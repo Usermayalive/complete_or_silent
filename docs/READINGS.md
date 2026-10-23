@@ -1046,3 +1046,64 @@ Long chapters without sections are sliced into ~1,200-token subsections (Sherloc
 **Run 2 (after both fixes): 8 of 42 so far, then the free daily quota ran out.**
 - The 8 CUAD questions: evidence found 87.5%, judge score 0.75, no wrong refusals.
 - Too few to conclude. The run resumes on the same model when the quota resets.
+
+---
+
+## Build step 4 (v4-4) — Relevance gate in front of the workers (2026-10-23, in progress)
+
+**Code:** `workers/gate.py`, plus scope / evidence limits / widening / whole-document notes in
+`workers/routing.py` and `workers/orchestrator.py`; tests in `tests/test_workers.py`.
+
+**Gate:**
+- **Signals:**
+  - lexical: each chapter's *best* sentence (BM25 on the question's content words)
+  - dense: MiniLM best passage, optional
+  - named units from routing
+  - TOC screen: one model call over chapter titles and summaries
+- **Rounds:**
+  - **round 1:** the named unit, or else the union of every signal's top k (any signal
+    can open a chapter)
+  - **round 2:** the next k
+  - **round 3:** the question rewritten as document-style keywords; that round's workers
+    search with the rewritten words
+- **Scope** sets k and the evidence size:
+
+  | Scope | k | Evidence |
+  |---|---|---|
+  | single | 3 | 600 tokens |
+  | multi | 4 | 1,000 tokens |
+  | global | 8 | 2,000 tokens, plus workers' partial answers as notes (not evidence) |
+
+### Gate readings (no model; TOC screen off)
+
+For each question with gold evidence: the chapter that holds the answer (looked up inside
+the unit the question is about), and whether the gate opens it.
+
+| Document | Chapters | Questions (with gold) | Routing correct | Answer chapter in round 1 | By round 2 | Opened: round 1 / by round 2 |
+|---|---|---|---|---|---|---|
+| contracts S (130 pages) | 8 | 23 | 100% | 91% (CUAD and single needles 100%) | **100%** | 1.5 / 4.5 |
+| contracts M (977 pages) | 55 | 71 | 100% | 94% (CUAD and single needles 100%) | **98.6%** | 1.3 / 4.3 |
+| books S (119 pages, 1 book) | 20 | 8 | — (book not a unit) | **100%** | 100% | 3 / 6 |
+| books M (1,001 pages) | 155 | 16 | 100% | 81% | 87.5% | 2.8 / 5.8 |
+| L (~9,000 pages) | pending | | | | | |
+
+- **Two-hop questions are not in round 1 by design:** the second part is in another chapter.
+  - contracts: 75–100% by round 2
+  - books M: 50%; the rest needs a worker's follow or search
+
+**Bugs the gate readings found (all fixed, with tests):**
+1. **One-book library routed every question to its title-page chapter.** That chapter is
+   titled with the book's name. Placeholder chapters are no longer routable.
+2. **Contracts split into slices ("… (1/4)") were never routed.** The slice numbers became
+   "distinctive" title words. Slice markers are now ignored.
+3. **The rewrite round opened the right chapter, but its worker searched with the old
+   words.**
+4. **Measurement bug:** boilerplate clauses ("governed by the laws of New York") were
+   attributed to the wrong contract. The answer chapter is now looked up inside the
+   question's own unit.
+
+**Still to measure (needs model calls):**
+- the TOC screen
+- gated vs ungated workers
+- the whole-document route on NarrativeQA
+- the five-system comparison
