@@ -1,0 +1,35 @@
+{
+  "st:all-MiniLM-L6-v2": {
+    "cases": 35,
+    "coef": [
+      13.866546111528686,
+      4.283834691367019
+    ],
+    "embedder": "st:all-MiniLM-L6-v2",
+    "fitted_on": "calibration_v1.jsonl",
+    "intercept": -4.862840885208091,
+    "threshold": 0.274
+  },
+  "st:all-mpnet-base-v2": {
+    "cases": 35,
+    "coef": [
+      11.936740824040776,
+      5.598100181965184
+    ],
+    "embedder": "st:all-mpnet-base-v2",
+    "fitted_on": "calibration_v1.jsonl",
+    "intercept": -4.635874801290897,
+    "threshold": 0.189
+  },
+  "tfidf": {
+    "cases": 36,
+    "coef": [
+      2.74637652801682,
+      6.4874896081808
+    ],
+    "embedder": "tfidf",
+    "fitted_on": "calibration_v1.jsonl",
+    "intercept": -2.082594704591017,
+    "threshold": 0.11
+  }
+}

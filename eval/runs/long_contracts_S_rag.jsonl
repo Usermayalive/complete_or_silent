@@ -1,0 +1,42 @@
+{"id": "cuad-S-0", "kind": "cuad", "answerable": true, "depth": 0.682, "build_seconds": 49.0, "retrieval_ms": 22.1, "pack_tokens": 1089, "coverage": 1.0, "hit": true}
+{"id": "cuad-S-1", "kind": "cuad", "answerable": true, "depth": 0.849, "build_seconds": 49.0, "retrieval_ms": 10.7, "pack_tokens": 2517, "coverage": 1.0, "hit": true}
+{"id": "cuad-S-2", "kind": "cuad", "answerable": true, "depth": 0.054, "build_seconds": 49.0, "retrieval_ms": 9.1, "pack_tokens": 2074, "coverage": 1.0, "hit": true}
+{"id": "cuad-S-3", "kind": "cuad", "answerable": true, "depth": 0.58, "build_seconds": 49.0, "retrieval_ms": 8.2, "pack_tokens": 678, "coverage": 1.0, "hit": true}
+{"id": "cuad-S-4", "kind": "cuad", "answerable": true, "depth": 0.693, "build_seconds": 49.0, "retrieval_ms": 8.3, "pack_tokens": 1160, "coverage": 1.0, "hit": true}
+{"id": "cuad-S-5", "kind": "cuad", "answerable": true, "depth": 0.738, "build_seconds": 49.0, "retrieval_ms": 7.9, "pack_tokens": 1022, "coverage": 0.13, "hit": false}
+{"id": "cuad-S-6", "kind": "cuad", "answerable": true, "depth": 0.701, "build_seconds": 49.0, "retrieval_ms": 8.6, "pack_tokens": 1038, "coverage": 1.0, "hit": true}
+{"id": "cuad-S-7", "kind": "cuad", "answerable": true, "depth": 0.826, "build_seconds": 49.0, "retrieval_ms": 9.6, "pack_tokens": 891, "coverage": 0.111, "hit": false}
+{"id": "cuad-S-8", "kind": "cuad", "answerable": true, "depth": 0.506, "build_seconds": 49.0, "retrieval_ms": 8.3, "pack_tokens": 566, "coverage": 0.086, "hit": false}
+{"id": "cuad-S-9", "kind": "cuad", "answerable": true, "depth": 0.408, "build_seconds": 49.0, "retrieval_ms": 7.7, "pack_tokens": 635, "coverage": 0.022, "hit": false}
+{"id": "cuad-S-10", "kind": "cuad", "answerable": true, "depth": null, "build_seconds": 49.0, "retrieval_ms": 8.1, "pack_tokens": 1022, "coverage": 1.0, "hit": true}
+{"id": "cuad-S-11", "kind": "cuad", "answerable": true, "depth": 0.124, "build_seconds": 49.0, "retrieval_ms": 8.8, "pack_tokens": 1745, "coverage": 1.0, "hit": true}
+{"id": "cuad-S-12", "kind": "cuad", "answerable": true, "depth": 0.826, "build_seconds": 49.0, "retrieval_ms": 9.1, "pack_tokens": 2286, "coverage": 0.0, "hit": false}
+{"id": "cuad-S-13", "kind": "cuad", "answerable": true, "depth": 0.119, "build_seconds": 49.0, "retrieval_ms": 10.9, "pack_tokens": 2100, "coverage": 1.0, "hit": true}
+{"id": "cuad-S-14", "kind": "cuad", "answerable": true, "depth": 0.738, "build_seconds": 49.0, "retrieval_ms": 9.9, "pack_tokens": 1022, "coverage": 0.13, "hit": false}
+{"id": "cuad-S-15", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 10.6, "pack_tokens": 2352}
+{"id": "cuad-S-16", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 10.3, "pack_tokens": 635}
+{"id": "cuad-S-17", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 10.3, "pack_tokens": 1022}
+{"id": "cuad-S-18", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 11.2, "pack_tokens": 1022}
+{"id": "cuad-S-19", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 9.9, "pack_tokens": 1022}
+{"id": "cuad-S-20", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 12.9, "pack_tokens": 1966}
+{"id": "cuad-S-21", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 10.7, "pack_tokens": 2281}
+{"id": "cuad-S-22", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 11.6, "pack_tokens": 573}
+{"id": "cuad-S-23", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 11.4, "pack_tokens": 2034}
+{"id": "cuad-S-24", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 11.0, "pack_tokens": 2261}
+{"id": "cuad-S-25", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 11.9, "pack_tokens": 2199}
+{"id": "cuad-S-26", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 10.5, "pack_tokens": 1195}
+{"id": "cuad-S-27", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 9.7, "pack_tokens": 1090}
+{"id": "cuad-S-28", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 11.9, "pack_tokens": 1145}
+{"id": "cuad-S-29", "kind": "cuad_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 11.4, "pack_tokens": 737}
+{"id": "needle-contracts-S-0", "kind": "needle", "answerable": true, "depth": 0.035, "build_seconds": 49.0, "retrieval_ms": 9.5, "pack_tokens": 1429, "coverage": 1.0, "hit": true}
+{"id": "needle-contracts-S-1", "kind": "needle", "answerable": true, "depth": 0.238, "build_seconds": 49.0, "retrieval_ms": 11.0, "pack_tokens": 752, "coverage": 0.0, "hit": false}
+{"id": "needle-contracts-S-2", "kind": "needle", "answerable": true, "depth": 0.927, "build_seconds": 49.0, "retrieval_ms": 12.7, "pack_tokens": 2282, "coverage": 0.0, "hit": false}
+{"id": "needle-contracts-S-3", "kind": "needle", "answerable": true, "depth": 0.743, "build_seconds": 49.0, "retrieval_ms": 11.7, "pack_tokens": 1110, "coverage": 1.0, "hit": true}
+{"id": "needle-contracts-S-4", "kind": "needle", "answerable": true, "depth": 0.729, "build_seconds": 49.0, "retrieval_ms": 11.1, "pack_tokens": 1022, "coverage": 1.0, "hit": true}
+{"id": "needle-contracts-S-5", "kind": "needle", "answerable": true, "depth": 0.08, "build_seconds": 49.0, "retrieval_ms": 11.7, "pack_tokens": 1429, "coverage": 0.714, "hit": true}
+{"id": "needle2-contracts-S-6", "kind": "needle_2hop", "answerable": true, "depth": 0.028, "build_seconds": 49.0, "retrieval_ms": 12.9, "pack_tokens": 1986, "coverage": 0.167, "hit": false}
+{"id": "needle2-contracts-S-7", "kind": "needle_2hop", "answerable": true, "depth": 0.029, "build_seconds": 49.0, "retrieval_ms": 11.7, "pack_tokens": 1986, "coverage": 0.167, "hit": false}
+{"id": "absent-contracts-S-8", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 11.3, "pack_tokens": 1022}
+{"id": "absent-contracts-S-9", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 13.6, "pack_tokens": 1114}
+{"id": "absent-contracts-S-10", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 10.7, "pack_tokens": 998}
+{"id": "absent-contracts-S-11", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 49.0, "retrieval_ms": 12.7, "pack_tokens": 1022}

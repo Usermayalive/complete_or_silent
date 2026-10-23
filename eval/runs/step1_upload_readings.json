@@ -1,0 +1,617 @@
+{
+  "sherlock.pdf": {
+    "title": "The Adventures of Sherlock Holmes",
+    "kind": "book",
+    "pages": 144,
+    "tree": {
+      "parts": 0,
+      "chapters": 16,
+      "sections": 18,
+      "subsections": 136,
+      "passages": 879,
+      "virtual_chapters": 0,
+      "virtual_sections": 15,
+      "virtual_subsections": 136,
+      "sentences": 5768,
+      "tokens": 132210,
+      "pages": 144
+    },
+    "build_seconds": 11.7,
+    "enrichment": {
+      "provider": "gemini:gemini-3.5-flash-lite",
+      "complete": true,
+      "stopped": null
+    },
+    "facts": {
+      "proposed": 582,
+      "kept": 511,
+      "kept_share": 0.878,
+      "dropped_bad_ids": 56,
+      "dropped_numbers": 15,
+      "fallbacks": 0
+    },
+    "cost": {
+      "calls": 31,
+      "tokens": 258677,
+      "seconds": 338.0,
+      "usd": 0.0,
+      "calls_per_100_pages": 21.5,
+      "tokens_per_100_pages": 179637
+    },
+    "lists": {
+      "right": 7,
+      "obligation": 32,
+      "definition": 17,
+      "person": 53,
+      "date": 71,
+      "party": 34,
+      "event": 68,
+      "place": 58,
+      "amount": 68,
+      "deadline": 30,
+      "condition": 4,
+      "prohibition": 1
+    },
+    "structure": {
+      "outline_entries": 20,
+      "fonts_only": {
+        "headings": 40,
+        "found": 7,
+        "found_share": 0.35,
+        "spurious": 30
+      },
+      "with_outline": {
+        "headings": 20,
+        "found": 20,
+        "found_share": 1.0,
+        "spurious": 0
+      }
+    },
+    "metadata": {
+      "fields": {
+        "title": {
+          "expected": "The Adventures of Sherlock Holmes",
+          "got": "The Adventures of Sherlock Holmes",
+          "correct": true,
+          "source": "label"
+        },
+        "author": {
+          "expected": "Arthur Conan Doyle",
+          "got": "Arthur Conan Doyle",
+          "correct": true,
+          "source": "label"
+        },
+        "year": {
+          "expected": null,
+          "got": null,
+          "correct": true,
+          "source": null
+        },
+        "isbn": {
+          "expected": null,
+          "got": null,
+          "correct": true,
+          "source": null
+        }
+      },
+      "correct": 4,
+      "total": 4
+    },
+    "fact_sample": [
+      {
+        "node": "ch1.s1.u1",
+        "where": "The Project Gutenberg eBook of The Adventures of Sherlock Holmes",
+        "type": "right",
+        "fact": "The eBook is for the use of anyone anywhere in the United States and most other parts of the world at no cost and with almost no restrictions whatsoever.",
+        "source": "This eBook is for the use of anyone anywhere in the United States and most other parts of the world at no cost and with almost no restrictions whatsoever.",
+        "pages": [
+          1,
+          1
+        ]
+      },
+      {
+        "node": "ch4.s2.u1",
+        "where": "I. A SCANDAL IN BOHEMIA / II. / (1/6)",
+        "type": "date",
+        "fact": "Holmes left the house a little after eight o'clock in the morning in the character of a groom out of work.",
+        "source": "I left the house a little after eight o'clock this morning in the character of a groom out of work.",
+        "pages": [
+          8,
+          9
+        ]
+      },
+      {
+        "node": "ch5.s1.u7",
+        "where": "II. THE RED-HEADED LEAGUE / (7/13)",
+        "type": "definition",
+        "fact": "William Morris was a solicitor who used Jabez Wilson's room temporarily.",
+        "source": "He was a solicitor and was using my room as a temporary convenience until his new premises were ready.",
+        "pages": [
+          21,
+          22
+        ]
+      },
+      {
+        "node": "ch6.s1.u3",
+        "where": "III. A CASE OF IDENTITY / (3/9)",
+        "type": "event",
+        "fact": "Miss Sutherland and Hosmer Angel became engaged after their first walk.",
+        "source": "We were engaged after the first walk that we took.",
+        "pages": [
+          30,
+          30
+        ]
+      },
+      {
+        "node": "ch7.s1.u7",
+        "where": "IV. THE BOSCOMBE VALLEY MYSTERY / (7/11)",
+        "type": "date",
+        "fact": "Young McCarthy married a barmaid in Bristol at a registry office some two years ago.",
+        "source": "This fellow is madly, insanely, in love with her, but some two years ago, when he was only a lad, and before he really knew her, for she had been away five years at a boardingschool, what does the idiot do but get into the clutches of a barmaid in Bristol and marry her at a registry office?",
+        "pages": [
+          42,
+          43
+        ]
+      },
+      {
+        "node": "ch9.s1.u4",
+        "where": "VI. THE MAN WITH THE TWISTED LIP / (4/10)",
+        "type": "other",
+        "fact": "Mr. St. Clair is thirty-seven years of age.",
+        "source": "St. Clair is now thirty-seven years of age, is a man of temperate habits, a good husband, a very affectionate father, and a man who is popular with all who know him.",
+        "pages": [
+          61,
+          62
+        ]
+      },
+      {
+        "node": "ch10.s1.u2",
+        "where": "VII. THE ADVENTURE OF THE BLUE CARBUNCLE / (2/11)",
+        "type": "other",
+        "fact": "The hat is three years old.",
+        "source": "\"The decline of his fortunes, then?\" \"This hat is three years old.",
+        "pages": [
+          72,
+          73
+        ]
+      },
+      {
+        "node": "ch11.s1.u2",
+        "where": "VIII. THE ADVENTURE OF THE SPECKLED BAND / (2/12)",
+        "type": "person",
+        "fact": "The visitor's name is Helen Stoner.",
+        "source": "\"I am all attention, madam.\" \"My name is Helen Stoner, and I am living with my stepfather, who is the last survivor of one of the oldest Saxon families in England, the Roylotts of Stoke Moran, on the western border of Surrey.\"",
+        "pages": [
+          83,
+          83
+        ]
+      },
+      {
+        "node": "ch12.s1.u9",
+        "where": "IX. THE ADVENTURE OF THE ENGINEER'S THUMB / (9/9)",
+        "type": "other",
+        "fact": "The criminals were coiners on a large scale who used the machine to form silver-replacing amalgam.",
+        "source": "\"They are coiners on a large scale, and have used the machine to form the amalgam which has taken the place of silver.\"",
+        "pages": [
+          104,
+          104
+        ]
+      },
+      {
+        "node": "ch14.s1.u1",
+        "where": "XI. THE ADVENTURE OF THE BERYL CORONET / (1/12)",
+        "type": "party",
+        "fact": "Alexander Holder is from the banking firm of Holder & Stevenson of Threadneedle Street.",
+        "source": "I am Alexander Holder, of the banking firm of Holder & Stevenson, of Threadneedle Street.\"",
+        "pages": [
+          116,
+          117
+        ]
+      },
+      {
+        "node": "ch14.s1.u10",
+        "where": "XI. THE ADVENTURE OF THE BERYL CORONET / (10/12)",
+        "type": "other",
+        "fact": "Arthur recovered the coronet and attempted to straighten the twisted piece in his room before his father appeared.",
+        "source": "Then something suddenly snapped, and your son, finding that he had the coronet in his hands, rushed back, closed the window, ascended to your room, and had just observed that the coronet had been twisted in the struggle and was endeavouring to straighten it when you appeared upon the scene.\"",
+        "pages": [
+          125,
+          126
+        ]
+      },
+      {
+        "node": "ch15.s1.u4",
+        "where": "XII. THE ADVENTURE OF THE COPPER BEECHES / (4/11)",
+        "type": "party",
+        "fact": "Mr. Rucastle and Miss Hunter are parties to the employment arrangement.",
+        "source": "Rucastle seemed to be a very kind, goodnatured man. I shall write to Mr.",
+        "pages": [
+          131,
+          132
+        ]
+      }
+    ]
+  },
+  "two_cities.pdf": {
+    "title": "A Tale of Two Cities",
+    "kind": "book",
+    "pages": 215,
+    "tree": {
+      "parts": 3,
+      "chapters": 49,
+      "sections": 49,
+      "subsections": 164,
+      "passages": 1172,
+      "virtual_chapters": 1,
+      "virtual_sections": 49,
+      "virtual_subsections": 164,
+      "sentences": 6967,
+      "tokens": 173623,
+      "pages": 215
+    },
+    "build_seconds": 15.6,
+    "enrichment": {
+      "provider": "gemini:gemini-3.5-flash-lite",
+      "complete": true,
+      "stopped": null
+    },
+    "facts": {
+      "proposed": 592,
+      "kept": 575,
+      "kept_share": 0.971,
+      "dropped_bad_ids": 3,
+      "dropped_numbers": 14,
+      "fallbacks": 0
+    },
+    "cost": {
+      "calls": 40,
+      "tokens": 323228,
+      "seconds": 406.7,
+      "usd": 0.0,
+      "calls_per_100_pages": 18.6,
+      "tokens_per_100_pages": 150339
+    },
+    "lists": {
+      "right": 19,
+      "obligation": 97,
+      "definition": 26,
+      "person": 73,
+      "date": 50,
+      "event": 113,
+      "party": 23,
+      "amount": 64,
+      "place": 30,
+      "deadline": 27,
+      "condition": 6,
+      "prohibition": 4
+    },
+    "structure": {
+      "outline_entries": 52,
+      "fonts_only": {
+        "headings": 89,
+        "found": 40,
+        "found_share": 0.769,
+        "spurious": 46
+      },
+      "with_outline": {
+        "headings": 52,
+        "found": 52,
+        "found_share": 1.0,
+        "spurious": 0
+      }
+    },
+    "metadata": {
+      "fields": {
+        "title": {
+          "expected": "A Tale of Two Cities",
+          "got": "A Tale of Two Cities",
+          "correct": true,
+          "source": "label"
+        },
+        "author": {
+          "expected": "Charles Dickens",
+          "got": "Charles Dickens",
+          "correct": true,
+          "source": "label"
+        },
+        "year": {
+          "expected": null,
+          "got": null,
+          "correct": true,
+          "source": null
+        },
+        "isbn": {
+          "expected": null,
+          "got": null,
+          "correct": true,
+          "source": null
+        }
+      },
+      "correct": 4,
+      "total": 4
+    },
+    "fact_sample": [
+      {
+        "node": "ch1.s1.u1",
+        "where": "The Project Gutenberg eBook of A Tale of Two Cities",
+        "type": "right",
+        "fact": "The eBook is free and available to anyone anywhere in the United States and most other parts of the world with almost no restrictions.",
+        "source": "This eBook is for the use of anyone anywhere in the United States and most other parts of the world at no cost and with almost no restrictions whatsoever.",
+        "pages": [
+          1,
+          1
+        ]
+      },
+      {
+        "node": "ch7.s1.u5",
+        "where": "Book the First—Recalled to Life / CHAPTER IV. The Preparation / (5/6)",
+        "type": "amount",
+        "fact": "Miss Manette's parents had no great possession, and what they had was secured to her mother and her.",
+        "source": "\"You know that your parents had no great possession, and that what they had was secured to your mother and to you.",
+        "pages": [
+          16,
+          17
+        ]
+      },
+      {
+        "node": "ch11.s1.u1",
+        "where": "Book the Second—the Golden Thread / CHAPTER II. A Sight / (1/2)",
+        "type": "place",
+        "fact": "They hanged people at Tyburn in those days.",
+        "source": "They hanged at Tyburn, in those days, so the street outside Newgate had not obtained one infamous notoriety that has since attached to it.",
+        "pages": [
+          35,
+          36
+        ]
+      },
+      {
+        "node": "ch15.s1.u5",
+        "where": "Book the Second—the Golden Thread / CHAPTER VI. Hundreds of People / (5/6)",
+        "type": "other",
+        "fact": "The letters D. I. C. or DIG were carved on a corner stone in the dungeon.",
+        "source": "At first, they were read as D. C.; but, on being more carefully examined, the last letter was found to be G. At length, it was suggested that the letters were not initials, but the complete word, DIG.",
+        "pages": [
+          58,
+          59
+        ]
+      },
+      {
+        "node": "ch18.s1.u4",
+        "where": "Book the Second—the Golden Thread / CHAPTER IX. The Gorgon's Head / (4/5)",
+        "type": "event",
+        "fact": "The stone faces on the outer walls stared blindly at the black night for three heavy hours.",
+        "source": "The stone faces on the outer walls stared blindly at the black night for three heavy hours; for three heavy hours, the horses in the stables rattled at their racks, the dogs barked, and the owl made a noise with very little resemblance in it to the noise conventionally assigned to the owl by men-poets.",
+        "pages": [
+          72,
+          72
+        ]
+      },
+      {
+        "node": "ch23.s1.u1",
+        "where": "Book the Second—the Golden Thread / CHAPTER XIV. The Honest Tradesman / (1/5)",
+        "type": "event",
+        "fact": "Mr. Cruncher witnesses an unusual funeral procession going westward down Fleet-street.",
+        "source": "Cruncher must have been \"flopping\" in some pointed manner, when an unusual concourse pouring down Fleet-street westward, attracted his attention. Looking that way, Mr. Get a top of that there seat, and look at the crowd.\" His son obeyed, and the crowd approached; they were bawling and hissing round a dingy hearse and dingy mourning coach, in which mourning coach there was only one mourner, dressed in the dingy trappings that were considered essential to the dignity of the position.",
+        "pages": [
+          89,
+          90
+        ]
+      },
+      {
+        "node": "ch24.s1.u4",
+        "where": "Book the Second—the Golden Thread / CHAPTER XV. Knitting / (4/5)",
+        "type": "event",
+        "fact": "An old man describes horrific tortures done to a prisoner who attempted to assassinate King Louis Fifteen.",
+        "source": "That old man says, all this was actually done to a prisoner who made an attempt on the life of the late King, Louis Fifteen.",
+        "pages": [
+          98,
+          99
+        ]
+      },
+      {
+        "node": "ch30.s1.u4",
+        "where": "Book the Second—the Golden Thread / CHAPTER XXI. Echoing Footsteps / (4/5)",
+        "type": "condition",
+        "fact": "The turnkey agrees to show Defarge the North Tower if Defarge comes with him.",
+        "source": "\"Quick!\" \"I will faithfully,\" replied the man, \"if you will come with me.",
+        "pages": [
+          122,
+          123
+        ]
+      },
+      {
+        "node": "ch34.s1.u3",
+        "where": "Book the Third—the Track of a Storm / CHAPTER I. In Secret / (3/5)",
+        "type": "obligation",
+        "fact": "Defarge refuses to do anything for Charles Darnay.",
+        "source": "\"I will do,\" Defarge doggedly rejoined, \"nothing for you. I will do nothing for you.\"",
+        "pages": [
+          143,
+          143
+        ]
+      },
+      {
+        "node": "ch40.s1.u1",
+        "where": "Book the Third—the Track of a Storm / CHAPTER VII. A Knock at the Door / (1/3)",
+        "type": "obligation",
+        "fact": "An ordinance of the Republic required the name of every inmate to be legibly inscribed on the door or doorpost of every house.",
+        "source": "It was an ordinance of the Republic One and Indivisible of Liberty, Equality, Fraternity, or Death, that on the door or doorpost of every house, the name of every inmate must be legibly inscribed in letters of a certain size, at a certain convenient height from the ground.",
+        "pages": [
+          163,
+          164
+        ]
+      },
+      {
+        "node": "ch42.s1.u4",
+        "where": "Book the Third—the Track of a Storm / CHAPTER IX. The Game Made / (4/5)",
+        "type": "date",
+        "fact": "Charles Darnay received his indictment last night.",
+        "source": "Indictment delivered to him last night.",
+        "pages": [
+          177,
+          178
+        ]
+      },
+      {
+        "node": "ch45.s1.u4",
+        "where": "Book the Third—the Track of a Storm / CHAPTER XII. Darkness / (4/4)",
+        "type": "deadline",
+        "fact": "Mr. Lorry is instructed to have his horses ready at two o'clock in the afternoon.",
+        "source": "Early to-morrow have your horses ready, so that they may be in starting trim at two o'clock in the afternoon.\"",
+        "pages": [
+          193,
+          194
+        ]
+      }
+    ]
+  },
+  "saas_agreement.md": {
+    "title": "SaaS Subscription Agreement",
+    "kind": "contract",
+    "pages": null,
+    "tree": {
+      "parts": 0,
+      "chapters": 45,
+      "sections": 46,
+      "subsections": 46,
+      "passages": 291,
+      "virtual_chapters": 0,
+      "virtual_sections": 44,
+      "virtual_subsections": 46,
+      "sentences": 301,
+      "tokens": 5064,
+      "pages": 0
+    },
+    "build_seconds": 0.0,
+    "enrichment": {
+      "provider": "gemini:gemini-3.5-flash-lite",
+      "complete": true,
+      "stopped": null
+    },
+    "facts": {
+      "proposed": 293,
+      "kept": 293,
+      "kept_share": 1.0,
+      "dropped_bad_ids": 0,
+      "dropped_numbers": 0,
+      "fallbacks": 0
+    },
+    "cost": {
+      "calls": 11,
+      "tokens": 38498,
+      "seconds": 111.1,
+      "usd": 0.0,
+      "calls_per_100_pages": null,
+      "tokens_per_100_pages": null
+    },
+    "lists": {
+      "definition": 4,
+      "right": 45,
+      "prohibition": 3,
+      "amount": 25,
+      "deadline": 29,
+      "obligation": 130,
+      "place": 1,
+      "condition": 56
+    },
+    "structure": null,
+    "fact_sample": [
+      {
+        "node": "ch1.s1.u1",
+        "where": "1. Definitions",
+        "type": "definition",
+        "fact": "Subscription Term means the initial term of twelve months and any renewal term.",
+        "source": "\"Subscription Term\" means the initial term of twelve months and any renewal term.",
+        "pages": null
+      },
+      {
+        "node": "ch8.s1.u1",
+        "where": "8. Limitation of Liability",
+        "type": "obligation",
+        "fact": "Neither party is liable for indirect or consequential losses.",
+        "source": "Neither party is liable for indirect or consequential losses.",
+        "pages": null
+      },
+      {
+        "node": "ch12.s1.u1",
+        "where": "12. Insurance",
+        "type": "condition",
+        "fact": "The Customer is not responsible for insurance unless the Provider has first agreed a plan.",
+        "source": "The Customer is not responsible for insurance unless the Provider has first agreed a plan.",
+        "pages": null
+      },
+      {
+        "node": "ch16.s1.u1",
+        "where": "16. Anti-Bribery",
+        "type": "right",
+        "fact": "The Customer may require a remediation plan after fifteen business days if the Provider fails to maintain the anti-bribery.",
+        "source": "If the Provider fails to maintain the anti-bribery, the Customer may require a remediation plan after fifteen business days.",
+        "pages": null
+      },
+      {
+        "node": "ch19.s1.u1",
+        "where": "19. Security Testing",
+        "type": "condition",
+        "fact": "The Customer is not responsible for security testing unless the Provider has first agreed a plan.",
+        "source": "The Customer is not responsible for security testing unless the Provider has first agreed a plan.",
+        "pages": null
+      },
+      {
+        "node": "ch23.s1.u1",
+        "where": "23. Acceptance Testing",
+        "type": "obligation",
+        "fact": "The Provider shall update all acceptance testing within twenty months of a written request from the Customer.",
+        "source": "The Provider shall update all acceptance testing within twenty months of a written request from the Customer.",
+        "pages": null
+      },
+      {
+        "node": "ch26.s1.u1",
+        "where": "26. Health and Safety",
+        "type": "right",
+        "fact": "The Customer may request changes to the health and safety on twenty days' written notice to the Provider.",
+        "source": "The Customer may request changes to the health and safety on twenty days' written notice to the Provider.",
+        "pages": null
+      },
+      {
+        "node": "ch29.s1.u1",
+        "where": "29. Travel Expenses",
+        "type": "condition",
+        "fact": "The Customer is not responsible for travel expenses unless the Provider has first approved it in writing.",
+        "source": "The Customer is not responsible for travel expenses unless the Provider has first approved it in writing.",
+        "pages": null
+      },
+      {
+        "node": "ch32.s1.u1",
+        "where": "32. Management Reporting",
+        "type": "condition",
+        "fact": "Any management reporting must be recorded in accordance with the Provider's published procedures.",
+        "source": "Any management reporting must be recorded in accordance with the Provider's published procedures.",
+        "pages": null
+      },
+      {
+        "node": "ch35.s1.u1",
+        "where": "35. Step-In Rights",
+        "type": "right",
+        "fact": "The Customer may suspend the step-in rights on thirty business days' written notice to the Provider.",
+        "source": "The Customer may suspend the step-in rights on thirty business days' written notice to the Provider.",
+        "pages": null
+      },
+      {
+        "node": "ch39.s1.u1",
+        "where": "39. Open Source Software",
+        "type": "condition",
+        "fact": "The Customer is not responsible for open source software unless the Provider has first agreed a plan.",
+        "source": "The Customer is not responsible for open source software unless the Provider has first agreed a plan.",
+        "pages": null
+      },
+      {
+        "node": "ch42.s1.u1",
+        "where": "42. Service Reviews",
+        "type": "condition",
+        "fact": "Any service reviews must be carried out in accordance with the Provider's published guidelines.",
+        "source": "Any service reviews must be carried out in accordance with the Provider's published guidelines.",
+        "pages": null
+      }
+    ]
+  }
+}

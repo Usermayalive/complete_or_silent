@@ -1,0 +1,5 @@
+{
+  "_note": "Hand-made answer key for metadata readings. null = not stated in the document's text, so the right output is no value.",
+  "sherlock.pdf": {"title": "The Adventures of Sherlock Holmes", "author": "Arthur Conan Doyle", "year": null, "isbn": null},
+  "two_cities.pdf": {"title": "A Tale of Two Cities", "author": "Charles Dickens", "year": null, "isbn": null}
+}

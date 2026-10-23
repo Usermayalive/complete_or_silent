@@ -1,0 +1,46 @@
+{"id": "def-01", "document": "../examples/saas_agreement.md", "question": "What's a Subscription Term?", "query_type": "definition_lookup", "focus": "subscription term"}
+{"id": "def-02", "document": "../examples/saas_agreement.md", "question": "Explain the meaning of Affiliate", "query_type": "definition_lookup", "focus": "affiliate"}
+{"id": "def-03", "document": "../examples/sample_contract.md", "question": "What counts as Confidential Information?", "query_type": "definition_lookup", "focus": "confidential information"}
+{"id": "def-04", "document": "../examples/sample_contract.md", "question": "How is Misconduct defined?", "query_type": "definition_lookup", "focus": "misconduct"}
+{"id": "def-05", "document": "../examples/sample_contract.md", "question": "Define Losses.", "query_type": "definition_lookup", "focus": "losses"}
+{"id": "def-06", "document": "../examples/saas_agreement.md", "question": "What does the agreement mean by Customer Data?", "query_type": "definition_lookup", "focus": "customer data"}
+{"id": "def-07", "document": "../examples/saas_agreement.md", "question": "Service Levels - what does that term mean?", "query_type": "definition_lookup", "focus": "service levels"}
+{"id": "def-08", "document": "../examples/sample_contract.md", "question": "What is 'Losses'?", "query_type": "definition_lookup", "focus": "losses"}
+{"id": "fact-01", "document": "../examples/saas_agreement.md", "question": "When are fees invoiced?", "query_type": "fact_lookup", "sections": ["3"]}
+{"id": "fact-02", "document": "../examples/saas_agreement.md", "question": "How much is the Standard plan per month?", "query_type": "fact_lookup"}
+{"id": "fact-03", "document": "../examples/saas_agreement.md", "question": "Is support available on weekends?", "query_type": "fact_lookup", "sections": ["7"]}
+{"id": "fact-04", "document": "../examples/saas_agreement.md", "question": "Who can use the Platform?", "query_type": "fact_lookup"}
+{"id": "fact-05", "document": "../examples/saas_agreement.md", "question": "How long is the initial term?", "query_type": "fact_lookup"}
+{"id": "fact-06", "document": "../examples/saas_agreement.md", "question": "Does the Customer get a refund on termination for convenience?", "query_type": "fact_lookup", "sections": ["10"]}
+{"id": "fact-07", "document": "../examples/saas_agreement.md", "question": "What notice is required for non-renewal?", "query_type": "fact_lookup", "sections": ["9.1"]}
+{"id": "fact-08", "document": "../examples/saas_agreement.md", "question": "Where is customer data stored?", "query_type": "fact_lookup"}
+{"id": "fact-09", "document": "../examples/sample_contract.md", "question": "What is the liability cap?", "query_type": "fact_lookup", "sections": ["4.1"]}
+{"id": "fact-10", "document": "../examples/sample_contract.md", "question": "When must invoices be paid?", "query_type": "fact_lookup"}
+{"id": "fact-11", "document": "../examples/sample_contract.md", "question": "Can the Customer terminate immediately?", "query_type": "fact_lookup", "sections": ["6"]}
+{"id": "fact-12", "document": "../examples/saas_agreement.md", "question": "What is the uptime commitment?", "query_type": "fact_lookup"}
+{"id": "xref-01", "document": "../examples/saas_agreement.md", "question": "What happens if the Customer breaches Section 2(c)?", "query_type": "cross_reference_reasoning", "sections": ["2(c)"]}
+{"id": "xref-02", "document": "../examples/saas_agreement.md", "question": "What if availability drops below 99.9 percent?", "query_type": "cross_reference_reasoning"}
+{"id": "xref-03", "document": "../examples/sample_contract.md", "question": "If the Supplier commits fraud, what are the consequences?", "query_type": "cross_reference_reasoning"}
+{"id": "xref-04", "document": "../examples/saas_agreement.md", "question": "What are the consequences of a personal data breach?", "query_type": "cross_reference_reasoning"}
+{"id": "xref-05", "document": "../examples/sample_contract.md", "question": "In the event of a material breach, can the agreement be ended?", "query_type": "cross_reference_reasoning"}
+{"id": "xref-06", "document": "../examples/sample_contract.md", "question": "Which clauses refer to Section 4.2?", "query_type": "cross_reference_reasoning", "sections": ["4.2"]}
+{"id": "xref-07", "document": "../examples/saas_agreement.md", "question": "Suppose the Provider raises prices - what notice applies?", "query_type": "cross_reference_reasoning"}
+{"id": "xref-08", "document": "../examples/sample_contract.md", "question": "Assuming the Supplier is grossly negligent, is its liability capped?", "query_type": "cross_reference_reasoning"}
+{"id": "cmp-01", "document": "../examples/sample_contract.md", "question": "Compare sections 4.1 and 4.2", "query_type": "clause_comparison", "sections": ["4.1", "4.2"], "sides": 2}
+{"id": "cmp-02", "document": "../examples/sample_contract.md", "question": "How do sections 4.1 and 4.2 differ?", "query_type": "clause_comparison", "sections": ["4.1", "4.2"], "sides": 2}
+{"id": "cmp-03", "document": "../examples/saas_agreement.md", "question": "What is the difference between the Standard and Enterprise plans?", "query_type": "clause_comparison", "sides": 2}
+{"id": "cmp-04", "document": "../examples/saas_agreement.md", "question": "Renewal vs termination: how do they differ?", "query_type": "clause_comparison", "sections": ["9.1", "10"], "sides": 2}
+{"id": "cmp-05", "document": "../examples/saas_agreement.md", "question": "Contrast the support terms with the service levels", "query_type": "clause_comparison", "sections": ["7", "5"], "sides": 2}
+{"id": "cmp-06", "document": "../examples/sample_contract.md", "question": "Which is longer: the confidentiality period or the termination notice period?", "query_type": "clause_comparison", "sections": ["3", "6"], "sides": 2}
+{"id": "cmp-07", "document": "../examples/sample_contract.md", "question": "Compare the indemnity with the liability cap", "query_type": "clause_comparison", "sections": ["5", "4.1"], "sides": 2}
+{"id": "sum-01", "document": "../examples/sample_contract.md", "question": "Summarize the liability terms", "query_type": "summary", "sections": ["4"]}
+{"id": "sum-02", "document": "../examples/saas_agreement.md", "question": "Give me an overview of the fees", "query_type": "summary", "sections": ["3"]}
+{"id": "sum-03", "document": "../examples/saas_agreement.md", "question": "What are the key points of the data protection section?", "query_type": "summary", "sections": ["4"]}
+{"id": "sum-04", "document": "../examples/saas_agreement.md", "question": "Outline the termination provisions", "query_type": "summary", "sections": ["10"]}
+{"id": "sum-05", "document": "../examples/saas_agreement.md", "question": "Briefly describe Section 9", "query_type": "summary", "sections": ["9"]}
+{"id": "sum-06", "document": "../examples/sample_contract.md", "question": "TL;DR of the confidentiality clause", "query_type": "summary", "sections": ["3"]}
+{"id": "con-01", "document": "../examples/saas_agreement.md", "question": "Is there a conflict in the incident response time?", "query_type": "contradiction_detection"}
+{"id": "con-02", "document": "../examples/saas_agreement.md", "question": "Are there any inconsistent provisions about support response?", "query_type": "contradiction_detection"}
+{"id": "con-03", "document": "../examples/saas_agreement.md", "question": "Do sections 5 and 7 contradict each other?", "query_type": "contradiction_detection", "sections": ["5", "7"]}
+{"id": "con-04", "document": "../examples/saas_agreement.md", "question": "Does anything clash with the 99.9 percent availability commitment?", "query_type": "contradiction_detection"}
+{"id": "con-05", "document": "../examples/saas_agreement.md", "question": "Are the incident response commitments consistent?", "query_type": "contradiction_detection"}

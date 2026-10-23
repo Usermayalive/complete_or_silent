@@ -1,0 +1,23 @@
+# Python / tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+*.egg-info/
+.DS_Store
+
+# Large or rebuildable data: recreated by the build scripts
+#   python -m gnn_pruner.corpus ...        (data/corpus_v1)
+#   python -m gnn_pruner.longbench build   (data/longbench, downloads CUAD + Gutenberg)
+#   python -m gnn_pruner.upload <file>     (data/trees cache)
+data/*
+!data/books/
+data/books/*
+!data/books/key.json
+
+# Trained models (binary; back up separately, e.g. Git LFS or a GitHub release)
+models/
+
+# Never commit credentials (keys live in ~/.zshrc)
+.env
+*.key

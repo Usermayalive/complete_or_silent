@@ -1,0 +1,200 @@
+{"id": "nqa-S-0", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 28.6, "pack_tokens": 1233, "answer_overlap": 1.0}
+{"id": "nqa-S-1", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 15.9, "pack_tokens": 1290, "answer_overlap": 0.4}
+{"id": "nqa-S-2", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.8, "pack_tokens": 1278, "answer_overlap": 0.5}
+{"id": "nqa-S-3", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.5, "pack_tokens": 1230, "answer_overlap": 0.25}
+{"id": "nqa-S-4", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.9, "pack_tokens": 1258, "answer_overlap": 0.667}
+{"id": "nqa-S-5", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 1134, "answer_overlap": 0.5}
+{"id": "nqa-S-6", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 1233, "answer_overlap": 0.5}
+{"id": "nqa-S-7", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.1, "pack_tokens": 1289, "answer_overlap": 0.286}
+{"id": "nqa-S-8", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 13.1, "pack_tokens": 1060, "answer_overlap": 0.333}
+{"id": "nqa-S-9", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1233, "answer_overlap": 0.4}
+{"id": "nqa-S-10", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.4, "pack_tokens": 1237, "answer_overlap": 0.0}
+{"id": "nqa-S-11", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1336, "answer_overlap": 0.75}
+{"id": "nqa-S-12", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.9, "pack_tokens": 1233, "answer_overlap": 0.333}
+{"id": "nqa-S-13", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.6, "pack_tokens": 1265, "answer_overlap": 0.0}
+{"id": "nqa-S-14", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.6, "pack_tokens": 1060, "answer_overlap": 0.333}
+{"id": "nqa-S-15", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.1, "pack_tokens": 1195, "answer_overlap": 0.667}
+{"id": "nqa-S-16", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.1, "pack_tokens": 1241, "answer_overlap": 0.0}
+{"id": "nqa-S-17", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1315, "answer_overlap": 0.6}
+{"id": "nqa-S-18", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.6, "pack_tokens": 1121, "answer_overlap": 0.0}
+{"id": "nqa-S-19", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1259, "answer_overlap": 1.0}
+{"id": "nqa-S-20", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.9, "pack_tokens": 1400, "answer_overlap": 0.5}
+{"id": "nqa-S-21", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.6, "pack_tokens": 1322, "answer_overlap": 0.5}
+{"id": "nqa-S-22", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.8, "pack_tokens": 1220, "answer_overlap": 0.0}
+{"id": "nqa-S-23", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.2, "pack_tokens": 997, "answer_overlap": 1.0}
+{"id": "nqa-S-24", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.4, "pack_tokens": 1132, "answer_overlap": 0.333}
+{"id": "nqa-S-25", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1142, "answer_overlap": 0.0}
+{"id": "nqa-S-26", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.1, "pack_tokens": 1230, "answer_overlap": 1.0}
+{"id": "nqa-S-27", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 1130, "answer_overlap": 0.571}
+{"id": "nqa-S-28", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.6, "pack_tokens": 1260, "answer_overlap": 1.0}
+{"id": "nqa-S-29", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1197, "answer_overlap": 0.5}
+{"id": "nqa-M-30", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 1073, "answer_overlap": 0.0}
+{"id": "nqa-M-31", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.8, "pack_tokens": 1041, "answer_overlap": 0.0}
+{"id": "nqa-M-32", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.7, "pack_tokens": 1103, "answer_overlap": 0.0}
+{"id": "nqa-M-33", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.2, "pack_tokens": 1303, "answer_overlap": 0.5}
+{"id": "nqa-M-34", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.2, "pack_tokens": 1270, "answer_overlap": 0.0}
+{"id": "nqa-M-35", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1181, "answer_overlap": 1.0}
+{"id": "nqa-M-36", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.0, "pack_tokens": 966, "answer_overlap": 0.0}
+{"id": "nqa-M-37", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 23.7, "pack_tokens": 781, "answer_overlap": 1.0}
+{"id": "nqa-M-38", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 35.4, "pack_tokens": 1335, "answer_overlap": 0.5}
+{"id": "nqa-M-39", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 962, "answer_overlap": 0.429}
+{"id": "nqa-M-40", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.1, "pack_tokens": 1000, "answer_overlap": 1.0}
+{"id": "nqa-M-41", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 1174, "answer_overlap": 0.5}
+{"id": "nqa-M-42", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.9, "pack_tokens": 1093, "answer_overlap": 0.0}
+{"id": "nqa-M-43", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.8, "pack_tokens": 961, "answer_overlap": 0.2}
+{"id": "nqa-M-44", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.8, "pack_tokens": 1170, "answer_overlap": 0.429}
+{"id": "nqa-M-45", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.3, "pack_tokens": 1398, "answer_overlap": 0.5}
+{"id": "nqa-M-46", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 790, "answer_overlap": 0.2}
+{"id": "nqa-M-47", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.1, "pack_tokens": 905, "answer_overlap": 0.0}
+{"id": "nqa-M-48", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.9, "pack_tokens": 963, "answer_overlap": 0.333}
+{"id": "nqa-M-49", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 1055, "answer_overlap": 0.167}
+{"id": "nqa-M-50", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 1071, "answer_overlap": 0.125}
+{"id": "nqa-M-51", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 1114, "answer_overlap": 0.333}
+{"id": "nqa-M-52", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 913, "answer_overlap": 1.0}
+{"id": "nqa-M-53", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.0, "pack_tokens": 1053, "answer_overlap": 0.333}
+{"id": "nqa-M-54", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.7, "pack_tokens": 1399, "answer_overlap": 1.0}
+{"id": "nqa-M-55", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.0, "pack_tokens": 1041, "answer_overlap": 1.0}
+{"id": "nqa-M-56", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.3, "pack_tokens": 1698, "answer_overlap": 0.0}
+{"id": "nqa-M-57", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 775, "answer_overlap": 1.0}
+{"id": "nqa-M-58", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.8, "pack_tokens": 718, "answer_overlap": 1.0}
+{"id": "nqa-M-59", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 769, "answer_overlap": 0.0}
+{"id": "nqa-M-60", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.9, "pack_tokens": 708, "answer_overlap": 0.2}
+{"id": "nqa-M-61", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 1597, "answer_overlap": 0.5}
+{"id": "nqa-M-62", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 999, "answer_overlap": 1.0}
+{"id": "nqa-M-63", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 977, "answer_overlap": 1.0}
+{"id": "nqa-M-64", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 792, "answer_overlap": 1.0}
+{"id": "nqa-M-65", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.6, "pack_tokens": 767, "answer_overlap": 1.0}
+{"id": "nqa-M-66", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.5, "pack_tokens": 1155, "answer_overlap": 0.643}
+{"id": "nqa-M-67", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 17.3, "pack_tokens": 724, "answer_overlap": 0.5}
+{"id": "nqa-M-68", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.7, "pack_tokens": 1008, "answer_overlap": 0.0}
+{"id": "nqa-M-69", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.1, "pack_tokens": 1004, "answer_overlap": 1.0}
+{"id": "nqa-L-70", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.0, "pack_tokens": 1226, "answer_overlap": 0.75}
+{"id": "nqa-L-71", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.8, "pack_tokens": 1080, "answer_overlap": 1.0}
+{"id": "nqa-L-72", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.7, "pack_tokens": 420, "answer_overlap": 1.0}
+{"id": "nqa-L-73", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 479, "answer_overlap": 1.0}
+{"id": "nqa-L-74", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.6, "pack_tokens": 1379, "answer_overlap": 0.0}
+{"id": "nqa-L-75", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.3, "pack_tokens": 1321, "answer_overlap": 0.25}
+{"id": "nqa-L-76", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.1, "pack_tokens": 174, "answer_overlap": 0.0}
+{"id": "nqa-L-77", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 1193, "answer_overlap": 0.5}
+{"id": "nqa-L-78", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.1, "pack_tokens": 1239, "answer_overlap": 0.333}
+{"id": "nqa-L-79", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.5, "pack_tokens": 957, "answer_overlap": 0.0}
+{"id": "nqa-L-80", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 13.2, "pack_tokens": 1261, "answer_overlap": 0.333}
+{"id": "nqa-L-81", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.9, "pack_tokens": 850, "answer_overlap": 0.5}
+{"id": "nqa-L-82", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.5, "pack_tokens": 1335, "answer_overlap": 1.0}
+{"id": "nqa-L-83", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 16.1, "pack_tokens": 1252, "answer_overlap": 0.667}
+{"id": "nqa-L-84", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.0, "pack_tokens": 1083, "answer_overlap": 0.0}
+{"id": "nqa-L-85", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 739, "answer_overlap": 1.0}
+{"id": "nqa-L-86", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 14.7, "pack_tokens": 1040, "answer_overlap": 1.0}
+{"id": "nqa-L-87", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.4, "pack_tokens": 1339, "answer_overlap": 0.333}
+{"id": "nqa-L-88", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.3, "pack_tokens": 651, "answer_overlap": 1.0}
+{"id": "nqa-L-89", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.0, "pack_tokens": 517, "answer_overlap": 1.0}
+{"id": "nqa-L-90", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 1066, "answer_overlap": 0.0}
+{"id": "nqa-L-91", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1311, "answer_overlap": 0.5}
+{"id": "nqa-L-92", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 900, "answer_overlap": 0.0}
+{"id": "nqa-L-93", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1333, "answer_overlap": 0.0}
+{"id": "nqa-L-94", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 13.1, "pack_tokens": 1253, "answer_overlap": 1.0}
+{"id": "nqa-L-95", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.7, "pack_tokens": 1121, "answer_overlap": 0.0}
+{"id": "nqa-L-96", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.1, "pack_tokens": 877, "answer_overlap": 0.0}
+{"id": "nqa-L-97", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.3, "pack_tokens": 970, "answer_overlap": 0.0}
+{"id": "nqa-L-98", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.6, "pack_tokens": 1073, "answer_overlap": 0.2}
+{"id": "nqa-L-99", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1064, "answer_overlap": 1.0}
+{"id": "nqa-L-100", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.9, "pack_tokens": 988, "answer_overlap": 0.75}
+{"id": "nqa-L-101", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1120, "answer_overlap": 0.6}
+{"id": "nqa-L-102", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.8, "pack_tokens": 1162, "answer_overlap": 0.5}
+{"id": "nqa-L-103", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.8, "pack_tokens": 908, "answer_overlap": 0.0}
+{"id": "nqa-L-104", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1198, "answer_overlap": 1.0}
+{"id": "nqa-L-105", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1128, "answer_overlap": 0.0}
+{"id": "nqa-L-106", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.1, "pack_tokens": 1137, "answer_overlap": 0.333}
+{"id": "nqa-L-107", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.9, "pack_tokens": 942, "answer_overlap": 0.0}
+{"id": "nqa-L-108", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.1, "pack_tokens": 1200, "answer_overlap": 0.286}
+{"id": "nqa-L-109", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1151, "answer_overlap": 0.5}
+{"id": "nqa-L-110", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 660, "answer_overlap": 0.5}
+{"id": "nqa-L-111", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.8, "pack_tokens": 1230, "answer_overlap": 1.0}
+{"id": "nqa-L-112", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.9, "pack_tokens": 826, "answer_overlap": 0.333}
+{"id": "nqa-L-113", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.8, "pack_tokens": 1004, "answer_overlap": 0.0}
+{"id": "nqa-L-114", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.9, "pack_tokens": 804, "answer_overlap": 0.6}
+{"id": "nqa-L-115", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.1, "pack_tokens": 1197, "answer_overlap": 0.75}
+{"id": "nqa-L-116", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.9, "pack_tokens": 997, "answer_overlap": 0.25}
+{"id": "nqa-L-117", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 965, "answer_overlap": 0.0}
+{"id": "nqa-L-118", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.0, "pack_tokens": 1046, "answer_overlap": 0.0}
+{"id": "nqa-L-119", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 740, "answer_overlap": 1.0}
+{"id": "nqa-L-120", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.9, "pack_tokens": 751, "answer_overlap": 0.5}
+{"id": "nqa-L-121", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1193, "answer_overlap": 0.6}
+{"id": "nqa-L-122", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1094, "answer_overlap": 0.0}
+{"id": "nqa-L-123", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 1058, "answer_overlap": 1.0}
+{"id": "nqa-L-124", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.6, "pack_tokens": 899, "answer_overlap": 1.0}
+{"id": "nqa-L-125", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 762, "answer_overlap": 0.0}
+{"id": "nqa-L-126", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.7, "pack_tokens": 1188, "answer_overlap": 0.5}
+{"id": "nqa-L-127", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.0, "pack_tokens": 778, "answer_overlap": 0.333}
+{"id": "nqa-L-128", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1141, "answer_overlap": 1.0}
+{"id": "nqa-L-129", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.0, "pack_tokens": 1253, "answer_overlap": 0.833}
+{"id": "nqa-L-130", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.7, "pack_tokens": 374, "answer_overlap": 0.0}
+{"id": "nqa-L-131", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 769, "answer_overlap": 0.5}
+{"id": "nqa-L-132", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.1, "pack_tokens": 1044, "answer_overlap": 0.4}
+{"id": "nqa-L-133", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 1476, "answer_overlap": 0.667}
+{"id": "nqa-L-134", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.2, "pack_tokens": 919, "answer_overlap": 0.667}
+{"id": "nqa-L-135", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.1, "pack_tokens": 1386, "answer_overlap": 0.0}
+{"id": "nqa-L-136", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.1, "pack_tokens": 1405, "answer_overlap": 1.0}
+{"id": "nqa-L-137", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.0, "pack_tokens": 1364, "answer_overlap": 1.0}
+{"id": "nqa-L-138", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.9, "pack_tokens": 1151, "answer_overlap": 0.0}
+{"id": "nqa-L-139", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.7, "pack_tokens": 1217, "answer_overlap": 1.0}
+{"id": "nqa-L-140", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.0, "pack_tokens": 1018, "answer_overlap": 0.0}
+{"id": "nqa-L-141", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1118, "answer_overlap": 0.0}
+{"id": "nqa-L-142", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 361, "answer_overlap": 0.0}
+{"id": "nqa-L-143", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 449, "answer_overlap": 0.0}
+{"id": "nqa-L-144", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.9, "pack_tokens": 1184, "answer_overlap": 0.333}
+{"id": "nqa-L-145", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1241, "answer_overlap": 0.5}
+{"id": "nqa-L-146", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1203, "answer_overlap": 0.5}
+{"id": "nqa-L-147", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 17.1, "pack_tokens": 1184, "answer_overlap": 0.385}
+{"id": "nqa-L-148", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.1, "pack_tokens": 1249, "answer_overlap": 0.6}
+{"id": "nqa-L-149", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.3, "pack_tokens": 1144, "answer_overlap": 0.667}
+{"id": "nqa-L-150", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.8, "pack_tokens": 1206, "answer_overlap": 1.0}
+{"id": "nqa-L-151", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.0, "pack_tokens": 1453, "answer_overlap": 0.5}
+{"id": "nqa-L-152", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 1021, "answer_overlap": 0.0}
+{"id": "nqa-L-153", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 1216, "answer_overlap": 1.0}
+{"id": "nqa-L-154", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.5, "pack_tokens": 1991, "answer_overlap": 1.0}
+{"id": "nqa-L-155", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 1989, "answer_overlap": 0.5}
+{"id": "nqa-L-156", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.1, "pack_tokens": 1072, "answer_overlap": 0.5}
+{"id": "nqa-L-157", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.6, "pack_tokens": 690, "answer_overlap": 0.0}
+{"id": "nqa-L-158", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.7, "pack_tokens": 1157, "answer_overlap": 0.25}
+{"id": "nqa-L-159", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1017, "answer_overlap": 0.667}
+{"id": "nqa-L-160", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1441, "answer_overlap": 1.0}
+{"id": "nqa-L-161", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.2, "pack_tokens": 1159, "answer_overlap": 1.0}
+{"id": "nqa-L-162", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 10.9, "pack_tokens": 685, "answer_overlap": 1.0}
+{"id": "nqa-L-163", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 507, "answer_overlap": 0.0}
+{"id": "needle-books-S-0", "kind": "needle", "answerable": true, "depth": 0.008, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1412, "coverage": 0.583, "hit": true}
+{"id": "needle-books-S-1", "kind": "needle", "answerable": true, "depth": 0.011, "build_seconds": 339.4, "retrieval_ms": 11.6, "pack_tokens": 1176, "coverage": 1.0, "hit": true}
+{"id": "needle-books-S-2", "kind": "needle", "answerable": true, "depth": 0.01, "build_seconds": 339.4, "retrieval_ms": 12.0, "pack_tokens": 1360, "coverage": 1.0, "hit": true}
+{"id": "needle-books-S-3", "kind": "needle", "answerable": true, "depth": 0.004, "build_seconds": 339.4, "retrieval_ms": 11.1, "pack_tokens": 1329, "coverage": 0.0, "hit": false}
+{"id": "needle-books-S-4", "kind": "needle", "answerable": true, "depth": 0.011, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1255, "coverage": 1.0, "hit": true}
+{"id": "needle-books-S-5", "kind": "needle", "answerable": true, "depth": 0.009, "build_seconds": 339.4, "retrieval_ms": 17.1, "pack_tokens": 1295, "coverage": 1.0, "hit": true}
+{"id": "needle2-books-S-6", "kind": "needle_2hop", "answerable": true, "depth": 0.002, "build_seconds": 339.4, "retrieval_ms": 12.4, "pack_tokens": 1283, "coverage": 0.071, "hit": false}
+{"id": "needle2-books-S-7", "kind": "needle_2hop", "answerable": true, "depth": 0.002, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1221, "coverage": 0.0, "hit": false}
+{"id": "absent-books-S-8", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.7, "pack_tokens": 1311}
+{"id": "absent-books-S-9", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.1, "pack_tokens": 1334}
+{"id": "absent-books-S-10", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.7, "pack_tokens": 1328}
+{"id": "absent-books-S-11", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 12.6, "pack_tokens": 1264}
+{"id": "needle-books-M-12", "kind": "needle", "answerable": true, "depth": 0.025, "build_seconds": 339.4, "retrieval_ms": 12.4, "pack_tokens": 1742, "coverage": 0.0, "hit": false}
+{"id": "needle-books-M-13", "kind": "needle", "answerable": true, "depth": 0.054, "build_seconds": 339.4, "retrieval_ms": 11.7, "pack_tokens": 920, "coverage": 1.0, "hit": true}
+{"id": "needle-books-M-14", "kind": "needle", "answerable": true, "depth": 0.039, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 959, "coverage": 1.0, "hit": true}
+{"id": "needle-books-M-15", "kind": "needle", "answerable": true, "depth": 0.017, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1273, "coverage": 0.0, "hit": false}
+{"id": "needle-books-M-16", "kind": "needle", "answerable": true, "depth": 0.054, "build_seconds": 339.4, "retrieval_ms": 13.2, "pack_tokens": 860, "coverage": 0.0, "hit": false}
+{"id": "needle-books-M-17", "kind": "needle", "answerable": true, "depth": 0.099, "build_seconds": 339.4, "retrieval_ms": 12.4, "pack_tokens": 1023, "coverage": 0.0, "hit": false}
+{"id": "needle2-books-M-18", "kind": "needle_2hop", "answerable": true, "depth": 0.052, "build_seconds": 339.4, "retrieval_ms": 11.8, "pack_tokens": 994, "coverage": 0.0, "hit": false}
+{"id": "needle2-books-M-19", "kind": "needle_2hop", "answerable": true, "depth": 0.014, "build_seconds": 339.4, "retrieval_ms": 11.7, "pack_tokens": 1234, "coverage": 0.5, "hit": true}
+{"id": "absent-books-M-20", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1074}
+{"id": "absent-books-M-21", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 1252}
+{"id": "absent-books-M-22", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.6, "pack_tokens": 843}
+{"id": "absent-books-M-23", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 866}
+{"id": "needle-books-L-24", "kind": "needle", "answerable": true, "depth": 0.735, "build_seconds": 339.4, "retrieval_ms": 11.6, "pack_tokens": 848, "coverage": 1.0, "hit": true}
+{"id": "needle-books-L-25", "kind": "needle", "answerable": true, "depth": 0.145, "build_seconds": 339.4, "retrieval_ms": 11.3, "pack_tokens": 1241, "coverage": 0.0, "hit": false}
+{"id": "needle-books-L-26", "kind": "needle", "answerable": true, "depth": 0.222, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1278, "coverage": 1.0, "hit": true}
+{"id": "needle-books-L-27", "kind": "needle", "answerable": true, "depth": 0.549, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1246, "coverage": 0.0, "hit": false}
+{"id": "needle-books-L-28", "kind": "needle", "answerable": true, "depth": 0.107, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 861, "coverage": 1.0, "hit": true}
+{"id": "needle-books-L-29", "kind": "needle", "answerable": true, "depth": 0.498, "build_seconds": 339.4, "retrieval_ms": 11.2, "pack_tokens": 1069, "coverage": 1.0, "hit": true}
+{"id": "needle2-books-L-30", "kind": "needle_2hop", "answerable": true, "depth": 0.477, "build_seconds": 339.4, "retrieval_ms": 12.1, "pack_tokens": 1180, "coverage": 0.0, "hit": false}
+{"id": "needle2-books-L-31", "kind": "needle_2hop", "answerable": true, "depth": 0.886, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1241, "coverage": 0.0, "hit": false}
+{"id": "absent-books-L-32", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.5, "pack_tokens": 1117}
+{"id": "absent-books-L-33", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 1077}
+{"id": "absent-books-L-34", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.0, "pack_tokens": 1159}
+{"id": "absent-books-L-35", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 339.4, "retrieval_ms": 11.4, "pack_tokens": 584}

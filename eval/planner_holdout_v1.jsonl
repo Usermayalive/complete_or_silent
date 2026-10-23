@@ -1,0 +1,23 @@
+{"id": "h-def-01", "document": "../examples/saas_agreement.md", "question": "Whats the definition of an Affiliate?", "query_type": "definition_lookup", "focus": "affiliate"}
+{"id": "h-def-02", "document": "../examples/sample_contract.md", "question": "Tell me what Misconduct means", "query_type": "definition_lookup", "focus": "misconduct"}
+{"id": "h-def-03", "document": "../examples/sample_contract.md", "question": "Losses: meaning?", "query_type": "definition_lookup", "focus": "losses"}
+{"id": "h-def-04", "document": "../examples/saas_agreement.md", "question": "In this contract, what are Service Levels?", "query_type": "definition_lookup", "focus": "service levels"}
+{"id": "h-fact-01", "document": "../examples/saas_agreement.md", "question": "How many users does the Enterprise plan allow?", "query_type": "fact_lookup"}
+{"id": "h-fact-02", "document": "../examples/sample_contract.md", "question": "What does the Customer have to pay on termination?", "query_type": "fact_lookup", "sections": ["6"]}
+{"id": "h-fact-03", "document": "../examples/sample_contract.md", "question": "Can the Supplier be liable for consequential losses?", "query_type": "fact_lookup"}
+{"id": "h-fact-04", "document": "../examples/saas_agreement.md", "question": "Who answers critical incidents and how fast?", "query_type": "fact_lookup"}
+{"id": "h-xref-01", "document": "../examples/sample_contract.md", "question": "What happens when the cap does not apply?", "query_type": "cross_reference_reasoning"}
+{"id": "h-xref-02", "document": "../examples/saas_agreement.md", "question": "If the Provider misses the availability target, does the Customer get anything?", "query_type": "cross_reference_reasoning"}
+{"id": "h-xref-03", "document": "../examples/sample_contract.md", "question": "What would follow from a breach of confidentiality?", "query_type": "cross_reference_reasoning"}
+{"id": "h-xref-04", "document": "../examples/saas_agreement.md", "question": "Should the Customer use the Platform to build a competitor, what can the Provider do?", "query_type": "cross_reference_reasoning"}
+{"id": "h-cmp-01", "document": "../examples/saas_agreement.md", "question": "Is the Standard plan cheaper than Enterprise?", "query_type": "clause_comparison", "sides": 2}
+{"id": "h-cmp-02", "document": "../examples/saas_agreement.md", "question": "How does the renewal clause relate to price changes?", "query_type": "clause_comparison", "sections": ["9.1", "9.2"], "sides": 2}
+{"id": "h-cmp-03", "document": "../examples/saas_agreement.md", "question": "Sections 9.1 versus 9.2", "query_type": "clause_comparison", "sections": ["9.1", "9.2"], "sides": 2}
+{"id": "h-cmp-04", "document": "../examples/saas_agreement.md", "question": "Which gives more notice, renewal or price changes?", "query_type": "clause_comparison", "sections": ["9.1", "9.2"], "sides": 2}
+{"id": "h-sum-01", "document": "../examples/saas_agreement.md", "question": "Can you give me a quick rundown of the support section?", "query_type": "summary", "sections": ["7"]}
+{"id": "h-sum-02", "document": "../examples/sample_contract.md", "question": "Summarise section 4", "query_type": "summary", "sections": ["4"]}
+{"id": "h-sum-03", "document": "../examples/saas_agreement.md", "question": "What does the data protection section cover?", "query_type": "summary", "sections": ["4"]}
+{"id": "h-sum-04", "document": "../examples/saas_agreement.md", "question": "High-level summary of fees please", "query_type": "summary", "sections": ["3"]}
+{"id": "h-con-01", "document": "../examples/saas_agreement.md", "question": "Do the support and service level sections disagree?", "query_type": "contradiction_detection", "sections": ["7", "5"]}
+{"id": "h-con-02", "document": "../examples/saas_agreement.md", "question": "Any discrepancies in response times?", "query_type": "contradiction_detection"}
+{"id": "h-con-03", "document": "../examples/saas_agreement.md", "question": "Is the four hour response time at odds with Section 7?", "query_type": "contradiction_detection", "sections": ["7"]}

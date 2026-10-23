@@ -1,0 +1,190 @@
+{
+  "rated": "2026-10-21",
+  "ratings": [
+    {
+      "q": "Q1",
+      "case": "para-04",
+      "rating": "Same",
+      "A": "rule",
+      "B": "v3.0",
+      "preferred": "same",
+      "sufficient": true
+    },
+    {
+      "q": "Q2",
+      "case": "msa-09",
+      "rating": "A",
+      "A": "rule",
+      "B": "v3.0",
+      "preferred": "rule",
+      "sufficient": true
+    },
+    {
+      "q": "Q3",
+      "case": "saas-10",
+      "rating": "Same",
+      "A": "v3.0",
+      "B": "rule",
+      "preferred": "same",
+      "sufficient": true
+    },
+    {
+      "q": "Q4",
+      "case": "saas-04",
+      "rating": "Same",
+      "A": "v3.0",
+      "B": "rule",
+      "preferred": "same",
+      "sufficient": true
+    },
+    {
+      "q": "Q5",
+      "case": "lex-05",
+      "rating": "Same",
+      "A": "rule",
+      "B": "v3.0",
+      "preferred": "same",
+      "sufficient": true
+    },
+    {
+      "q": "Q6",
+      "case": "para-08",
+      "rating": "B",
+      "A": "rule",
+      "B": "v3.0",
+      "preferred": "v3.0",
+      "sufficient": true
+    },
+    {
+      "q": "Q7",
+      "case": "msa-10",
+      "rating": "B",
+      "A": "rule",
+      "B": "v3.0",
+      "preferred": "v3.0",
+      "sufficient": true
+    },
+    {
+      "q": "Q8",
+      "case": "para-06",
+      "rating": "Same",
+      "A": "rule",
+      "B": "v3.0",
+      "preferred": "same",
+      "sufficient": true
+    },
+    {
+      "q": "Q9",
+      "case": "saas-01",
+      "rating": "B",
+      "A": "v3.0",
+      "B": "rule",
+      "preferred": "rule",
+      "sufficient": true
+    },
+    {
+      "q": "Q10",
+      "case": "para-05",
+      "rating": "A",
+      "A": "v3.0",
+      "B": "rule",
+      "preferred": "v3.0",
+      "sufficient": true
+    },
+    {
+      "q": "Q11",
+      "case": "saas-12",
+      "rating": "Same",
+      "A": "rule",
+      "B": "v3.0",
+      "preferred": "same",
+      "sufficient": true
+    },
+    {
+      "q": "Q12",
+      "case": "saas-05",
+      "rating": "Same",
+      "A": "v3.0",
+      "B": "rule",
+      "preferred": "same",
+      "sufficient": true
+    },
+    {
+      "q": "Q13",
+      "case": "msa-03",
+      "rating": "B",
+      "A": "v3.0",
+      "B": "rule",
+      "preferred": "rule",
+      "sufficient": true
+    },
+    {
+      "q": "Q14",
+      "case": "msa-05",
+      "rating": "Same",
+      "A": "rule",
+      "B": "v3.0",
+      "preferred": "same",
+      "sufficient": true
+    },
+    {
+      "q": "Q15",
+      "case": "para-01",
+      "rating": "A",
+      "A": "rule",
+      "B": "v3.0",
+      "preferred": "rule",
+      "sufficient": true
+    },
+    {
+      "q": "Q16",
+      "case": "msa-07",
+      "rating": "A",
+      "A": "v3.0",
+      "B": "rule",
+      "preferred": "v3.0",
+      "sufficient": true
+    },
+    {
+      "q": "Q17",
+      "case": "msa-01",
+      "rating": "A",
+      "A": "rule",
+      "B": "v3.0",
+      "preferred": "rule",
+      "sufficient": true
+    },
+    {
+      "q": "Q18",
+      "case": "lex-04",
+      "rating": "B",
+      "A": "v3.0",
+      "B": "rule",
+      "preferred": "rule",
+      "sufficient": true
+    },
+    {
+      "q": "Q19",
+      "case": "saas-09",
+      "rating": "A",
+      "A": "v3.0",
+      "B": "rule",
+      "preferred": "v3.0",
+      "sufficient": true
+    },
+    {
+      "q": "Q20",
+      "case": "para-03",
+      "rating": "B",
+      "A": "rule",
+      "B": "v3.0",
+      "preferred": "v3.0",
+      "sufficient": true
+    }
+  ],
+  "totals": {
+    "v3.0": 6,
+    "rule": 6,
+    "same": 8
+  }
+}

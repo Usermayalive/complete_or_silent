@@ -1,0 +1,42 @@
+{"id": "nqa-S-0", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 94.0, "pack_tokens": 294, "answer_overlap": 0.5, "would_abstain": false}
+{"id": "nqa-S-1", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 29.5, "pack_tokens": 187, "answer_overlap": 0.333, "would_abstain": false}
+{"id": "nqa-S-2", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 106.1, "pack_tokens": 277, "answer_overlap": 0.5, "would_abstain": false}
+{"id": "nqa-S-3", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 36.6, "pack_tokens": 221, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-4", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 33.8, "pack_tokens": 278, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-5", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 32.0, "pack_tokens": 272, "answer_overlap": 0.5, "would_abstain": false}
+{"id": "nqa-S-6", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 36.4, "pack_tokens": 294, "answer_overlap": 0.5, "would_abstain": false}
+{"id": "nqa-S-7", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 35.9, "pack_tokens": 249, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-8", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 34.7, "pack_tokens": 260, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-9", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 35.4, "pack_tokens": 225, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-10", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 36.2, "pack_tokens": 290, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-11", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 33.5, "pack_tokens": 297, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-12", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 40.4, "pack_tokens": 240, "answer_overlap": 0.167, "would_abstain": false}
+{"id": "nqa-S-13", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 34.7, "pack_tokens": 284, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-14", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 30.2, "pack_tokens": 198, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-15", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 30.7, "pack_tokens": 296, "answer_overlap": 0.333, "would_abstain": false}
+{"id": "nqa-S-16", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 35.0, "pack_tokens": 294, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-17", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 31.9, "pack_tokens": 289, "answer_overlap": 0.375, "would_abstain": false}
+{"id": "nqa-S-18", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 35.7, "pack_tokens": 290, "answer_overlap": 0.25, "would_abstain": false}
+{"id": "nqa-S-19", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 30.7, "pack_tokens": 222, "answer_overlap": 1.0, "would_abstain": false}
+{"id": "nqa-S-20", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 30.3, "pack_tokens": 299, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-21", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 36.0, "pack_tokens": 223, "answer_overlap": 0.5, "would_abstain": false}
+{"id": "nqa-S-22", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 37.0, "pack_tokens": 278, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-23", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 34.4, "pack_tokens": 293, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-24", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 32.6, "pack_tokens": 296, "answer_overlap": 0.333, "would_abstain": false}
+{"id": "nqa-S-25", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 32.7, "pack_tokens": 289, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-26", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 37.4, "pack_tokens": 289, "answer_overlap": 0.0, "would_abstain": false}
+{"id": "nqa-S-27", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 30.9, "pack_tokens": 293, "answer_overlap": 0.429, "would_abstain": false}
+{"id": "nqa-S-28", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 36.4, "pack_tokens": 299, "answer_overlap": 0.333, "would_abstain": false}
+{"id": "nqa-S-29", "kind": "narrativeqa", "answerable": true, "depth": null, "build_seconds": 12.6, "retrieval_ms": 34.0, "pack_tokens": 297, "answer_overlap": 0.5, "would_abstain": false}
+{"id": "needle-books-S-0", "kind": "needle", "answerable": true, "depth": 0.661, "build_seconds": 12.6, "retrieval_ms": 32.8, "pack_tokens": 289, "coverage": 1.0, "hit": true, "would_abstain": false}
+{"id": "needle-books-S-1", "kind": "needle", "answerable": true, "depth": 0.906, "build_seconds": 12.6, "retrieval_ms": 34.3, "pack_tokens": 249, "coverage": 1.0, "hit": true, "would_abstain": false}
+{"id": "needle-books-S-2", "kind": "needle", "answerable": true, "depth": 0.842, "build_seconds": 12.6, "retrieval_ms": 28.0, "pack_tokens": 108, "coverage": 1.0, "hit": true, "would_abstain": false}
+{"id": "needle-books-S-3", "kind": "needle", "answerable": true, "depth": 0.359, "build_seconds": 12.6, "retrieval_ms": 28.9, "pack_tokens": 110, "coverage": 1.0, "hit": true, "would_abstain": false}
+{"id": "needle-books-S-4", "kind": "needle", "answerable": true, "depth": 0.9, "build_seconds": 12.6, "retrieval_ms": 28.6, "pack_tokens": 16, "coverage": 1.0, "hit": true, "would_abstain": false}
+{"id": "needle-books-S-5", "kind": "needle", "answerable": true, "depth": 0.743, "build_seconds": 12.6, "retrieval_ms": 32.7, "pack_tokens": 283, "coverage": 1.0, "hit": true, "would_abstain": false}
+{"id": "needle2-books-S-6", "kind": "needle_2hop", "answerable": true, "depth": 0.169, "build_seconds": 12.6, "retrieval_ms": 33.4, "pack_tokens": 299, "coverage": 0.5, "hit": true, "would_abstain": false}
+{"id": "needle2-books-S-7", "kind": "needle_2hop", "answerable": true, "depth": 0.194, "build_seconds": 12.6, "retrieval_ms": 31.0, "pack_tokens": 299, "coverage": 0.5, "hit": true, "would_abstain": false}
+{"id": "absent-books-S-8", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 12.6, "retrieval_ms": 33.4, "pack_tokens": 297, "would_abstain": false}
+{"id": "absent-books-S-9", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 12.6, "retrieval_ms": 32.5, "pack_tokens": 266, "would_abstain": false}
+{"id": "absent-books-S-10", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 12.6, "retrieval_ms": 32.2, "pack_tokens": 243, "would_abstain": false}
+{"id": "absent-books-S-11", "kind": "needle_absent", "answerable": false, "depth": null, "build_seconds": 12.6, "retrieval_ms": 33.4, "pack_tokens": 300, "would_abstain": false}
