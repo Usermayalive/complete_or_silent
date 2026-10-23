@@ -28,6 +28,7 @@ def test_contract_and_book_text_become_nested_markdown():
     blocks = _contract_blocks("EXHIBIT 10.6\n\n1. DEFINITIONS\n\n\"Goods\" means the products.\n\n"
                               "ARTICLE V - TERM\n\nThe term is ten years.")
     assert "### 1. DEFINITIONS" in blocks and "### ARTICLE V - TERM" in blocks
+    assert not any(b.startswith("#") and not b.startswith("### ") for b in _contract_blocks("Text.\n\n#\n\n# #\n\nMore."))
     assert _contract_title("LIMEENERGYCO_09_09_1999-EX-10-DISTRIBUTOR AGREEMENT", "DISTRIBUTOR AGREEMENT") == \
         "Distributor Agreement of LIMEENERGYCO (1999-09-09)"
     book = _book_blocks("BOOK I\n\nCHAPTER I. The Period\n\nIt was the best of times.\n\nCHAPTER II\n\nMore.")

@@ -198,7 +198,9 @@ def _contract_blocks(text: str) -> List[str]:
             if _HEADING_LINE.match(block):
                 blocks.append("### " + block)
                 continue
-        blocks.append(block.lstrip("#").strip() or block)
+        text = re.sub(r"^[#\s]+", "", block)  # "# # #" -> ""
+        if text:            # a stray "#" line must not become a Markdown heading
+            blocks.append(text)
     return blocks
 
 
@@ -254,7 +256,9 @@ def _book_blocks(text: str) -> List[str]:
         if len(block) <= 80 and _CHAPTER.match(block) and not _PART.match(block):
             blocks.append("### " + block)
         else:
-            blocks.append(block.lstrip("#").strip() or block)
+            text = re.sub(r"^[#\s]+", "", block)  # "# # #" -> ""
+            if text:
+                blocks.append(text)
     return blocks
 
 

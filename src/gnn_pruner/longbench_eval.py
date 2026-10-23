@@ -126,7 +126,18 @@ class RagBaseline:
                 self.chunks.append((first, " / ".join(tree.path(first)[:2]), " ".join(buf)))
         texts = [f"{path}: {text}" for _, path, text in self.chunks]
         embedder.fit(texts)
-        vecs = np.asarray(embedder.encode(texts), dtype=np.float32)
+        # Chunk vectors are cached on disk (k=5 and k=1 runs share them).
+        import hashlib
+
+        key = hashlib.sha256(("\n".join(texts) + getattr(embedder, "model_name", type(embedder).__name__))
+                             .encode()).hexdigest()[:16]
+        cache = ROOT / "data" / "longbench" / "cache" / f"rag-{key}.npy"
+        if cache.exists():
+            vecs = np.load(cache)
+        else:
+            vecs = np.asarray(embedder.encode(texts), dtype=np.float32)
+            cache.parent.mkdir(parents=True, exist_ok=True)
+            np.save(cache, vecs)
         self.vecs = vecs / np.maximum(np.linalg.norm(vecs, axis=1, keepdims=True), 1e-9)
 
     def ask(self, question: str):
