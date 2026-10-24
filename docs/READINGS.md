@@ -972,7 +972,8 @@ Long chapters without sections are sliced into ~1,200-token subsections (Sherloc
 | S | books: needle / 2-hop | 67% / 0% | 67% / 0% | **100% / 100%** | **100% / 100%** |
 | M | contracts: CUAD / needle / 2-hop | 44% / 42% / 0% | 13% / 17% / 0% | 13% / **83%** / 25% | 16% / **83% / 100%** |
 | M | books: needle / 2-hop | 83% / 25% | 42% / 0% | **100% / 100%** | **100% / 100%** |
-| L | (pending) | | | | |
+| L | contracts (8,619 pages): CUAD / needle / 2-hop | 37% / 39% / 0% | 14% / 11% / 0% | 14% / 39% / 67% | 10% / 44% / **100%** |
+| L | books (9,988 pages): needle / 2-hop | 61% / 17% | 39% / 0% | out of memory | **100% / 100%** |
 
 1. **At the same evidence budget (~200–300 tokens), our pipeline finds planted facts far
    more often than plain search:**
@@ -987,8 +988,33 @@ Long chapters without sections are sliced into ~1,200-token subsections (Sherloc
      Agreement of WebmdHealthCorp…"). Our pipeline reaches the right contract (4 of 6 pack
      items from it) but the wrong clause: the title words dominate the search.
    - **Response:** this motivated routing in step 3.
-3. **Cost:** build time at 1,000 pages is 1–1.5 min, peak memory ≤ 1 GB. Retrieval latency:
-   rule ~0.1–0.15 s, GNN ~0.3 s, plain search ~0.01 s.
+3. **Cost at 1,000 pages:** build 1–1.5 min, peak memory ≤ 1 GB. Retrieval latency: rule
+   ~0.1–0.15 s, GNN ~0.3 s, plain search ~0.01 s.
+4. **At ~10,000 pages (L):**
+   - **Books: the GNN pipeline still finds every planted fact and every two-hop fact**
+     from ~285 tokens. Plain search drops to 39% (equal budget) / 61% (5× budget).
+   - **Contracts (510 contracts of similar form):** the pipelines fall from 83% (M) to
+     39–44% on planted facts. They pick the right *kind* of clause from the wrong
+     contract; the distractors are the same clause type in other contracts. Two-hop facts
+     hold up: GNN 100%, rule 67%. The chapter-worker design targets this: routing names
+     the right contract 95% of the time at this size (step 4 below).
+   - **Cost on this 8 GB laptop:**
+
+     | System | Build | Memory | Per question |
+     |---|---|---|---|
+     | rule (contracts) | 36 min | 3.5 GB | 1.2 s |
+     | GNN (contracts) | 38 min | 3.1 GB | 6.8 s |
+     | GNN (books) | 17 min | 3.5 GB | 9.6 s |
+     | plain search | 5–21 min | ~1.1 GB | 0.012 s |
+
+     **The rule pipeline cannot index the 9,988-page book library in 8 GB:** it was
+     killed twice, once running alone.
+   - **Run notes:**
+     - The first L contract runs used a document whose structure was broken by a stray
+       "# # #" line in one CUAD contract. That line became a top-level heading: 5
+       chapters instead of ~550. Fixed and rerun; S and M documents are byte-identical.
+     - The laptop slept overnight (10:39 pm–10:44 am) and froze one run. Long runs now
+       use `caffeinate`.
 
 ### Answers at ~100 pages (S): pipeline vs plain search vs the whole document
 
@@ -1085,7 +1111,20 @@ the unit the question is about), and whether the gate opens it.
 | contracts M (977 pages) | 55 | 71 | 100% | 94% (CUAD and single needles 100%) | **98.6%** | 1.3 / 4.3 |
 | books S (119 pages, 1 book) | 20 | 8 | — (book not a unit) | **100%** | 100% | 3 / 6 |
 | books M (1,001 pages) | 155 | 16 | 100% | 81% | 87.5% | 2.8 / 5.8 |
-| L (~9,000 pages) | pending | | | | | |
+| contracts L (8,619 pages) | 554 | 119 | **95%** | 95%* | 97.5%* | 1.2 / 4.2 |
+| books L (9,988 pages) | 1,669 | 24 | 100% | 83% (single needles 100%) | 87.5% | 2.9 / 5.9 |
+
+\* About 6% of L CUAD spans could not be located inside their contract (the span crosses a
+paragraph break). Those questions count as found, so the conservative round-1 figure is
+the routing rate, 95%.
+
+**The gate scales:**
+- In the 8,619-page room, the gate opens ~1.2 of 554 chapters in round 1 and reaches the
+  answer's contract 95% of the time.
+- In the 9,988-page library: ~3 of 1,669 chapters, and every single planted fact's chapter
+  is opened in round 1.
+
+That is the step the pipelines above are missing at L.
 
 - **Two-hop questions are not in round 1 by design:** the second part is in another chapter.
   - contracts: 75–100% by round 2

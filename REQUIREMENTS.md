@@ -121,7 +121,7 @@ financial and technical documents.
 | Phase | Name                                                              | Architecture § | Status |
 |-------|-------------------------------------------------------------------|----------------|--------|
 | v4-1  | Tree + enrichment: TOC structure, virtual chapters, root metadata, bottom-up summaries / key facts | 2, 3 | 🟡 Built and measured; human fact spot check pending |
-| v4-2  | Long-document benchmark (100 → 10,000+ pages) + baselines 1–3     | 8              | 🟡 Built; S/M measured, L retrieval running; full-document baseline on Claude pending |
+| v4-2  | Long-document benchmark (100 → 10,000+ pages) + baselines 1–3     | 8              | 🟡 Built; S/M/L retrieval measured, S answers measured; M/L answers and the strong full-document baseline (Claude) pending |
 | v4-3  | Central board + chapter workers (descend loop, quote checks, references) | 4 [7]–[9] | 🟡 Built and tested; first readings (contracts S); run 2 resumes on quota reset |
 | v4-4  | Worker gate (local score + TOC screen) + 5-system comparison      | 4 [8], 8       | ⬜ |
 | v4-5  | Entity links for books                                            | 2.3            | ⬜ |
@@ -633,7 +633,7 @@ Constraints for the whole track:
   - calls, tokens, latency, build time, memory
   - `--rescore` regrades saved answers
 - [x] Readings S and M (retrieval) and S (answers): READINGS "Build step 2"
-- [ ] L retrieval (running)
+- [x] L retrieval: books, GNN 100% needles / 2-hop; contracts, pipelines 39–44% needles (wrong-contract picks); rule pipeline out of memory on the 9,988-page library
 - [ ] Answers at M / L (free quota: ~500 calls per model per day; or Claude)
 - [ ] Whole-document baseline on a strong long-context model (Claude, budget pending)
 - [x] Tests (`tests/test_longbench.py`, 5)
