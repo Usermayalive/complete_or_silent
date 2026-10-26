@@ -126,8 +126,9 @@ financial and technical documents.
 | v4-4  | Worker gate (local score + TOC screen) + 5-system comparison      | 4 [8], 8       | ⬜ |
 | v4-5  | Entity links for books                                            | 2.3            | ⬜ |
 | v4-6  | Learning loop: board labels retrain the gate (= Phase 11)         | 4 [13]         | ⬜ |
+| v4-7  | Demo app: local chat interface (Streamlit) with citation viewer  | WORKFLOW B8    | ⬜ Planned; starts once the core engine is proven |
 
-**Next up: finish v4-2 / v4-3 readings (L retrieval, workers run 2, books), then v4-4 (gate + whole-document route). v4-1 waits on the human fact spot check.**
+**Next up: prove the core engine. Finish the v4-3 / v4-4 readings (books, judge), fix the open weaknesses (widening cost on unanswerable questions, two-hop facts, story-level questions), and run the strong whole-document baseline (Claude, budget pending). Then v4-7 (demo app). v4-1 waits on the human fact spot check.**
 
 ---
 
@@ -684,6 +685,63 @@ Constraints for the whole track:
 - [ ] Accepted board posts become gate training labels; the gate retrains periodically
 - [ ] User feedback feeds the same labels
 - [ ] Readings: LLM calls per question and gate recall before / after retraining
+
+### v4-7 — Demo app (local chat interface) ⬜ Planned
+**Purpose:** a demo / project presentation, run on this laptop.
+- **Scope:** single user, no login, no hosting. Gradio or Streamlit; Streamlit chosen for
+  the multi-panel layout.
+- **When:** starts only once the core engine is proven (see "Next up"); about 1–2 days.
+
+```
+┌──────────── Sidebar ────────────┬──────────── Chat ─────────────┬──── Source viewer ────┐
+│ Upload PDF / Word / Markdown    │ question → streamed answer    │ cited PDF page, quote │
+│   (progress; cached)            │ with numbered citations       │ highlighted           │
+│ Document library                │ "How I found this" (gate,     │ Outline (tree)        │
+│ Model: Gemini free / Claude /   │   calls, tokens, cost, time)  │ Facts & lists         │
+│   offline                       │ feedback buttons              │                       │
+└─────────────────────────────────┴───────────────────────────────┴───────────────────────┘
+```
+
+- [ ] **Service layer** (`service.py`): one API the UI calls (a later web API can reuse it)
+  - library of processed documents (cached trees)
+  - save upload; process with progress (tree → metadata → key facts / summaries; option
+    to skip summaries for speed)
+  - open a document (sentence index + gate, kept in memory)
+  - ask: follow-up rewriting from the conversation (one call, only for follow-ups) →
+    gate → workers → board → cited answer
+  - offline mode (no model): gate-picked chapters, best sentences as cited extracts
+  - citations: label, chapter / section path, page, exact quote, source file
+  - trace: chapters opened and why, rounds, model calls, tokens, cost, time
+  - feedback appended to `data/feedback.jsonl` (input for the learning loop, v4-6)
+- [ ] **Interface** (`app/demo.py`):
+  - **sidebar:** upload with a progress bar, document library, model choice (shows
+    whether keys are set, never the keys), document info (title, author / parties,
+    pages, chapters)
+  - **chat:** history per document, streamed answers, "The document does not say"
+    shown clearly
+  - **citations:** clickable chips; the source viewer shows the PDF page with the quote
+    highlighted (PyMuPDF) or the passage with the quote marked (other formats)
+  - **"How I found this":** e.g. "opened 2 of 554 chapters: named in the question /
+    best-matching sentence / table of contents"
+  - **document tabs:** outline tree, key facts, lists (obligations, deadlines, amounts …)
+  - **feedback:** 👍 / 👎 / "missed a clause" (with a note)
+- [ ] **One-command start:** `./demo.sh` (keys read from the environment)
+- [ ] **Tests:** service layer with a fake model (ask, offline mode, follow-up rewrite,
+      citations, page highlight, feedback)
+- [ ] **Walkthrough before the presentation:**
+  - a contract and a book
+  - a named-unit question, a cross-reference (two-hop), an unanswerable question, a
+    follow-up
+- **Known limit:** on the free Gemini tier an answer takes ~10–60 s (pacing) and the quota
+  is ~500 calls per day. Claude would be faster.
+
+**Later, only if it goes beyond a demo** (not planned now):
+- FastAPI backend and background job queue
+- React / Next.js frontend
+- login and per-user isolation, database
+- hosting on a 16–32 GB server
+- monitoring
+- CI on GitHub Actions
 
 ## Phase 11 — Training pipeline: curriculum + feedback (spec §5 training, §9 phase 3)
 
