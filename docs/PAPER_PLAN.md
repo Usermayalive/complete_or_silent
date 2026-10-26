@@ -230,7 +230,44 @@ paper. It depends on the API budget being available at P4 and on annotators at P
 | Budget or rate limits slow P4 | Prompt caching, batch discounts, smaller S / M samples with CIs |
 | Reviewers doubt the AI judge | Human agreement numbers (P5); exact-match metrics for planted values |
 
-## 8. Definition of done (submittable)
+## 8. Limitations
+
+Stated openly: in the paper's Limitations section, and here so the plan addresses them.
+Numbers are from `docs/READINGS.md`.
+
+### 8a. Measured today: fix, or report honestly
+
+| Limitation (measured) | Evidence | Plan |
+|---|---|---|
+| **The GNN pipeline is weak on real contracts** | Trained on generated contracts. CUAD evidence hit 7–16% at a ~270-token budget (S / M); 10% at 8,619 pages | Use the GNN as one gate signal, not the reader. Ablate GNN vs lexical gate (P6). Report the domain shift; retraining on real data (worker / board labels) is future work |
+| **Two-hop facts fail for workers** | 0% at 130 pages (contracts), despite free-text follow | Fix in P1 (follow / second search). Report the before / after |
+| **Widening is costly on unanswerable questions** | Gated workers: 7.1 calls / question vs 4.4 ungated (contracts S); books 16.7 calls / question | Calibrated budgets (U4) should replace blind widening. Report calls per outcome |
+| **Story-level book questions are weak for every system** | NarrativeQA: best 37% (whole document, small model); rule pipeline 3%; workers refuse often | Out of the paper's core claim (contracts / clauses). Report as a limitation; whole-document route as future work |
+| **Workers refuse absent clauses less reliably than the rule pipeline** | Absent CUAD clauses correctly refused: 67% (workers) vs 93% (rule) | The stricter posting rule + entailment check (Q7); measure again |
+| **Small samples so far** | 15–42 questions per setting; no confidence intervals | ≥ 300 per main setting with CIs (P2–P4) |
+| **No strong long-context baseline yet** | The only whole-document baseline is a small free model (`gemini-3.5-flash-lite`) | Claude (1M context) + a second model in P4; needs budget |
+| **Judge and answer model are small free models** | `gemini-3.5-flash-lite` answers, `gemini-3.1-flash-lite` judges | Two answer models; judge validated against humans (P5) |
+| **Memory and time on 8 GB** | Rule pipeline killed (out of memory) on the 9,988-page library; GNN 3.1–3.5 GB, 17–38 min to index, 7–10 s / question at ~10,000 pages | Report hardware and costs; the gate + workers path is lighter (BM25 + tree). Present it as a single-laptop result |
+| **Key facts can overreach their source** | 0.5–10% of facts dropped for bad ids; some kept facts say more than their sentences | Facts are navigation only, never evidence (by design). Human spot check (36 facts) pending |
+| **PDF reading gaps** | No OCR for scanned PDFs; hyphenated words at line breaks lose the hyphen | State the scope: text PDFs; OCR is future work |
+
+### 8b. Built into the method: state in the paper
+
+| Limitation | Why it matters | How we frame it |
+|---|---|---|
+| **Canary guarantees assume canaries behave like real facts** (exchangeability) | If real clauses are harder to find than mutated copies, the stated miss risk is too optimistic | RQ1 measures exactly this; report where it holds and where it breaks. Mutation canaries reduce, not remove, the gap |
+| **Guarantees are per document and per question class, not per question** | Conformal coverage is marginal: "98% over questions of this class on this document" | Say so plainly; never phrase a certificate as certainty about one answer |
+| **A certificate covers retrieval completeness, not legal interpretation** | The system can read every relevant clause and still summarise it wrongly | The entailment check limits this; a human lawyer stays responsible. Not legal advice |
+| **Qualifier detection relies on cue phrases and links** | Exceptions written without cue words ("…but this does not cover…") or implied by context can be missed | The full-document text sweep + qualifier worker catch some; report recall on unlinked qualifiers separately |
+| **Precedence rules are heuristic** | Which clause prevails can depend on governing law, intent, or rules not in the document | Apply explicit precedence clauses first; flag conflicts rather than decide them silently when no rule applies |
+| **Depends on document structure quality** | Unstructured or badly parsed text gives weaker gate rankings | Calibration widens budgets or weakens guarantees automatically; report by structure quality |
+| **English contracts and novels only** | Drafting conventions and cue phrases differ by language and legal system | State the scope; other languages and statutes / filings are future work |
+| **Benchmark realism** | Planted traps and canaries are synthetic, though built from real clauses; NarrativeQA has no evidence spans; ~2–6% of CUAD spans cross paragraph breaks | Report results separately on real labels (CUAD) and planted traps; release the generator and seeds |
+| **Questions name their contract by a constructed title** | Real users may describe a contract loosely ("the ACME deal"), which makes routing harder | Add paraphrased / partial-name questions to the trap set; report routing accuracy |
+| **Cost vs a single retrieval call** | Certified answers take several model calls and seconds to minutes; "any X in the room" may read many contracts | Report the guarantee-vs-cost curve; the user chooses α |
+| **Dependence on the answer / worker models** | Worker and qualifier-worker errors propagate | Two answer models in P4; ids-only posting and quote checks contain hallucination |
+
+## 9. Definition of done (submittable)
 
 - [ ] RQ1–RQ5 each answered with ≥ 300 questions per main setting and confidence intervals
 - [ ] Certificates' stated vs measured validity reported, including where they fail
@@ -238,4 +275,5 @@ paper. It depends on the API budget being available at P4 and on annotators at P
       identical questions
 - [ ] Human evaluation with agreement
 - [ ] Ablations
+- [ ] Limitations section written from section 8 (measured + inherent), with numbers
 - [ ] Code + benchmark released; data card; limitations; disclosure
