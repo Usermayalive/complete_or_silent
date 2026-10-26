@@ -127,9 +127,9 @@ financial and technical documents.
 | v4-5  | Entity links for books                                            | 2.3            | ⬜ |
 | v4-6  | Learning loop: board labels retrain the gate (= Phase 11)         | 4 [13]         | ⬜ |
 | v4-7  | Demo app: local chat interface (Streamlit) with citation viewer  | WORKFLOW B8    | ⬜ Planned; starts once the core engine is proven |
-| R     | **Research track: "Complete or Silent"** (closure + absence certificates, trap benchmark, paper) | `docs/PAPER_PLAN.md`, `docs/COMPLETE_OR_SILENT.md` | ⬜ Planned: P0–P7, ~5–7 weeks focused; P4 needs ~$200–400 API budget |
+| R     | **Research track: "Complete or Silent"** (closure + absence certificates, trap benchmark, paper) | `docs/PAPER_PLAN.md`, `docs/COMPLETE_OR_SILENT.md` | ⬜ Idea + plan written, not started (see "Research track R" below); P4 needs ~$200–400 API budget |
 
-**Next up: the research track (`docs/PAPER_PLAN.md`): P0 literature review + P1 certificates + P2 trap benchmark, in parallel. It includes proving the core engine. Finish the v4-3 / v4-4 readings (books, judge), fix the open weaknesses (widening cost on unanswerable questions, two-hop facts, story-level questions), and run the strong whole-document baseline (Claude, budget pending). Then v4-7 (demo app). v4-1 waits on the human fact spot check.**
+**Next up: the research track R (`docs/PAPER_PLAN.md`), when the user gives the go-ahead: P0 literature review + P1 certificates + P2 trap benchmark, in parallel. It includes proving the core engine. Finish the v4-3 / v4-4 readings (books, judge), fix the open weaknesses (widening cost on unanswerable questions, two-hop facts, story-level questions), and run the strong whole-document baseline (Claude, budget pending). Then v4-7 (demo app). v4-1 waits on the human fact spot check.**
 
 ---
 
@@ -743,6 +743,69 @@ Constraints for the whole track:
 - hosting on a 16–32 GB server
 - monitoring
 - CI on GitHub Actions
+
+## Research track R — "Complete or Silent" (new project; not started)
+
+**Documents:** `docs/COMPLETE_OR_SILENT.md` (method, worked example, relation to GNN
+PRUNER, implementation design), `docs/PAPER_PLAN.md` (research questions, phases,
+budget, risks, limitations).
+
+**Status:** idea and plan written; **no implementation yet**. Starts when the user says
+so.
+
+**Project split:**
+- GNN PRUNER is frozen at tag `gnn-pruner-final` (`Usermayalive/GNN-PRUNER`).
+- This project continues in the same folder, history kept, and is pushed to a new repo.
+
+### P0 — Literature review ⬜
+- [ ] Systematic search: conformal / certified retrieval and abstention; canaries /
+      probes; long-document agents (Chain-of-Agents, LongAgent, MemWalker, ReadAgent,
+      RAPTOR, PageIndex, DocAtlas, Corpus2Skill); legal exception / override reasoning
+      (CLAUSE, Exception Chain Collapse, ContractEval, LegalBench-Deep); stale / override
+      evidence
+- [ ] Related-work table vs the two certificates; go / no-go on novelty
+
+### P1 — Certificates ⬜
+- [ ] U2 qualifier graph (`certify/qualifiers.py`), contract-scoped target resolution
+- [ ] U3 reverse index (`certify/reverse.py`)
+- [ ] U4 canary calibration (`certify/canaries.py`): mutation canaries, hidden copy,
+      split-conformal tables per class
+- [ ] Q2 calibrated reading plan (`certify/plan.py`)
+- [ ] Q4 closure expansion (`certify/closure.py`): forward, reverse, full-document sweep,
+      qualifier worker, fixpoint
+- [ ] Q5 precedence (`certify/precedence.py`)
+- [ ] Q6 certificates (`certify/certificate.py`): closure / absence / uncertified
+- [ ] Q7 entailment check (`certify/verify.py`)
+- [ ] Fix two-hop facts and the widening cost (engine weaknesses)
+- [ ] Tests for each (fake model, no network)
+
+### P2 — Trap benchmark ⬜
+- [ ] `certify/traps.py` on `longbench.py`: far exception, override chain, unlinked
+      qualifier, precedence conflict, existence yes / no (single contract and data room)
+- [ ] Built by mutating real CUAD clauses; ≥ 300 trap questions per tier; data card
+
+### P3 — Validity (go / no-go) ⬜
+- [ ] Stated vs measured miss rate on real labels and traps (α = 90 / 95 / 98%)
+- [ ] False-certificate rate; by size, class, structure quality, canary type
+- [ ] Guarantee-vs-cost curves
+
+### P4 — Baselines ⬜ (needs ~$200–400 API budget)
+- [ ] Frontier long-context model (Claude, 1M context), strong hybrid RAG + reranker,
+      Chain-of-Agents-style baseline, ours without / with certificates; two answer models
+
+### P5 — Human evaluation ⬜ (needs annotators; fact sheet first)
+- [ ] 50–100 answers + certificates by 2 annotators; agreement; judge vs humans
+
+### P6 — Ablations ⬜
+- [ ] Reverse sweep, text sweep, forward closure, canaries, mutation vs template, GNN vs
+      lexical gate, precedence
+
+### P7 — Write and submit ⬜
+- [ ] Paper (incl. the limitations from `docs/PAPER_PLAN.md` §8), anonymised code +
+      benchmark, ARR checklist, AI-assistance disclosure, next ARR deadline, arXiv
+
+### Optional
+- [ ] Learning loop: retrain the GNN gate on board labels (only if time allows after P3)
 
 ## Phase 11 — Training pipeline: curriculum + feedback (spec §5 training, §9 phase 3)
 

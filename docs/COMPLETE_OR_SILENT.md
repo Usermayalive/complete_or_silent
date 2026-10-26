@@ -132,3 +132,86 @@ Messy documents automatically get bigger budgets or weaker guarantees.
 **One line:** other systems answer from the clause they find; this one proves it checked
 everything that could change the answer, and says how sure it is when it says "not
 there".
+
+---
+
+## How this relates to GNN PRUNER
+
+This project grows out of GNN PRUNER (frozen at tag `gnn-pruner-final` in
+`Usermayalive/GNN-PRUNER`). Same goal: shrink a huge document into a small,
+structure-aware, checked set of evidence before a model answers. What changes is the
+"brain":
+- **Before:** a trained GNN scored nodes and pruned the graph.
+- **Now:** a calibrated, mostly keyword-based gate picks chapters, model workers read them,
+  **the graph proves completeness** (closure certificate), and **canaries measure the
+  risk** (absence certificate).
+
+| GNN PRUNER component | Built there | Role here | Weight |
+|---|---|---|---|
+| 4-layer document tree / DAG, sentence ids | yes | **Core:** the tree workers navigate; cite by id | high |
+| Document graph (cross-references, definitions, Phase 6 dependency rules) | yes | **Core, expanded** into the qualifier graph + reverse index | high |
+| Evidence pack, topology routing, answer step, citation checks (Phases 9–10) | yes | Reused for the final cited answer | medium |
+| Gate, chapter workers, central board, routing (v4-3 / v4-4) | yes | Reused; the gate gets calibrated budgets | high |
+| Long-document benchmark (nested 100 / 1,000 / 10,000 pages; planted facts) | yes | Reused; extended with traps | high |
+| GNN (CoarseGNN, FineGNN, cross-edge attention) | yes | **Optional** gate signal, kept only if an ablation shows it helps | low |
+| Graph coarsening (G3) | yes | The coarse-to-fine *idea* survives (chapter → section → passage); the learned coarsening is not used | low |
+| Distributed system (Ray, METIS partitioning, halos) | yes | Not used at runtime on one laptop (workers are threads); chapter slicing comes from it; a cluster deployment could use Ray | none (future) |
+| Silver Paths + PPO training | yes | Not used (they trained the GNN) | none |
+| Phase 7 confidence signal | yes | Replaced by model judgement + certificates | none |
+
+**Retrieval style:** mostly **vectorless**, close to PageIndex.
+- **Gate:** BM25 on each chapter's best sentence, plus a table-of-contents screen in which
+  the model reasons over titles and summaries.
+- **Workers:** navigate the tree by reasoning and search inside a chapter with BM25.
+- **Canaries, qualifier graph, reverse index:** no vectors.
+- **Optional:** MiniLM vectors are an extra gate signal.
+
+It is "RAG" only in the broad sense (find evidence, then write); plain top-k chunk RAG is
+a baseline.
+
+**Code reuse:** about 50–60%.
+
+---
+
+## Implementation design (planned; not started)
+
+New package `gnn_pruner/certify/` (renamed with the project later). Everything below is a
+plan; no code is written yet.
+
+| Module | Holds | Key structures | Model calls |
+|---|---|---|---|
+| `qualifiers.py` (U2) | cue patterns, target extraction, target resolution | `QualifierLink(sentence, passage, chapter, kind ∈ {qualifies, overrides, amends, precedence, mentions}, cue, target, target_label, resolved)` | none (optional check for ambiguous cues) |
+| `reverse.py` (U3) | reverse index | `pointing_at(node)` → links targeting the node, its ancestors below the chapter, or its descendants (a link to "Section 12" also concerns 12.3) | none |
+| `canaries.py` (U4) | mutation canaries per class; hidden-copy index; gate ranks; split-conformal tables | `Calibration{class → {α → chapters k, score threshold}, canaries n, measured miss, upper bound}`, stored with the tree | none |
+| `plan.py` (Q2) | reading plan from the calibration table, the question class and α; "any X in the room" uses the score threshold | `ReadingPlan(chapters, α, class, basis)` | none |
+| `closure.py` (Q4) | forward closure, reverse sweep, full-document text sweep, qualifier worker, fixpoint | `Closure(items, forward, reverse, swept, verdicts, complete)` | one per batch of candidate qualifiers |
+| `precedence.py` (Q5) | precedence clause > amendment date > specific over general | ordered items, superseded marks, unresolved conflicts flagged | none |
+| `certificate.py` (Q6) | closure / absence / uncertified certificates, readable + JSON | `Certificate(kind, level, read, evidence, reasons)` | none |
+| `verify.py` (Q7) | entailment check of every answer sentence against its quotes | per-sentence verdicts | one |
+| `traps.py` (P2) | trap generator built on `longbench.py`: far exception, override chain, unlinked qualifier, precedence conflict, existence yes / no; gold for answer, required qualifiers, certificate correctness | trap questions in `eval/long/` | none |
+
+**Design rules (from what GNN PRUNER measured):**
+- **Resolve references inside the right contract.**
+  - The existing document graph resolves "Section 12.3" document-wide (first match). In a
+    data room of 510 contracts that points to the wrong contract.
+  - Qualifier targets resolve within the sentence's own contract (its chapter, its slices
+    "(k/n)", and the schedules lifted after it).
+  - They cross into another contract only when the sentence names it (amendments: "…of
+    the Master Services Agreement between BETA and ACME"), matched by distinctive title
+    words as in routing.
+- **Cite by id everywhere:** workers and the qualifier worker return sentence ids only.
+- **Calibration and graph building use no model:** the expensive part is only where it
+  must be (workers, qualifier worker, entailment, answer).
+- **Three honest outcomes:** complete, absent (certified at α), or uncertified with a
+  reason. A certificate is never phrased as certainty about one answer.
+
+---
+
+## Optional extension: a learning loop for the GNN
+
+Every accepted board finding is a free label ("for this question, this passage held the
+answer"). Retraining the GNN gate on those labels from real documents would address its
+domain shift (it was trained on generated contracts). Showing the gate improve and
+costs fall with use would be a secondary result.
+
+Not on the critical path: only if time allows after P3.
