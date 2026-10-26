@@ -127,8 +127,9 @@ financial and technical documents.
 | v4-5  | Entity links for books                                            | 2.3            | ⬜ |
 | v4-6  | Learning loop: board labels retrain the gate (= Phase 11)         | 4 [13]         | ⬜ |
 | v4-7  | Demo app: local chat interface (Streamlit) with citation viewer  | WORKFLOW B8    | ⬜ Planned; starts once the core engine is proven |
+| R     | **Research track: "Complete or Silent"** (closure + absence certificates, trap benchmark, paper) | `docs/PAPER_PLAN.md`, `docs/COMPLETE_OR_SILENT.md` | ⬜ Planned: P0–P7, ~5–7 weeks focused; P4 needs ~$200–400 API budget |
 
-**Next up: prove the core engine. Finish the v4-3 / v4-4 readings (books, judge), fix the open weaknesses (widening cost on unanswerable questions, two-hop facts, story-level questions), and run the strong whole-document baseline (Claude, budget pending). Then v4-7 (demo app). v4-1 waits on the human fact spot check.**
+**Next up: the research track (`docs/PAPER_PLAN.md`): P0 literature review + P1 certificates + P2 trap benchmark, in parallel. It includes proving the core engine. Finish the v4-3 / v4-4 readings (books, judge), fix the open weaknesses (widening cost on unanswerable questions, two-hop facts, story-level questions), and run the strong whole-document baseline (Claude, budget pending). Then v4-7 (demo app). v4-1 waits on the human fact spot check.**
 
 ---
 
