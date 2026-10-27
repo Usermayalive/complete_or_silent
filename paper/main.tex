@@ -19,6 +19,9 @@
 \usepackage{url}
 \usepackage{tikz}
 \usetikzlibrary{positioning,arrows.meta}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepgfplotslibrary{groupplots}
 
 \newcommand{\system}{\textsc{GNN-Pruner}}
 \newcommand{\coarse}{\textsc{CoarseGNN}}
@@ -296,24 +299,37 @@ Exact halos reproduce single-process scores to within $7\times10^{-6}$ for 1--4 
 
 \subsection{End-to-end latency and tokens}
 
-\begin{table}[t]
+\begin{figure}[t]
 \centering
-\scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}rccccc@{}}
-\toprule
-\textbf{Pages} & \textbf{Two-stage} & \textbf{GNN} & \textbf{\rulepipe{}} & \textbf{GNN pack} & \textbf{Share of doc.} \\
-\midrule
-100 & 23 ms & 53 ms & 60 ms & 372 tok & 0.72\% \\
-1,000 & 165 ms & 463 ms & 1,517 ms & 394 tok & 0.08\% \\
-10,000 & 4.7 s & 9.9 s & 167 s & 377 tok & 0.007\% \\
-\bottomrule
-\end{tabular}
-\caption{End-to-end latency p50 per question (one CPU process) and evidence pack size. Rule-based packs: 266 / 324 / 300 tokens.}
-\label{tab:latency}
-\end{table}
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=2 by 1, horizontal sep=1.25cm},
+  scale only axis, width=0.33\columnwidth, height=2.8cm,
+  xmode=log, xtick={100,1000,10000}, xticklabels={100,1k,10k},
+  xlabel={Pages}, tick label style={font=\scriptsize},
+  label style={font=\scriptsize}, title style={font=\scriptsize},
+  legend style={font=\tiny, inner sep=1pt, row sep=-2pt}, legend cell align=left]
+\nextgroupplot[ymode=log, ylabel={Latency p50 (ms)}, title={(a) Time per question},
+  legend pos=north west, ymax=2e6]
+\addplot[black, dashed, mark=square*, mark size=1.5pt] coordinates {(100,60) (1000,1517) (10000,167000)};
+\addlegendentry{\rulepipe{}}
+\addplot[blue, thick, mark=*, mark size=1.5pt] coordinates {(100,53) (1000,463) (10000,9900)};
+\addlegendentry{GNN}
+\addplot[red, thick, mark=triangle*, mark size=2pt] coordinates {(100,23) (1000,165) (10000,4700)};
+\addlegendentry{Two-stage}
+\nextgroupplot[ymin=0, ymax=500, ylabel={Pack size (tokens)}, title={(b) Evidence sent to the LLM},
+  legend pos=south east]
+\addplot[blue, thick, mark=*, mark size=1.5pt] coordinates {(100,372) (1000,394) (10000,377)};
+\addlegendentry{GNN}
+\addplot[black, dashed, mark=square*, mark size=1.5pt] coordinates {(100,266) (1000,324) (10000,300)};
+\addlegendentry{\rulepipe{}}
+\end{groupplot}
+\end{tikzpicture}
+\caption{(a) End-to-end latency p50 per question on one CPU process (log scale). (b) Evidence pack size: flat while the document grows 100$\times$; the GNN pack is 0.72\% / 0.08\% / 0.007\% of the document at 100 / 1,000 / 10,000 pages.}
+\label{fig:scale}
+\end{figure}
 
-Packs stay at about 300--400 tokens whatever the document size (Table~\ref{tab:latency}), so a 5.09M-token document is answered from 377 tokens, about 13,500$\times$ fewer than full context. At 10,000 pages the two-stage model is about 35$\times$ faster than the rule-based pipeline, whose index build also takes 6 minutes and 2.7\,GB. Cross-edge attention roughly doubles latency. Evidence recall on these generated scale documents is 1.0 / 0.88 / 0.83 for the GNN and 0.75 / 0.71 / 0.92 for the rule-based pipeline at 100 / 1,000 / 10,000 pages (12 questions each). For reference, the design specification we started from targeted 80\,ms at 10,000 pages on a four-GPU cluster; on one CPU we measure 4.7--9.9\,s.
+Packs stay at about 300--400 tokens whatever the document size (Figure~\ref{fig:scale}), so a 5.09M-token document is answered from 377 tokens, about 13,500$\times$ fewer than full context. At 10,000 pages the two-stage model is about 35$\times$ faster than the rule-based pipeline, whose index build also takes 6 minutes and 2.7\,GB. Cross-edge attention roughly doubles latency. Evidence recall on these generated scale documents is 1.0 / 0.88 / 0.83 for the GNN and 0.75 / 0.71 / 0.92 for the rule-based pipeline at 100 / 1,000 / 10,000 pages (12 questions each). For reference, the design specification we started from targeted 80\,ms at 10,000 pages on a four-GPU cluster; on one CPU we measure 4.7--9.9\,s.
 
 \paragraph{Robustness.} On 100 perturbed questions (distractor topic, wrong number, swapped parties, typos, paraphrase), all systems keep Recall@10 at 0.99--1.0; the top-ranked passage is kept in 83\% (GNN), 88\% (two-stage) and 86\% (rule-based) of cases, with typos and party swaps hurting most.
 
@@ -364,7 +380,42 @@ library (9,988) & .39 / .00 & out of memory & \textbf{1.00} / \textbf{1.00} & .6
 \label{tab:longbench}
 \end{table}
 
-At an equal evidence budget, the pipelines find planted facts far more often than dense retrieval (Table~\ref{tab:longbench}); dense retrieval catches up only partly with five times the text. In the 9,988-page library the GNN pipeline finds every planted single and two-hop fact from about 285 tokens. In data rooms of near-identical contracts, the pipelines fall from 0.83 at 977 pages to 0.39--0.44 at 8,619 pages: they find the right \emph{kind} of clause in the wrong contract, since distractors are the same clause type elsewhere. Real CUAD clauses are hard for every system at a small budget (evidence found: GNN 0.07--0.16, rule-based 0.13--0.14, dense top-1 0.13--0.20; dense top-5 0.37--0.60). At about 10,000 pages, the GNN pipeline needs 17--38 minutes to index, 3.1--3.5\,GB and 6.8--9.6\,s per question; the rule-based pipeline could not index the 9,988-page library within 8\,GB. With an LLM on the 130-page data room, sending the whole document (about 87k tokens) to a small model (\texttt{gemini-3.5-flash-lite}) answered 33\% of clause questions correctly by a model judge, the same as dense top-5 and above the rule-based pack (13\%), and missed half of the planted facts.
+\begin{figure}[t]
+\centering
+\begin{tikzpicture}
+\begin{groupplot}[
+  group style={group size=2 by 1, horizontal sep=0.45cm, y descriptions at=edge left},
+  scale only axis, width=0.39\columnwidth, height=2.6cm,
+  xmode=log, xtick={119,1001,9988}, xticklabels={119,1k,10k},
+  xlabel={Library size (pages)}, ymin=-0.05, ymax=1.12, ytick={0,0.5,1},
+  tick label style={font=\scriptsize}, label style={font=\scriptsize},
+  title style={font=\scriptsize}]
+\nextgroupplot[ylabel={Facts found}, title={(a) Single fact},
+  legend to name=liblegend, legend columns=4,
+  legend style={font=\scriptsize, draw=none, /tikz/every even column/.append style={column sep=6pt}}]
+\addplot[blue, thick, mark=*, mark size=1.5pt] coordinates {(119,1) (1001,1) (9988,1)};
+\addlegendentry{GNN ($\sim$270 tok)}
+\addplot[black, dashed, mark=square*, mark size=1.5pt] coordinates {(119,1) (1001,1)};
+\addlegendentry{\rulepipe{} ($\sim$270)}
+\addplot[orange, mark=diamond*, mark size=2pt] coordinates {(119,0.67) (1001,0.83) (9988,0.61)};
+\addlegendentry{Dense k=5 ($\sim$1.2k)}
+\addplot[gray, mark=o, mark size=1.5pt] coordinates {(119,0.67) (1001,0.42) (9988,0.39)};
+\addlegendentry{Dense k=1 ($\sim$200)}
+\node[font=\tiny, anchor=north] at (axis cs:9988,0.95) {\rulepipe{}: OOM};
+\nextgroupplot[title={(b) Two-hop}]
+\addplot[blue, thick, mark=*, mark size=1.5pt] coordinates {(119,1) (1001,1) (9988,1)};
+\addplot[black, dashed, mark=square*, mark size=1.5pt] coordinates {(119,1) (1001,1)};
+\addplot[orange, mark=diamond*, mark size=2pt] coordinates {(119,0) (1001,0.25) (9988,0.17)};
+\addplot[gray, mark=o, mark size=1.5pt] coordinates {(119,0) (1001,0) (9988,0)};
+\node[font=\tiny, anchor=north] at (axis cs:9988,0.95) {\rulepipe{}: OOM};
+\end{groupplot}
+\end{tikzpicture}
+\pgfplotslegendfromname{liblegend}
+\caption{Planted facts found in the evidence pack as a library of books grows (nested libraries; data rooms are in Table~\ref{tab:longbench}). The rule-based pipeline ran out of memory (OOM) at 9,988 pages.}
+\label{fig:library}
+\end{figure}
+
+At an equal evidence budget, the pipelines find planted facts far more often than dense retrieval (Table~\ref{tab:longbench}, Figure~\ref{fig:library}); dense retrieval catches up only partly with five times the text. In the 9,988-page library the GNN pipeline finds every planted single and two-hop fact from about 285 tokens. In data rooms of near-identical contracts, the pipelines fall from 0.83 at 977 pages to 0.39--0.44 at 8,619 pages: they find the right \emph{kind} of clause in the wrong contract, since distractors are the same clause type elsewhere. Real CUAD clauses are hard for every system at a small budget (evidence found: GNN 0.07--0.16, rule-based 0.13--0.14, dense top-1 0.13--0.20; dense top-5 0.37--0.60). At about 10,000 pages, the GNN pipeline needs 17--38 minutes to index, 3.1--3.5\,GB and 6.8--9.6\,s per question; the rule-based pipeline could not index the 9,988-page library within 8\,GB. With an LLM on the 130-page data room, sending the whole document (about 87k tokens) to a small model (\texttt{gemini-3.5-flash-lite}) answered 33\% of clause questions correctly by a model judge, the same as dense top-5 and above the rule-based pack (13\%), and missed half of the planted facts.
 
 \subsection{Human evaluation}
 In a blind A/B comparison of evidence packs from the GNN and rule-based pipelines on 20 test questions, rated by one author, preference was tied (6 / 6, 8 equal) and the preferred pack was sufficient to answer in all 20. In 11 of 12 decided pairs the shorter sufficient pack was chosen, which points to the token budget as the main lever.

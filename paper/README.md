@@ -8,7 +8,7 @@
    all three files into an Overleaf project created from the ACL template.
 2. `pdflatex main && bibtex main && pdflatex main && pdflatex main`
 
-The pipeline figure is drawn with TikZ, so no image files are needed.
+The pipeline figure and both plots (Figures 2–3) are drawn with TikZ / pgfplots from the measured numbers, so no image files are needed.
 
 ## Before submitting
 - [ ] **References:** replace every entry in `custom.bib` with the BibTeX exported from ACL
