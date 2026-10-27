@@ -106,9 +106,10 @@ Training labels come without annotation. For each training question we take the 
 
 \subsection{\coarse{}: typed GraphSAGE}
 Node features combine the paragraph embedding, its element-wise product with the question embedding, cosine similarity, BM25, term coverage and structural features; without the question features the model cannot rank at all (Table~\ref{tab:ablation}). With $\mathbf{h}^{(0)}_v = \mathrm{ReLU}(\mathbf{W}_{\mathrm{in}}\mathbf{x}_v)$, each of $L{=}2$ layers averages one GraphSAGE convolution \citep{hamilton2017graphsage} per edge type $t \in T$:
-\begin{equation}
-\mathbf{h}^{(k+1)} = \mathrm{LN}\Big(\mathbf{h}^{(k)} + \mathrm{Drop}\big(\mathrm{ReLU}\big(\tfrac{1}{|T|}\textstyle\sum_{t\in T}\mathrm{SAGE}_t(\mathbf{h}^{(k)}, E_t)\big)\big)\Big)
-\end{equation}
+\begin{align}
+\mathbf{m}^{(k)} &= \tfrac{1}{|T|}\textstyle\sum_{t\in T}\mathrm{SAGE}_t\big(\mathbf{h}^{(k)}, E_t\big)\\
+\mathbf{h}^{(k+1)} &= \mathrm{LN}\big(\mathbf{h}^{(k)} + \mathrm{Drop}(\mathrm{ReLU}(\mathbf{m}^{(k)}))\big)
+\end{align}
 The score reads both the input and the final representation (a skip connection): $s_v = \mathbf{w}^\top[\mathbf{h}^{(0)}_v; \mathbf{h}^{(L)}_v]$. Hidden size is 128. Training minimises a listwise cross-entropy \citep{cao2007listnet} between the softmax of scores over a document's paragraphs and a target distribution obtained from the silver grades with temperature $\tau{=}0.1$. A keep / prune policy is then fine-tuned with PPO \citep{schulman2017ppo} to retain answers at a small kept share; the supervised model remains the ranker.
 
 \subsection{Coarse-to-fine scoring}
@@ -131,22 +132,23 @@ After merging, dependency rules add what kept items need: definitions of terms t
 \begin{table}[t]
 \centering
 \scriptsize
-\begin{tabularx}{\columnwidth}{@{}lXr@{}}
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{@{}llr@{}}
 \toprule
-\textbf{Set} & \textbf{Content} & \textbf{Questions} \\
+\textbf{Set} & \textbf{Documents} & \textbf{Questions} \\
 \midrule
-contracts (test) & 2 contracts ($\sim$0.5--1 page) & 40 (4 unanswerable) \\
-contracts-long (test) & same contracts, $\sim$10 pages each & 40 (4 unanswerable) \\
-dev sets & real contracts: calibration, long, multi-passage, cross-chapter & 11--36 each \\
-generated val & 10 held-out generated contracts & 280 \\
-scale & generated, 100 / 1,000 / 10,000 pages & 8--12 per size \\
-adversarial & 20 questions $\times$ 5 perturbations & 100 \\
+test & 2 real contracts, $\leq$1 page & 40 \\
+test-long & same, $\sim$10 pages each & 40 \\
+dev & real contracts (4 sets) & 11--36 each \\
+generated val & 10 generated contracts & 280 \\
+scale & generated, 100--10,000 pp. & 8--12 per size \\
+adversarial & 20 q.\ $\times$ 5 perturbations & 100 \\
 \midrule
-data rooms & CUAD \citep{hendrycks2021cuad}: 130 / 977 / 8,619 pages & 42 / 109 / 176 \\
-libraries & NarrativeQA \citep{kocisky2018narrativeqa}: 119 / 1,001 / 9,988 pages & 42 / 94 / 200 \\
+data rooms & CUAD, 130 / 977 / 8,619 pp. & 42 / 109 / 176 \\
+libraries & NarrativeQA, 119 / 1,001 / 9,988 pp. & 42 / 94 / 200 \\
 \bottomrule
-\end{tabularx}
-\caption{Evaluation data. The long-document benchmark (bottom) nests each size inside the next; questions are CUAD clause spans (and clauses CUAD marks absent), NarrativeQA human questions, and planted facts.}
+\end{tabular}
+\caption{Evaluation data. Each test set has 4 unanswerable questions; dev sets cover calibration, long documents, multi-passage and cross-chapter questions. The long-document benchmark (bottom; CUAD \citep{hendrycks2021cuad}, NarrativeQA \citep{kocisky2018narrativeqa}) nests each size inside the next; its questions are CUAD clause spans (and clauses CUAD marks absent), NarrativeQA human questions, and planted facts.}
 \label{tab:data}
 \end{table}
 
@@ -156,7 +158,7 @@ libraries & NarrativeQA \citep{kocisky2018narrativeqa}: 119 / 1,001 / 9,988 page
 
 \paragraph{Metrics.} Ranking: MRR and hit@1 of the first answer paragraph; Recall@10. Evidence: whether the pack contains every gold span (word-3-gram coverage $\geq 0.5$ on the long-document benchmark). Answers: token F1 against the reference, whether every number in the reference appears, citation precision / recall, abstention on unanswerable questions and false abstention on answerable ones. Efficiency: latency p50 (p99), evidence tokens, build time, memory.
 
-\paragraph{Hardware and models.} One MacBook, 8 CPU cores, 8\,GB RAM, no GPU. Answers use \texttt{gemini-3.1-flash-lite} through its free tier; the judge for clause answers is a different model (\texttt{gemini-3.1-flash-lite} judging \texttt{gemini-3.5-flash-lite} answers, Section~\ref{sec:answers}).
+\paragraph{Hardware and models.} One MacBook, 8 CPU cores, 8\,GB RAM, no GPU. Answers use \texttt{gemini-3.1-flash-lite} through its free tier; the judge for clause answers is a different model (\texttt{gemini-3.1-flash-lite} judging \texttt{gemini-3.5-flash-lite} answers, Section~\ref{sec:longbench}).
 
 % ======================================================================
 \section{Results}
@@ -208,20 +210,20 @@ Table~\ref{tab:ablation} shows that edges help a little and typed edges more (un
 \begin{table}[t]
 \centering
 \scriptsize
-\setlength{\tabcolsep}{3pt}
-\begin{tabular}{@{}llccccc@{}}
+\setlength{\tabcolsep}{2.5pt}
+\begin{tabular}{@{}llcccrr@{}}
 \toprule
-\textbf{Set} & \textbf{Method} & \textbf{MRR} & \textbf{hit@1} & \textbf{Merged rec.} & \textbf{Merged share} & \textbf{Fine nodes} \\
+\textbf{Set} & \textbf{Method} & \textbf{MRR} & \textbf{h@1} & \textbf{Rec.} & \textbf{Share} & \textbf{Nodes} \\
 \midrule
-gen. val & two-stage & .778 & .686 & .977 & 6.4\% & 92 \\
- & no coarsening & .791 & .704 & 1.0 & 18.3\% & 795 \\
-test & two-stage & .887 & .806 & .889 & 13.0\% & 15 \\
- & no coarsening & .891 & .833 & .958 & 19.7\% & 56 \\
-test-long & two-stage & .835 & .750 & .931 & 2.5\% & 63 \\
- & no coarsening & .851 & .778 & 1.0 & 17.0\% & 620 \\
+gen. val & 2-stage & .778 & .686 & .977 & 6.4\% & 92 \\
+ & flat & .791 & .704 & 1.0 & 18.3\% & 795 \\
+test & 2-stage & .887 & .806 & .889 & 13.0\% & 15 \\
+ & flat & .891 & .833 & .958 & 19.7\% & 56 \\
+test-long & 2-stage & .835 & .750 & .931 & 2.5\% & 63 \\
+ & flat & .851 & .778 & 1.0 & 17.0\% & 620 \\
 \bottomrule
 \end{tabular}
-\caption{Sentence-level ranking with and without coarsening.}
+\caption{Sentence-level ranking with two-stage coarsening and without it (flat): MRR, hit@1, answers in the merged set (Rec.), share of sentences merged, and nodes in the fine stage.}
 \label{tab:coarsening}
 \end{table}
 
@@ -332,9 +334,10 @@ GNN + LLM & .46--.47 & 1.00 & .86 / .99 & 8/8 & 0\% \\
 \label{tab:answers}
 \end{table}
 
-With a language model answering from the pack, every number in every reference answer is stated correctly and every gold clause is cited (Table~\ref{tab:answers}); no answer cites a label outside the pack. Token F1 rises only to 0.46--0.47 because answers are full sentences carrying conditions the short references omit. Citation precision of 0.83--0.86 mostly reflects definitions and conditions added by the dependency rules, which models cite but gold snippets do not list. A score-based retrieval-confidence check that refuses before the model is called wrongly refused 5 paraphrased questions; letting the model judge sufficiency refused all 8 unanswerable questions and no answerable one.
+With a language model answering from the pack, every number in every reference answer is stated correctly and gold clauses are cited with recall 0.99--1.0 (Table~\ref{tab:answers}); no answer cites a label outside the pack. Token F1 rises only to 0.46--0.47 because answers are full sentences carrying conditions the short references omit. Citation precision of 0.83--0.86 mostly reflects definitions and conditions added by the dependency rules, which models cite but gold snippets do not list. A score-based retrieval-confidence check that refuses before the model is called wrongly refused 5 paraphrased questions; letting the model judge sufficiency refused all 8 unanswerable questions and no answerable one.
 
 \subsection{Long-document benchmark}
+\label{sec:longbench}
 
 \begin{table}[t]
 \centering
