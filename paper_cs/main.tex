@@ -1,0 +1,238 @@
+\documentclass[11pt]{article}
+
+% ACL style: "review" (anonymous) -> "preprint" (names, page numbers) -> "final"
+\usepackage[review]{acl}
+
+\usepackage{times}
+\usepackage{latexsym}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{microtype}
+\usepackage{inconsolata}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{url}
+
+\newtheorem{definition}{Definition}
+\newtheorem{proposition}{Proposition}
+
+\newcommand{\system}{\textsc{CoS}}          % Complete or Silent
+\newcommand{\pending}[1]{\textcolor{red}{[PENDING: #1]}}   % DRAFT ONLY: every \pending must be resolved before submission
+
+\title{Complete or Silent: Certified Question Answering over\\ Documents Beyond Any Context Window}
+
+\author{Anonymous ACL Submission}
+
+\begin{document}
+\maketitle
+
+% ======================================================================
+\begin{abstract}
+Systems that answer questions over very large documents---contract data rooms, books, filings---find a passage and answer from it. Two failures follow. A \emph{found} answer silently omits the exception, override or amendment written elsewhere, so it looks right and is wrong; and a \emph{not found} answer cannot distinguish absence from failure to look. We propose that every answer carry a certificate. A \emph{closure certificate} states that every provision that could change a found answer was read: it is obtained as a fixpoint over a qualifier graph (who qualifies, overrides or amends what), a reverse index, and a whole-contract sweep judged by a model. An \emph{absence certificate} states that, had the answer been present, it would have been found with probability at least $\alpha$, measured on the document itself by planting synthetic \emph{canaries} and calibrating the reading budget with split conformal prediction. When neither can be issued the system says why. We find that canaries built from the document's own sentences badly understate the miss rate of clause-type questions (25\% measured against 10\% stated, 977 pages), while \emph{type canaries}---real clauses of a known type planted and searched with the words of a question about that type---bring stated and measured miss rates into agreement at 130, 977 and 8,619 pages. On a new trap benchmark of far exceptions, amendment chains, unlinked carve-outs and precedence conflicts, certified answering is correct on 30 of 30 questions where the same system without certificates is correct on 11, with no false certificate, at 44\% more model calls. \pending{traps2 results with two answer models and external baselines; update the abstract to the final numbers.}
+\end{abstract}
+
+% ======================================================================
+\section{Introduction}
+
+A data room for an acquisition can hold hundreds of contracts---ten thousand pages, millions of tokens---far beyond the context window of any model \citep{liu2024lost,hsieh2024ruler}. Question answering over such collections therefore retrieves or navigates to a few passages and answers from them \citep{lewis2020rag,sarthi2024raptor,chen2023memwalker,zhang2024chainofagents}. This works when the answer sits in one place. Contracts are written so that it often does not:
+
+\begin{quote}\small
+\textbf{MSA §12.3:} liability shall not exceed the fees paid in the 12 months before the claim.\\
+\textbf{Schedule 3 (p.\,2,817):} \emph{Notwithstanding Section 12.3}, liability for data-protection breaches shall not exceed 5,000,000~USD.\\
+\textbf{Schedule 5 (p.\,2,903):} the limitations above \emph{shall not apply to fraud}.\\
+\textbf{Amendment No.\,2 (p.\,7,402):} Section 12.3 is \emph{deleted and replaced}: 24 months.
+\end{quote}
+
+\noindent A system that finds §12.3 and answers ``12 months of fees'' is fluent, cited, and wrong. When the question is instead ``Is there a change-of-control clause?'' and nothing is found, the answer ``no'' is acted on---yet no current system can say how likely it is to have missed one.
+
+We argue that answers over documents beyond the context window should be \emph{complete or silent}: either the system shows that it read everything that could change the answer, or it says precisely what it could not certify. Our contributions:
+\begin{enumerate}
+\item \textbf{Two certificates} (\S\ref{sec:problem}): a \emph{closure} certificate for found answers and an \emph{absence} certificate for ``not found'', plus an honest third outcome, \emph{uncertified}, with reasons.
+\item \textbf{Closure as a fixpoint} (\S\ref{sec:closure}) over a structural qualifier graph and a reverse index, completed by a sweep for qualifiers that cite no section, judged by a model by sentence id.
+\item \textbf{Per-document calibration with canaries} (\S\ref{sec:absence}): split conformal reading budgets from planted canaries, measured on the very document asked about, without labelled data; and the finding that canaries must imitate the \emph{question}, not the answer (type canaries).
+\item \textbf{A trap benchmark} (\S\ref{sec:benchmark}) of far exceptions, amendment chains, unlinked carve-outs and precedence conflicts planted in real contract data rooms of 100 to 10,000 pages, with gold for the answer, the required provisions and the correct certificate.
+\end{enumerate}
+
+% ======================================================================
+\section{Related Work}
+\label{sec:related}
+
+\paragraph{Long inputs.} Long-context models degrade on information in the middle of their input \citep{liu2024lost}; their effective context is shorter than the advertised one \citep{hsieh2024ruler,kuratov2024babilong,kamradt2023needle}. Benchmarks such as SCROLLS and LongBench \citep{shaham2022scrolls,bai2024longbench} test documents that still fit a window; our rooms do not.
+
+\paragraph{Retrieval and navigation.} Retrieval-augmented generation \citep{lewis2020rag,karpukhin2020dpr,khattab2020colbert}, summary trees \citep{sarthi2024raptor}, interactive navigation \citep{chen2023memwalker,lee2024readagent,pageindex2025}, graph-based retrieval \citep{edge2024graphrag,gutierrez2024hipporag} and agent chains \citep{zhang2024chainofagents} decide what to read. None returns a statement of what an answer depends on, and none attaches a measured risk to ``not found''.
+
+\paragraph{Calibration and abstention.} Conformal prediction gives distribution-free coverage from exchangeable calibration data \citep{vovk2005algorithmic,papadopoulos2002inductive,lei2018distribution,angelopoulos2021gentle}; it has been applied to language model outputs \citep{quach2024conformal,mohri2024conformal}. These methods calibrate on labelled held-out examples of the same distribution. We calibrate on the document itself with synthetic canaries, and we calibrate \emph{what to read}, not what to output. Abstention by self-assessment \citep{kadavath2022know,asai2024selfrag} carries no guarantee.
+
+\paragraph{Legal documents.} CUAD, ContractNLI and LegalBench \citep{hendrycks2021cuad,koreeda2021contractnli,guha2023legalbench} test clause finding and reasoning within one contract; legal hallucination is documented \citep{magesh2024hallucination}. Override and amendment chains across a data room are, to our knowledge, not benchmarked. \pending{systematic literature search (P0): confirm that no published system certifies closure or absence for documents beyond the context window; extend this section.}
+
+% ======================================================================
+\section{Problem: Complete or Silent}
+\label{sec:problem}
+
+A document $D$ (possibly a collection of units, e.g.\ contracts) is a tree of chapters, sections and passages whose sentences carry ids. A question $q$ is answered from a set of sentences $E \subseteq D$ that the system read.
+
+\begin{definition}[Qualifier relation]
+For sentences $s, t$, $t \rightsquigarrow s$ if $t$ \emph{qualifies} $s$ (limits or carves out an exception to it), \emph{overrides} it within $t$'s scope, \emph{amends} it (deletes or replaces it), \emph{restates} the same matter with different content, \emph{defines} a term $s$ uses, or is a \emph{precedence} rule deciding between $s$ and another sentence.
+\end{definition}
+
+\begin{definition}[Closure; complete answer]
+For seed sentences $S$ that state an answer, the closure $C(S)$ is the least set containing $S$ and closed under $t \rightsquigarrow s,\ s \in C(S) \Rightarrow t \in C(S)$. An answer is \emph{complete} if $C(S) \subseteq E$ and it reports the effect of every $t \in C(S)$, marking superseded sentences as such.
+\end{definition}
+
+\begin{definition}[Absence at level $\alpha$]
+A ``not found'' for $q$ is certified at level $\alpha$ if the reading procedure, applied to a question of the same class whose answer is present, includes the answer's chapter with probability at least $\alpha$, the probability taken over the position and wording of the answer as modelled by the document's canaries.
+\end{definition}
+
+\noindent The guarantee in Definition~3 is only as good as the exchangeability of canaries and real answers; \S\ref{sec:rq1} tests it empirically, and the certificate reports the canary miss rate with a Clopper--Pearson bound \citep{clopper1934use} so the reader sees the evidence behind the level. Exact closure is undecidable from text alone (the relation is semantic); the system computes a closure over links it can see and states which candidates it could not judge.
+
+% ======================================================================
+\section{Method}
+\label{sec:method}
+
+\system{} builds on a document tree with sentence ids, a lexical relevance gate (each chapter's best BM25 sentence; \citealp{robertson2009bm25}), chapter workers that read and post sentence ids, and a central board that verifies and quotes ids exactly. On top of it:
+
+\subsection{Qualifier graph and reverse index}
+\label{sec:closure}
+Pattern cues (\emph{subject to, notwithstanding, provided that, shall not apply, is hereby deleted and replaced, supersedes, in the event of any conflict}) mark a sentence as qualifying, overriding, amending or setting precedence. Its target is resolved \emph{inside the sentence's own contract}---a data room holds hundreds of ``Section 12.3''s---to a section, schedule, defined term, or ``the foregoing''; an amendment's references resolve into the contract its title names; a cue without a target is kept as \emph{unresolved}. The reverse index maps every passage to the links that point at it, at its ancestors below the chapter, or at its descendants, so the exception thousands of pages away is found by lookup.
+
+\paragraph{Closure.} From the seeds, each round adds (i)~forward links (definitions, references), (ii)~reverse links, and (iii)~a \emph{sweep}: every unresolved cue of the seed's contract that shares a content word with the subject, ranked by IDF weight, and the contract's sentences most similar to the seed (restatements without any cue). Sweep candidates are judged by a qualifier worker that returns a verdict per sentence id (qualifies / overrides / amends / restates / irrelevant). Qualifying items cascade; the loop stops at a fixpoint or a budget. Precedence then marks superseded text: an explicit precedence clause, then the later amendment, then specific over general.
+
+\subsection{Calibrated reading and absence}
+\label{sec:absence}
+For a document $D$, canaries $c_1,\dots,c_n$ are planted in a hidden copy of the index---the real document is untouched---and ranked by the gate for a query that imitates a question; $r_i$ is the rank of the chapter holding $c_i$ (ties count against the canary). For level $\alpha$ the reading budget is the split conformal quantile
+\begin{equation}
+k(\alpha) = r_{(\lceil (n+1)\alpha \rceil)},
+\end{equation}
+or all chapters if $\lceil (n+1)\alpha\rceil > n$ \citep{papadopoulos2002inductive,lei2018distribution}. If real answers rank like canaries, opening the top $k(\alpha)$ chapters contains the answer with probability $\ge \alpha$. A ``not found'' is certified at the highest $\alpha$ whose $k(\alpha)$ chapters were all \emph{actually read}: a chapter whose worker failed or ran out of budget does not count.
+
+\paragraph{Fact and type canaries.} \emph{Fact canaries} copy a sentence of $D$, change its numbers and names, and are searched with its most common words. \emph{Type canaries} plant a real clause of a known type (e.g.\ non-compete) taken from outside $D$ and search it with the words of a question about that type; sentences of $D$ that the clause duplicates are blanked in the hidden copy. Questions are mapped to a canary class (fact, clause, existence, list).
+
+\subsection{Answer and certificate}
+The answer is generated from an evidence pack sized to hold the whole closure, listing the main clause, then qualifications and overrides, then superseded text. An independent verifier checks every answer sentence against the quoted evidence by label. A closure certificate is issued only if the closure reached its fixpoint, every sweep candidate was judged, every closure item is in the pack, the answer did not abstain, and every answer sentence is supported; otherwise the outcome is \emph{uncertified} with the reasons.
+
+% ======================================================================
+\section{Benchmark}
+\label{sec:benchmark}
+
+\paragraph{Rooms.} Nested data rooms of real CUAD contracts \citep{hendrycks2021cuad} at about 100, 1,000 and 10,000 pages; each smaller room is contained in the larger ones.
+
+\paragraph{Traps.} Each trap plants a numbered liability cap for a named company in one contract and a look-alike cap for another company elsewhere, then one of: a \emph{far exception} (``notwithstanding Section $N$'') later in the contract, in a schedule, or in a side letter; an \emph{override chain} (Amendment No.\,1 and No.\,2 as separate documents); an \emph{unlinked carve-out} (fraud, no section number); a \emph{precedence conflict} (a schedule restates the cap; schedules prevail); or an \emph{existence} question, yes or no (``no'' only for a clause type the contract truly lacks). Gold: the answer, the required provisions, the superseded ones, and the correct certificate. Version~2 (\texttt{traps2}) writes the planted clauses from real CUAD clauses rewritten by a model into validated templates (no stray amounts, required references present), at most 12 traps per contract. Table~\ref{tab:bench} gives sizes.
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lrrr}
+\toprule
+Room & Pages & Questions & Per kind \\
+\midrule
+\texttt{traps} S (v1) & 139 & 60 & 12 \\
+\texttt{traps} M (v1) & 1,034 & 360 & 72 \\
+\texttt{traps2} S & 144 & 62 & 12 \\
+\texttt{traps2} M & 1,065 & 361 & 72 \\
+\texttt{traps2} L & 8,782 & 661 & 132 \\
+\bottomrule
+\end{tabular}
+\caption{Trap benchmark. \texttt{traps2} adds room-wide existence questions (1--2 per room).}
+\label{tab:bench}
+\end{table}
+
+% ======================================================================
+\section{Experiments}
+\label{sec:experiments}
+
+All runs use free hosted models (gemini-3.5-flash-lite and gemini-3.1-flash-lite) and one CPU laptop with 8\,GB of memory. \pending{a frontier long-context model with the whole document (S, M), a Chain-of-Agents re-implementation, and strong retrieval with a reranker as baselines.}
+
+\subsection{RQ1: do canaries predict the real miss rate?}
+\label{sec:rq1}
+We calibrate on 300 canaries per room and measure, on the benchmark's real questions with gold evidence (CUAD clause questions and planted facts), how often the answer's chapter falls outside the calibrated budget (lexical gate, whole room, no routing). Table~\ref{tab:rq1}.
+
+\begin{table}[t]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{llccc}
+\toprule
+Room (chapters) & Canaries & $\alpha{=}.90$ & $.95$ & $.98$ \\
+\midrule
+977 pp (55) & fact & 25.4 & 16.9 & 4.2 \\
+977 pp (55) & type & \textbf{10.9} & \textbf{1.8} & \textbf{1.8} \\
+8,619 pp (554) & fact & 23.5 & 17.6 & 7.6 \\
+8,619 pp (554) & type & \textbf{5.6} & \textbf{3.4} & \textbf{3.4} \\
+130 pp (8) & type & 6.7 & 0.0 & 0.0 \\
+\midrule
+\multicolumn{2}{l}{stated miss rate} & 10.0 & 5.0 & 2.0 \\
+\bottomrule
+\end{tabular}
+\caption{Measured miss rate (\%) of real clause questions at the budget calibrated for $\alpha$. Fact rows: all real questions (CUAD and planted facts; planted facts were never missed at 95\% and 98\%). Type rows: CUAD clause questions ($n = 55, 89, 15$). Upper 95\% bounds for type canaries at 8,619 pages: 11.4 / 8.5 / 8.5.}
+\label{tab:rq1}
+\end{table}
+
+Canaries made from the document's own sentences are found too easily: a question about a clause \emph{type} shares few words with the clause, and the measured miss rate is two to four times the stated one. Type canaries, searched with the words a question uses, bring the two into agreement within the confidence intervals at every size. Naively queried canaries (half their own words) are worse still: they promised a 2\% miss rate on the 130-page room where 61\% was measured. \pending{the same check at worker level (with model calls) and on \texttt{traps2}.}
+
+\subsection{RQ2: does closure find what others miss?}
+Table~\ref{tab:rq2} compares the full system with the same workers without closure and certificates, same model, on 30 trap questions (6 per kind).
+
+\begin{table}[t]
+\centering\small
+\begin{tabular}{lcc}
+\toprule
+Trap kind ($n{=}6$ each) & Workers & \system{} \\
+\midrule
+far exception & 0 & \textbf{6} \\
+override chain & 4 & \textbf{6} \\
+unlinked carve-out & 0 & \textbf{6} \\
+precedence & 1 & \textbf{6} \\
+existence (3 yes, 3 no) & 6 & 6 \\
+\midrule
+all (30) & 11 & \textbf{30} \\
+model calls / question & 5.4 & 7.8 \\
+\bottomrule
+\end{tabular}
+\caption{Correct answers on \texttt{traps} S (v1), gemini-3.5-flash-lite. A trap answer is correct when it states every amount of the reference as a whole number (and fraud for carve-outs).}
+\label{tab:rq2}
+\end{table}
+
+\noindent Without closure the workers find the base clause and stop. \pending{\texttt{traps2} S and M with two answer models; external baselines.}
+
+\subsection{RQ3: are certificates honest?}
+On the 30 questions above, 30 certificates were issued (27 closure, 3 absence) and none was false (95\% upper bound 10\%). These certificates came from a version of the system before a correctness review fixed 29 defects, several of which could make a certificate overclaim (e.g.\ counting chapters whose worker ran out of budget as read); the figure is reported for completeness and is superseded by the runs below. \pending{false-certificate rate on \texttt{traps2} with confidence intervals; certification rate; accuracy of certified vs uncertified answers.}
+
+\subsection{RQ4: what does certainty cost?}
+Closure costs 2.4 additional model calls per question (+44\%). An absence certificate for a question that names its contract opens that contract whole; for an unnamed clause-type question the budget is large (at 98\%: 51 of 55 chapters at 977 pages, 479 of 554 at 8,619 pages), because lexical ranking cannot single out a contract by clause type. \pending{cost curves over $\alpha$ with model calls and tokens.}
+
+\subsection{RQ5: which parts matter?}
+Table~\ref{tab:ablation} switches parts off on \texttt{traps2} M with an oracle qualifier worker, measuring what each part can reach.
+
+\begin{table}[t]
+\centering\small
+\setlength{\tabcolsep}{3pt}
+\begin{tabular}{lccccc}
+\toprule
+Variant & Far & Chain & Unlinked & Prec. & Sup. \\
+\midrule
+full & 72 & 70 & 65 & 69 & 130 \\
+no reverse index & 44 & 0 & 65 & 69 & 60 \\
+no sweep & 72 & 70 & 0 & 0 & 70 \\
+no forward links & 72 & 70 & 65 & 69 & 130 \\
+no precedence step & 72 & 70 & 65 & 62 & 127 \\
+\bottomrule
+\end{tabular}
+\caption{Traps (of 72 per kind) whose required provisions all enter the closure, and superseded clauses correctly marked (of 144), \texttt{traps2} M, 1,065 pages.}
+\label{tab:ablation}
+\end{table}
+
+\noindent The reverse index carries far exceptions and amendment chains; the sweep carries everything without a section number. Remaining misses: carve-outs worded in ways no cue covers (5 of 72; we did not add those phrasings to avoid tuning the system to its own benchmark), sweep budget exhaustion (reported as \emph{uncertified}), and two unlinked amendment chains.
+
+% ======================================================================
+\section*{Limitations}
+\textbf{Exchangeability.} Absence certificates hold only to the extent that canaries rank like real answers; Table~\ref{tab:rq1} shows this fails for naive canaries and must be checked per question class. \textbf{Lexical gate.} Room-wide certificates for clause-type questions need most of the room. \textbf{Cue coverage.} The qualifier graph uses patterns; qualifiers worded otherwise are found only by the sweep's similarity ranking. \textbf{Benchmark.} Traps are templated (v2 from real clauses) and were designed together with the system; liability caps only; one seed. \textbf{Scale of evaluation.} The model-judged results above use 30 questions and small free models. \textbf{Cost of baselines.} A frontier long-context baseline cannot read the 10,000-page rooms at all.
+
+\section*{Ethics Statement}
+The rooms consist of public contracts (CUAD, CC~BY~4.0) with fictitious planted provisions and company names. The system is a reading aid, not legal advice; its certificates state what was read and how likely a miss is, never that an answer is correct. \pending{AI-assistance statement: describe the use of AI coding and writing assistants.}
+
+\bibliography{references}
+
+\end{document}
