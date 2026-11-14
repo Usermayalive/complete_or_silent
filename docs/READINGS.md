@@ -1542,3 +1542,33 @@ first copy of a shared sentence anywhere in the room.
 **Sweep ranking improved (method change, reported):** candidates are ranked by the IDF
 weight of the words they share with the clause, not their count, so the carve-out naming
 the same party outranks dozens of similar clauses for other parties.
+
+## RQ5: structural ablations on traps2 M (no model; 2026-11-15)
+
+`scripts/ablations_structural.py traps2 M`. 288 traps (72 per kind) in the 1,065-page room.
+The qualifier worker is replaced by an **oracle** that accepts exactly the gold provisions
+among the sweep candidates, so the table measures what each part can *reach*, not a
+model's judgement (the model-judged numbers come from the benchmark runs).
+
+| Variant | far exception | override chain | unlinked carve-out | precedence | superseded clause marked |
+|---|---|---|---|---|---|
+| full | **72/72** | **70/72** | **65/72** | **69/72** | **130/144** |
+| A1 no reverse index | 44/72 | 0/72 | 65/72 | 69/72 | 60/144 |
+| A2 no sweep | 72/72 | 70/72 | 0/72 | 0/72 | 70/144 |
+| A3 no forward links | 72/72 | 70/72 | 65/72 | 69/72 | 130/144 |
+| A6 no precedence step | 72/72 | 70/72 | 65/72 | 62/72 | 127/144 |
+
+- The reverse index carries far exceptions and amendment chains (A1: chains fall to 0);
+  the sweep carries everything without a section number (A2: carve-outs and precedence
+  restatements fall to 0). Forward links do not matter for these traps (they test
+  backward and sideways links; forward links serve definitions).
+- **Bug found by this table (fixed):** a precedence clause ("the Schedules shall prevail")
+  also matches the override cue "shall prevail", so the sweep brought it in as a
+  qualifier, and the ordering step, reading only items labelled "precedence", never saw
+  the rule: superseded clauses were marked in 80/144 cases. Ordering now recognises an
+  order-of-precedence statement however it joined: 130/144. With that, the dedicated
+  precedence step adds little (A6: 127/144); it is kept for precedence clauses with no
+  override wording.
+- A4 (fixed k instead of canaries) and A5 (template instead of mutation canaries) are
+  gate-level ablations, measured in the RQ1 readings above (fact vs type canaries); A7
+  (GNN gate) is not yet run.

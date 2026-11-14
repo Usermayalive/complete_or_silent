@@ -130,8 +130,12 @@ def _title_words(tree, passage_id: str) -> List[str]:
 
 class Expander:
     def __init__(self, tree, graph: QualifierGraph, reverse: ReverseIndex, provider=None, board=None,
-                 max_rounds: int = MAX_ROUNDS, max_items: int = MAX_ITEMS, sweep: bool = True, index=None):
+                 max_rounds: int = MAX_ROUNDS, max_items: int = MAX_ITEMS, sweep: bool = True, index=None,
+                 use_forward: bool = True, use_reverse: bool = True, use_precedence: bool = True):
+        """``use_forward`` / ``use_reverse`` / ``sweep`` / ``use_precedence``: switch a part
+        off (ablations A1-A3, A6)."""
         self.tree, self.graph, self.reverse = tree, graph, reverse
+        self.use_forward, self.use_reverse, self.use_precedence = use_forward, use_reverse, use_precedence
         self.provider, self.board = provider, board
         self._index = index
         self.max_rounds, self.max_items, self.do_sweep = max_rounds, max_items, sweep
@@ -301,11 +305,11 @@ class Expander:
             new: List[ClosureItem] = []
             pending: List[ClosureItem] = []
             for item in frontier:
-                for cand in self.forward(item.passage):
+                for cand in (self.forward(item.passage) if self.use_forward else []):
                     if fresh(cand):
                         closure.forward += 1
                         new.append(cand)
-                for cand in self.backward(item.passage, set(item.sentence_ids)):
+                for cand in (self.backward(item.passage, set(item.sentence_ids)) if self.use_reverse else []):
                     if fresh(cand):
                         closure.reverse += 1
                         new.append(cand)
@@ -333,7 +337,7 @@ class Expander:
                         new.append(cand)
             # precedence clauses of every contract an override, amendment or restatement touches
             touching = [i for i in new if i.relation in (OVERRIDES, AMENDS, "restates") or i.found_by == "sweep"]
-            if touching:
+            if touching and self.use_precedence:
                 for i in touching + frontier:
                     u = self.unit_of(i.passage)
                     if u in precedence_units:

@@ -89,6 +89,10 @@ _SCHEDULE_WORD = re.compile(r"\b(schedules?|exhibits?|annex(?:es)?|appendi(?:x|c
 _BODY_WORD = re.compile(r"\b(this agreement|the agreement|the body|main body|these terms)\b", re.I)
 
 
+_PRECEDENCE_CUE = next(p for kind, p in __import__("gnn_pruner.certify.qualifiers", fromlist=["CUES"]).CUES
+                       if kind == PRECEDENCE)
+
+
 def precedence_winner(text: str) -> str:
     """"schedules" | "body" | "": the side named closest before the prevail verb (its
     subject). "In the event of a conflict between the Schedules and this Agreement, this
@@ -113,8 +117,11 @@ def order(tree, closure: Closure, seeds: List[ClosureItem] = None) -> Ordering:
     for s in seeds:
         rulings[s.passage] = Ruling(s, GOVERNS)
     for item in closure.items:
-        if item.relation == PRECEDENCE:
-            rule = precedence_winner(tree.quote(item.sentence_ids))
+        text = tree.quote(item.sentence_ids)
+        # an order-of-precedence statement is the rule however it joined the closure (its
+        # "shall prevail" also reads as an override cue, so the sweep may bring it first)
+        if item.relation == PRECEDENCE or (_PRECEDENCE_CUE.search(text) and precedence_winner(text)):
+            rule = precedence_winner(text)
             if rule:
                 out.precedence_rule = rule
             rulings[item.passage] = Ruling(item, RULE, "precedence clause")

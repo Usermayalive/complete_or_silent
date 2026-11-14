@@ -176,9 +176,9 @@ false-certificate rate, qualifier recall, override correctness, cost of certaint
 |---|---|---|---|
 | RQ1 | Do canaries predict the real miss rate on this document? | calibrate on canaries; measure on real CUAD clauses and planted facts at 100 / 1,000 / 10,000 pages | 🟡 with type canaries stated ≈ measured at 130 / 977 / 8,619 pages (gate level, no model); L has a library leak to fix with a held-out set; worker-level check still to do |
 | RQ2 | Does closure find what others miss? | trap benchmark: ours vs the baselines (§7) | 🟡 first reading, traps S, n = 30: plain workers 11/30 → certified 30/30, certificates 30/30 right (READINGS) |
-| RQ3 | Are certificates honest? | false-certificate rate vs α, with CIs | ⬜ |
+| RQ3 | Are certificates honest? | false-certificate rate vs α, with CIs | 🟡 `certify/report.py` computes it; traps v1: 0/30 false certificates (≤ 10%); traps2 runs in progress |
 | RQ4 | What does certainty cost? | cost curves at α = 90 / 95 / 98% | ⬜ |
-| RQ5 | Which parts matter? | ablations (§8) | ⬜ |
+| RQ5 | Which parts matter? | ablations (§8) | 🟡 structural ablations done (READINGS); model-judged ablations and A7 to do |
 | H1 | Do humans agree? | 2 annotators, κ, judge agreement | 🟡 pilot sheet ready, not rated |
 
 **Decision after RQ1 / RQ3 (P3):** pass → full paper, ACL main · closure only → closure as
@@ -200,12 +200,12 @@ or workshop).
 
 | ID | Removed part | Status |
 |---|---|---|
-| A1 | reverse index | ⬜ |
-| A2 | whole-document sweep | ⬜ |
-| A3 | forward closure | ⬜ |
+| A1 | reverse index | ✅ structural (traps2 M): chains 70 → 0, far exceptions 72 → 44 |
+| A2 | whole-document sweep | ✅ structural: carve-outs 65 → 0, precedence 69 → 0 |
+| A3 | forward closure | ✅ structural: no effect on traps (serves definitions) |
 | A4 | canaries (fixed k instead) | ⬜ |
 | A5 | mutation canaries (template canaries instead) | ⬜ |
-| A6 | precedence step | ⬜ |
+| A6 | precedence step | ✅ structural: superseded marked 130 → 127 / 144 |
 | A7 | GNN gate (lexical gate instead) | ⬜ |
 
 ## 9. Paper deliverables

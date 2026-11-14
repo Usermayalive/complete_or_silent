@@ -568,3 +568,24 @@ def test_clause_template_validation():
     assert validate("unlinked", "The limitations above shall not apply to any fraud or wilful misconduct by {co}.") is None
     assert validate("amend2", "Section {n} of the {title}, as amended by Amendment No. 1, is hereby replaced: the "
                               "liability of {co} shall not exceed {amount3}.") is None
+
+
+# ---------------------------------------------------------------- P3 report
+
+def test_report_counts_false_certificates_and_split_accuracy():
+    from gnn_pruner.certify.report import false_certificate, summarize
+    cases = {"a": {"answerable": True}, "b": {"answerable": False}, "c": {"answerable": True},
+             "d": {"answerable": True}, "e": {"answerable": True}}
+    rows = [
+        {"id": "a", "kind": "far_exception", "certificate": "closure", "correct": True, "qualifier_recall": 1.0, "calls": 8},
+        {"id": "b", "kind": "existence", "certificate": "absence", "correct": True, "calls": 6},
+        {"id": "c", "kind": "unlinked", "certificate": "closure", "correct": True, "qualifier_recall": 0.5, "calls": 9},
+        {"id": "d", "kind": "precedence", "certificate": "absence", "correct": False, "calls": 7},
+        {"id": "e", "kind": "precedence", "certificate": "uncertified", "correct": False, "calls": 10,
+         "certificate_text": "UNCERTIFIED: 3 sweep candidates were never judged (sweep budget) (read 2 of 8 chapters)"},
+    ]
+    assert [false_certificate(r, cases[r["id"]]) for r in rows] == [False, False, True, True, None]
+    s = summarize(rows, cases)
+    assert s["certified"] == (4, 5) and s["false_certificates"] == (2, 4)
+    assert s["acc_certified"] == (3, 4) and s["acc_uncertified"] == (0, 1) and s["calls"] == 8.0
+    assert list(s["uncertified_reasons"]) == ["N sweep candidates were never judged (sweep budget)"]
