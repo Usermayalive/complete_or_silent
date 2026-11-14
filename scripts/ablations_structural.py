@@ -1,9 +1,10 @@
-"""Run: PYTHONPATH=src python scripts/ablations_structural.py traps2 M
-
 """RQ5 structural ablations on traps2 (no model): with an oracle qualifier worker that
 accepts exactly the gold provisions among the sweep candidates (so the sweep's reach is
 measured, not a model's judgement), how many traps get every required provision into the
-closure, and is the superseded clause marked?"""
+closure, and is the superseded clause marked?
+
+Run: PYTHONPATH=src python scripts/ablations_structural.py traps2 M
+"""
 import sys, re, collections, json
 from gnn_pruner.answer import Completion
 from gnn_pruner.tree import tree_from_file
