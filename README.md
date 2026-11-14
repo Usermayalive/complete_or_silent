@@ -1,4 +1,46 @@
-# GNN Pruner
+# Complete or Silent
+
+Question answering over documents too large for any model's context window (contract
+data rooms, books; 100 to 10,000+ pages), where **every answer carries a certificate**:
+
+| Outcome | Certificate | Meaning |
+|---|---|---|
+| found | **closure** | every exception, override, amendment and definition that could change the answer was read |
+| not found | **absence** | if the answer were in the document, it would have been found with probability ≥ α, measured on this document with planted canaries |
+| neither | **uncertified** | the system says why |
+
+- Idea, end to end: [docs/IDEA_COMPLETE_OR_SILENT.md](docs/IDEA_COMPLETE_OR_SILENT.md)
+- Method: [docs/COMPLETE_OR_SILENT.md](docs/COMPLETE_OR_SILENT.md) · plan: [docs/PAPER_PLAN.md](docs/PAPER_PLAN.md)
+- Requirements and status: [REQUIREMENTS_COMPLETE_OR_SILENT.md](REQUIREMENTS_COMPLETE_OR_SILENT.md)
+- Every measured number: [docs/READINGS.md](docs/READINGS.md)
+
+**Code:** `src/gnn_pruner/certify/` (qualifier graph, reverse index, canary calibration,
+reading plan, closure, precedence, certificates, verifier, trap benchmark) on top of the
+document tree, relevance gate, chapter workers and central board in
+`src/gnn_pruner/workers/`. Baselines in `src/gnn_pruner/baselines/`.
+
+```bash
+# tests (no network)
+uv run --no-project --python 3.11 --with numpy --with scipy --with scikit-learn --with pytest \
+  --with "pymupdf>=1.24,<2" --with openai --with anthropic --with python-docx --with pyarrow pytest -q
+
+# build the long benchmark and the trap rooms (downloads CUAD + Gutenberg; data/ is not in git)
+PYTHONPATH=src python -m gnn_pruner.longbench build
+PYTHONPATH=src python -m gnn_pruner.certify.traps build --counts S=60,M=300,L=0
+
+# certified system vs plain workers on the traps (needs GEMINI_API_KEY in the environment)
+PYTHONPATH=src python -m gnn_pruner.longbench_eval --family traps --tier S --system workers_certify \
+  --llm gemini:gemini-3.5-flash-lite --limit 30
+```
+
+This project grows out of **GNN PRUNER** (structure-aware graph pruning for grounded QA),
+whose code and history it keeps; that project is frozen at tag `gnn-pruner-final` in
+[Usermayalive/GNN-PRUNER](https://github.com/Usermayalive/GNN-PRUNER). Its original README
+follows.
+
+---
+
+## GNN Pruner (the engine this project builds on)
 
 Structure-aware document QA: parse a document into a hierarchy graph, retrieve
 candidates (BM25 + dense + structural), expand to a local subgraph, score with
