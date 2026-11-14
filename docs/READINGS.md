@@ -1587,3 +1587,25 @@ sharing a word with "source code escrow clause". **Finding:** with a lexical gat
 room-wide absence certificate costs the whole room; a semantic screen (dense similarity or
 a model reading the table of contents) is needed to make room-wide certification cheap.
 Same conclusion as RQ4 for unnamed clause-type questions.
+
+## RQ4: does a semantic gate shrink the budget for unnamed clause-type questions? (no LLM)
+
+`scripts/gate_dense_vs_lexical.py M`: contracts M (977 pp, 55 chapters), 300 type canaries,
+55 real CUAD questions; lexical (BM25 best sentence), dense (MiniLM best passage, local),
+fused (reciprocal-rank fusion). In this script the canary's lexical score is approximated
+with BM25 against the room's statistics, so its lexical k differs slightly from the library
+calibration (51 / 51 at 0.98).
+
+| Gate | k (α 0.90 / 0.95 / 0.98) | real CUAD miss (α 0.90 / 0.95 / 0.98) |
+|---|---|---|
+| lexical | 47 / 51 / 55 | 3.6% / 1.8% / 0% |
+| dense | 42 / 47 / 50 | 0% / 0% / 0% (upper 5.3%) |
+| fused | 41 / 47 / 49 | 0% / 0% / 0% (upper 5.3%) |
+
+All three are honest (measured ≤ stated). A semantic signal trims the budget by ~10%, but
+every gate needs ~90% of the room. **Reason:** an unnamed clause-type question ("Does the
+agreement restrict competition?") matches every contract with such a clause; nothing in the
+question singles out the one asked about. The cost is a property of the question, not the
+gate. Questions that name their contract (all CUAD questions do) open one contract. For the
+paper: report room-wide certificates as expensive by nature, and named-unit certificates as
+the practical case.
