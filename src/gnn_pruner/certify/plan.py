@@ -59,6 +59,7 @@ class ReadingPlan:
     k: int                        # chapters the gate must open (0 = fixed default)
     chapters: List[str] = field(default_factory=list)   # named chapters, when basis == named
     note: str = ""
+    threshold: Optional[float] = None   # basis "threshold": open every chapter scoring >= this share of the top
 
 
 def reading_plan(calibration: Optional[Calibration], question: str, named: List[str],
@@ -71,13 +72,27 @@ def reading_plan(calibration: Optional[Calibration], question: str, named: List[
         return ReadingPlan(alpha, qc, "named", len(named), list(named),
                            "every chapter of the named unit is opened; coverage rests on routing")
     table = "unit" if named else "room"
+    if qc == "list" and not named:     # "which contracts contain X?": every chapter above the threshold (U4.5)
+        stats = calibration.stats(("type", "clause", "all"), "room")
+        tau = stats.threshold.get(str(alpha))
+        if tau is not None:
+            return ReadingPlan(alpha, qc, "threshold", 0, [], f"open every chapter scoring >= {tau:.2f} of the top "
+                               f"chapter (canary class n={stats.n})", threshold=tau)
     k = calibration.k(alpha, cls, table)
     return ReadingPlan(alpha, qc, table, k, list(named),
                        f"{table} table, class {'/'.join(cls)}: open the lexical top {k} chapters")
 
 
+def above_threshold(scores: dict, tau: float, chapters: List[str]) -> List[str]:
+    """Chapters whose relative score (best / top) is at least ``tau``; with tau 0, all."""
+    top = max(scores.values(), default=0.0)
+    if tau <= 0 or top <= 0:
+        return list(chapters)
+    return [c for c in chapters if scores.get(c, 0.0) / top >= tau]
+
+
 def certified_alpha(calibration: Optional[Calibration], plan: ReadingPlan, opened: List[str],
-                    ranking: List[str]) -> Optional[float]:
+                    ranking: List[str], scores: Optional[dict] = None) -> Optional[float]:
     """The highest alpha whose calibrated k chapters (by ``ranking``, the lexical order the
     canaries were ranked with, restricted to the unit when the basis is ``unit``, and padded
     with the chapters the words do not match) were all opened; None if none was reached or
@@ -87,6 +102,15 @@ def certified_alpha(calibration: Optional[Calibration], plan: ReadingPlan, opene
     opened_set = set(opened)
     if plan.basis == "named":
         return max(calibration.alphas()) if set(plan.chapters) <= opened_set else None
+    if plan.basis == "threshold":
+        if scores is None:
+            return None
+        best = None
+        for a in calibration.alphas():
+            tau = calibration.stats(("type", "clause", "all"), "room").threshold.get(str(a))
+            if tau is not None and set(above_threshold(scores, tau, ranking)) <= opened_set:
+                best = a if best is None or a > best else best
+        return best
     cls = CANARY_CLASS[plan.question_class]
     best = None
     for a in calibration.alphas():

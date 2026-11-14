@@ -589,3 +589,21 @@ def test_report_counts_false_certificates_and_split_accuracy():
     assert s["certified"] == (4, 5) and s["false_certificates"] == (2, 4)
     assert s["acc_certified"] == (3, 4) and s["acc_uncertified"] == (0, 1) and s["calls"] == 8.0
     assert list(s["uncertified_reasons"]) == ["N sweep candidates were never judged (sweep budget)"]
+
+
+def test_room_wide_questions_use_a_calibrated_score_threshold():
+    from gnn_pruner.certify.canaries import calibrate, conformal_threshold
+    from gnn_pruner.certify.plan import above_threshold, certified_alpha, reading_plan
+    assert conformal_threshold([0.1 * i for i in range(1, 20)], 0.9) == 0.1      # floor(20 * 0.1) = 2nd smallest
+    assert conformal_threshold([0.5, 0.9], 0.98) == 0.0                           # too few: open everything
+    tree = room()
+    library = [(["restrict", "compet"], f"Neither party shall compete with the other in territory {i}.") for i in range(40)]
+    cal = calibrate(tree, n=40, seed=0, type_library=library)
+    plan = reading_plan(cal, "Which contracts contain a non-compete clause?", [], alpha=0.9)
+    assert plan.basis == "threshold" and plan.threshold is not None
+    chapters = [c.id for c in tree.chapters()]
+    scores = {chapters[0]: 4.0, chapters[1]: 2.0, chapters[2]: 0.5}
+    assert above_threshold(scores, 0.4, chapters) == chapters[:2] and above_threshold(scores, 0.0, chapters) == chapters
+    opened = above_threshold(scores, plan.threshold, chapters)
+    assert certified_alpha(cal, plan, opened, chapters, scores) is not None
+    assert certified_alpha(cal, plan, [], chapters, scores) is None or plan.threshold > 1

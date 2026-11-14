@@ -76,7 +76,7 @@ the NLLP workshop.
 | U4.2 | Canaries planted in a hidden copy of the index; the real index is never changed | ✅ tested; source sentence blanked in the copy |
 | U4.3 | Gate rank of each canary's chapter recorded | ✅ room rank and within-unit rank |
 | U4.4 | Split-conformal reading budget k(α, class) for α = 90 / 95 / 98% | ✅ room and unit tables; too few canaries → open everything |
-| U4.5 | Score threshold for "any X in the room?" questions | ⬜ |
+| U4.5 | Score threshold for "any X in the room?" questions | ✅ built + tested; on traps2 M the lexical threshold is 0 (opens the whole room) — needs a semantic screen (READINGS) |
 | U4.6 | Measured miss rate with Clopper–Pearson upper bound, stored with the tree | 🟡 computed and saved as JSON; not yet cached next to the tree by `upload` |
 | U4.7 | Calibration uses no model calls and runs at 10,000 pages within 8 GB | ✅ 8,619 pages: 18–19 min, ≤ 804 MB |
 
@@ -215,11 +215,11 @@ or workshop).
 | D1 | Idea, method and plan documented | ✅ |
 | D2 | ACL LaTeX template set up (from the GNN PRUNER paper) | ✅ |
 | D3 | Related-work table from a systematic search (P0) | ⬜ blocked: web search needs your permission or your own search (see chat) |
-| D4 | Formal definitions of "complete" and "absent" | ⬜ |
+| D4 | Formal definitions of "complete" and "absent" | ✅ `paper_cs/main.tex` §3 |
 | D5 | Figures: system diagram, certificate examples, stated-vs-measured plot, cost curves, trap results table | ⬜ |
-| D6 | Full draft: intro (BETA example), related work, problem, method, benchmark, experiments, limitations, ethics | ⬜ |
-| D7 | Limitations: exchangeability assumption, structure quality, cost of the long-context baseline | ⬜ |
-| D8 | Ethics: legal-advice disclaimer, data licences, AI-assistance statement | ⬜ |
+| D6 | Full draft: intro (BETA example), related work, problem, method, benchmark, experiments, limitations, ethics | 🟡 first draft in `paper_cs/` with 8 PENDING marks |
+| D7 | Limitations: exchangeability assumption, structure quality, cost of the long-context baseline | 🟡 drafted |
+| D8 | Ethics: legal-advice disclaimer, data licences, AI-assistance statement | 🟡 drafted; AI-assistance statement pending |
 | D9 | Code + benchmark + data card, anonymised for review | ⬜ |
 | D10 | ARR responsible-NLP checklist; submission; arXiv preprint when allowed | ⬜ |
 

@@ -89,6 +89,7 @@ class Canary:
     rank: int = 0          # rank of its chapter among every chapter (1 = first)
     rank_in_unit: int = 0  # rank among its unit's chapters
     twins: List[str] = field(default_factory=list)  # sentence ids of the document blanked in the hidden copy
+    rel_score: float = 0.0  # its chapter's best score / the top chapter's score (U4.5)
 
 
 @dataclass
@@ -98,6 +99,7 @@ class ClassCalibration:
     miss_at_k: Dict[str, float]          # canary miss rate at that k
     miss_upper: Dict[str, float]         # Clopper-Pearson 95% upper bound
     ranks: List[int] = field(default_factory=list)
+    threshold: Dict[str, float] = field(default_factory=dict)   # str(alpha) -> relative-score threshold (U4.5)
 
 
 def _pick(classes: Dict[str, "ClassCalibration"], cls) -> "ClassCalibration":
@@ -267,6 +269,8 @@ def _rank_batch(index, batch: List[Canary]) -> None:
         np.maximum.at(best, idx, scores)
         mine = lookup[c.chapter]
         own = best[mine]
+        top = float(best.max()) if len(best) else 0.0
+        c.rel_score = float(own) / top if top > 0 else 0.0
         # ties count against the canary (pessimistic): a chapter scoring as high as the
         # canary's is opened no later than it; a canary nothing matches ranks last
         c.rank = int((best >= own).sum())
@@ -274,15 +278,26 @@ def _rank_batch(index, batch: List[Canary]) -> None:
         c.rank_in_unit = int((best[unit_idx] >= own).sum()) if unit_idx else 1
 
 
-def _class_calibration(ranks: List[int], alphas: Sequence[float], chapters: int) -> ClassCalibration:
-    k, miss, upper = {}, {}, {}
+def conformal_threshold(scores: Sequence[float], alpha: float) -> float:
+    """Largest tau with P(score >= tau) >= alpha (lower split-conformal quantile); 0 (open
+    every chapter) when there are too few canaries for this alpha."""
+    order = sorted(scores)
+    i = math.floor((len(order) + 1) * (1 - alpha))
+    return float(order[i - 1]) if i >= 1 else 0.0
+
+
+def _class_calibration(ranks: List[int], alphas: Sequence[float], chapters: int,
+                       scores: Optional[Sequence[float]] = None) -> ClassCalibration:
+    k, miss, upper, threshold = {}, {}, {}, {}
     for a in alphas:
         kk = conformal_k(ranks, a, chapters)
         misses = sum(r > kk for r in ranks)
         k[str(a)] = kk
         miss[str(a)] = round(misses / len(ranks), 4) if ranks else 1.0
         upper[str(a)] = round(clopper_pearson_upper(misses, len(ranks)), 4)
-    return ClassCalibration(len(ranks), k, miss, upper, sorted(ranks))
+        if scores is not None:
+            threshold[str(a)] = round(conformal_threshold(scores, a), 4)
+    return ClassCalibration(len(ranks), k, miss, upper, sorted(ranks), threshold)
 
 
 def _twins(index, text: str) -> List[str]:
@@ -354,10 +369,12 @@ def calibrate(tree, index=None, n: int = 300, seed: int = 0, alphas: Sequence[fl
     tables: Dict[str, Dict[str, ClassCalibration]] = {}
     for table, rank_of in (("room", lambda c: c.rank), ("unit", lambda c: c.rank_in_unit)):
         own = [c for c in canaries if c.cls != "type"]      # "all" = the document's own canaries
-        classes = {"all": _class_calibration([rank_of(c) for c in own], alphas, chapters)}
+        classes = {"all": _class_calibration([rank_of(c) for c in own], alphas, chapters,
+                                             [c.rel_score for c in own])}
         for cls in CLASSES + ("type",):
-            ranks = [rank_of(c) for c in canaries if c.cls == cls]
-            if len(ranks) >= MIN_CLASS_N:
-                classes[cls] = _class_calibration(ranks, alphas, chapters)
+            members = [c for c in canaries if c.cls == cls]
+            if len(members) >= MIN_CLASS_N:
+                classes[cls] = _class_calibration([rank_of(c) for c in members], alphas, chapters,
+                                                  [c.rel_score for c in members])
         tables[table] = classes
     return Calibration(chapters, tables, seed)

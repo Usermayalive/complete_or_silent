@@ -137,6 +137,12 @@ def ask(tree, question: str, provider, answer_provider=None, chapters: Optional[
             within, named = named, []
         plan = gate.plan(question, terms, named, k=k, provider=provider, use_toc=use_toc,
                          board=board, within=within)
+        if reading.basis == "threshold":     # "which contracts contain X?": every chapter above the threshold
+            from ..certify.plan import above_threshold
+
+            plan.rounds = [above_threshold(index.best_per_chapter(terms), reading.threshold, gate.chapters)]
+            for c in plan.rounds[0]:
+                plan.opened_by.setdefault(c, []).append("threshold")
         result.plan = plan
         rounds = plan.rounds if widen else plan.rounds[:1]
 
@@ -206,7 +212,8 @@ def ask(tree, question: str, provider, answer_provider=None, chapters: Optional[
         allowed = [c for c in gate.chapters if within is None or c in within]
         ranking = [c for c in gate.lexical(terms) if c in allowed]
         ranking += [c for c in allowed if c not in set(ranking)]   # unmatched chapters last, as for the canaries
-        result.certified = certified_alpha(calibration, result.reading, result.opened, ranking)
+        result.certified = certified_alpha(calibration, result.reading, result.opened, ranking,
+                                           scores=index.best_per_chapter(terms))
     if board.status == "found":
         board.add_bridges()
     board.add_definitions()

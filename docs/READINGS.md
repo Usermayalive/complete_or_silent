@@ -1572,3 +1572,18 @@ model's judgement (the model-judged numbers come from the benchmark runs).
 - A4 (fixed k instead of canaries) and A5 (template instead of mutation canaries) are
   gate-level ablations, measured in the RQ1 readings above (fact vs type canaries); A7
   (GNN gate) is not yet run.
+
+## U4.5: calibrated score threshold for room-wide questions (2026-11-15, no model)
+
+"Which contracts contain X?" cannot use a top-k: the answer may sit in any number of
+contracts. Canaries now record their chapter's *relative* score (best / top chapter);
+τ(α) is the lower split-conformal quantile of those scores; the gate opens every chapter
+scoring ≥ τ·top, and "no other contract" is certified at α only if all were read.
+
+**On traps2 M** (311 chapters; escrow question, 6 gold chapters): τ = 0 at α = 0.90, 0.95
+and 0.98, so the threshold opens all 311 chapters (and covers all 6). More than 10% of type
+canaries score zero for their own question's words — a clause can concern escrow without
+sharing a word with "source code escrow clause". **Finding:** with a lexical gate, a
+room-wide absence certificate costs the whole room; a semantic screen (dense similarity or
+a model reading the table of contents) is needed to make room-wide certification cheap.
+Same conclusion as RQ4 for unnamed clause-type questions.
