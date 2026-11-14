@@ -66,6 +66,7 @@ _DEFINES = re.compile(
     r"[\"“']([A-Z][\w\- ]{1,40}?)[\"”']\s*(?:\([^)]*\)\s*)?(?:means|shall mean|refers to|has the meaning|is defined as)\b"
     r"|\((?:the |a |an )?[\"“']([A-Z][\w\- ]{1,40}?)[\"”']\)")
 _SLICE = re.compile(r"\s*\(\d+/\d+\)\s*$")
+_TITLE_DF: Dict[str, int] = {}   # title word -> number of contract titles holding it (set per graph)
 _AMENDING_TITLE = re.compile(r"^\s*(amendment|addendum|supplement|variation|side letter|novation)\b", re.I)
 _STOP = {"agreement", "contract", "inc", "corp", "ltd", "llc", "of", "and", "the", "a", "an", "co", "company",
          "corporation", "limited", "between", "dated", "for", "to", "in", "on", "by", "with", "number", "no"}
@@ -93,16 +94,21 @@ def base_title(title: str) -> str:
     return _SLICE.sub("", title or "").strip().lower()
 
 
+_ARTICLE_HEADING = re.compile(r"^\s*(?:(?:article|section|clause|part)\s+[\divxlc]+\b|\d+(?:\.\d+)*[.\s])", re.I)
+
+
 def units(tree: DocTree) -> Dict[str, List[str]]:
-    """Contract units: first chapter id -> chapter ids. Slices "(k/n)" of one contract and
-    the schedules / exhibits after it belong to the same unit."""
+    """Contract units: first chapter id -> chapter ids. Slices "(k/n)" of one contract, the
+    schedules / exhibits after it, and chapters that are articles of it ("Article 5",
+    "12. Liability") belong to the same unit; any other chapter starts a new contract."""
     out: Dict[str, List[str]] = {}
     current: Optional[str] = None
     current_title = None
     for ch in tree.chapters():
         title = base_title(ch.title)
         lifted = bool(LIFT_TO_CHAPTER.match(ch.title or ""))
-        if current is not None and (title == current_title or lifted):
+        article = bool(_ARTICLE_HEADING.match(ch.title or ""))
+        if current is not None and (title == current_title or lifted or article):
             out[current].append(ch.id)
             continue
         current, current_title = ch.id, title
@@ -128,9 +134,12 @@ class _UnitIndex:
         self.terms: Dict[str, str] = {}        # "fees" -> passage id defining it
         self.amends: Optional["_UnitIndex"] = None  # an amendment: the contract its title names
         self._sentences: List[str] = []
+        self._passage_numbers: Dict[str, str] = {}
         for ch in chapters:
             for node in tree.walk(ch):
                 self._index(node)
+        for number, nid in self._passage_numbers.items():   # headings win over passage labels
+            self.numbers.setdefault(number, nid)
         self._drop_name_like_terms()
 
     def _drop_name_like_terms(self) -> None:
@@ -160,9 +169,18 @@ class _UnitIndex:
             m = _LABEL.match(head)
             if m:
                 number = m.group(1).lower().strip(".")
-                self.numbers.setdefault(number, node.id)
-                if m.group(2):
-                    self.numbers.setdefault(number + m.group(2).lower().replace(" ", ""), node.id)
+                target = self.numbers
+                if node.kind == PASSAGE:
+                    # "8.2 Ownership of …" labels a clause; "Section 12.3 does not limit …" only
+                    # mentions one: a passage labels a number only if a capitalised title follows
+                    rest = head[m.end():].lstrip(" .):")
+                    if not rest[:1].isupper():
+                        m = None
+                    target = self._passage_numbers
+                if m:
+                    target.setdefault(number, node.id)
+                    if m.group(2):
+                        target.setdefault(number + m.group(2).lower().replace(" ", ""), node.id)
             s = _SCHEDULE_REF.match(head.strip())
             if s:
                 self.schedules.setdefault(f"{s.group(1).lower()} {s.group(2).lower()}", node.id)
@@ -240,9 +258,10 @@ def _targets(tree: DocTree, idx: _UnitIndex, others: Dict[str, Tuple[set, _UnitI
     for unit, (title_words, other_idx) in others.items():
         if unit == idx.unit or not title_words or _AMENDING_TITLE.match(other_idx.title or ""):
             continue      # "Section 42 of the MSA, as amended by Amendment No. 1" is the MSA's 42
-        overlap = len(title_words & words)
-        if overlap >= 2 and overlap > best_overlap:
-            best, best_overlap = other_idx, overlap
+        shared = title_words & words
+        # "license" and "agreement" name no contract; a distinctive title word must be shared
+        if len(shared) >= 2 and any(_TITLE_DF.get(w, 0) <= 2 for w in shared) and len(shared) > best_overlap:
+            best, best_overlap = other_idx, len(shared)
     if best is None and idx.amends is not None:
         best = idx.amends  # "Amendment No. 2 to the MSA": its "Section 12.3" is the MSA's
     if best is not None:
@@ -256,7 +275,9 @@ def _targets(tree: DocTree, idx: _UnitIndex, others: Dict[str, Tuple[set, _UnitI
         nid = own_index.schedules.get(label)
         found.append((SCHEDULE_T, label, [nid] if nid else []))
     if _FOREGOING.search(window):
-        found.append((FOREGOING_T, "foregoing", [_section_of(tree, passage_id)]))
+        target = _section_of(tree, passage_id)
+        # a chapter-level "foregoing" is unresolved (no reverse match; the sweep handles it)
+        found.append((FOREGOING_T, "foregoing", [] if tree.node(target).kind == CHAPTER else [target]))
     head = window[:TERM_WINDOW + 40].lower()
     for term, pid in own_index.terms.items():
         m = re.search(rf"\b{re.escape(term)}\b", head)
@@ -270,6 +291,10 @@ def build_qualifier_graph(tree: DocTree) -> QualifierGraph:
     unit_of = {ch: u for u, chs in unit_map.items() for ch in chs}
     indexes = {u: _UnitIndex(tree, u, chs) for u, chs in unit_map.items()}
     others = {u: (_title_words(tree.node(u).title), indexes[u]) for u in unit_map}
+    _TITLE_DF.clear()
+    for words_, _ in others.values():
+        for w in words_:
+            _TITLE_DF[w] = _TITLE_DF.get(w, 0) + 1
     for u in unit_map:
         if _AMENDING_TITLE.match(tree.node(u).title or ""):
             indexes[u].amends = _named_contract(u, others[u][0], others)

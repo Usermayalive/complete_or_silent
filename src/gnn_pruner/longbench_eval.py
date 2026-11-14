@@ -231,7 +231,7 @@ def run(family: str, tier: str, system: str, llm: Optional[str] = None, judge_sp
                     calibration = Calibration.load(str(cal_path))
                 else:
                     library = None
-                    if family in ("contracts", "traps"):   # type canaries: CUAD clauses from contracts not in this room
+                    if family == "contracts" or family.startswith("traps"):   # type canaries: CUAD clauses from contracts not in this room
                         from .certify.canaries import cuad_type_library
 
                         library = cuad_type_library(exclude_titles=[c.title for c in tree.chapters()])
@@ -257,8 +257,9 @@ def run(family: str, tier: str, system: str, llm: Optional[str] = None, judge_sp
                 from .baselines.chain_of_agents import ask as coa_ask
 
                 t0 = time.perf_counter()
-                res = coa_ask(full_text, case.question, provider)
+                res = coa_ask(full_text, case.question, provider, max_calls=None)
                 row.update(answer=res.answer, abstained=res.abstained, calls=res.calls, chunks=res.chunks,
+                           chunks_read=res.chunks_read, truncated=res.chunks_read < res.chunks,
                            input_tokens=res.input_tokens, output_tokens=res.output_tokens,
                            llm_ms=round((time.perf_counter() - t0) * 1000), pack_tokens=count_tokens(res.notes))
                 if case.gold_evidence:
@@ -357,6 +358,46 @@ def _full_answer(provider, full_text: str, case) -> Dict:
 
 
 _AMOUNT = re.compile(r"\d[\d,]*(?:\.\d+)?\s*USD")
+_MONEY_IN_ANSWER = re.compile(r"(?:US\$|USD|\$)\s*(\d[\d,]*(?:\.\d+)?)|(\d[\d,]*(?:\.\d+)?)\s*(?:USD|US dollars|dollars)",
+                              re.I)
+
+
+def _amounts(text: str) -> set:
+    """Whole amounts in ``text`` as integers ("150,000 USD", "$150,000", "USD 150000")."""
+    out = set()
+    for m in _MONEY_IN_ANSWER.finditer(text):
+        raw = (m.group(1) or m.group(2)).replace(",", "")
+        try:
+            out.add(int(float(raw)))
+        except ValueError:
+            continue
+    return out
+
+
+def _norm(text: str) -> str:
+    return re.sub(r"\s+", " ", text).strip().lower()
+
+
+_NEGATED = re.compile(r"\b(does not|doesn't|do not|did not|no|not|none|neither|nor|without)\b[^.]{0,80}?"
+                      r"\b(contain|include|have|has|provide|any)\b|\bcontains no\b|\bno\b[^.]{0,40}\bclause\b", re.I)
+
+
+def _says_yes(answer: str) -> bool:
+    """Leading yes / no word first; otherwise a negation anywhere near "contain" means no."""
+    head = re.sub(r"^[\s*_>#\-\"']+", "", answer).lower()
+    if re.match(r"^(yes)\b", head):
+        return True
+    if re.match(r"^(no)\b", head) or "does not say" in head or "not found" in head:
+        return False
+    return not _NEGATED.search(answer) and bool(re.search(r"\b(contain|include|has|provide)", head))
+
+
+def _company_of(title: str) -> str:
+    """The distinctive part of a CUAD room title: "License Agreement of WebmdHealthCorp
+    (2005-10-01)" -> "webmdhealthcorp"."""
+    m = re.search(r"\bof\s+([^()#]+)", title)
+    name = (m.group(1) if m else title).strip().lower()
+    return re.sub(r"[,.]?\s*(inc|corp|ltd|llc|co)\.?$", "", name).strip(" ,.")
 
 
 def trap_correct(answer: str, case) -> bool:
@@ -364,12 +405,17 @@ def trap_correct(answer: str, case) -> bool:
     each exception; for an override chain, the final amount) and, for an unlinked
     carve-out, names fraud. Existence: yes / no as expected (an abstention counts as no)."""
     text = answer.lower()
+    if case.tags.get("kind") == "room_existence":
+        expected = case.tags.get("expected_units") or []
+        if not expected:      # nothing in the room: a refusal or an explicit "none"
+            return not re.search(r"\b(contract|agreement)s?\b.*\b(contain|include|ha[sv]e?)\b", text) or \
+                bool(re.search(r"\b(none|no contract|does not say|not found)\b", text))
+        return all(_company_of(t) in text for t in expected)
     if case.tags.get("kind") == "existence":
-        said_yes = text.strip().startswith("yes") or ("contain" in text and not re.search(r"\b(no|not|does not)\b", text[:60]))
+        said_yes = _says_yes(answer)
         return said_yes if case.tags.get("expected") == "yes" else not said_yes
-    amounts = [a.replace(" ", "").lower() for a in _AMOUNT.findall(case.reference_answer)]
-    have = text.replace(" ", "")
-    ok = all(a in have for a in amounts)
+    # every amount of the reference, as a whole number ("50,000" is not inside "150,000")
+    ok = _amounts(case.reference_answer) <= _amounts(answer)
     if case.tags.get("kind") == "unlinked":
         ok = ok and "fraud" in text
     return ok
@@ -381,11 +427,13 @@ def _score_traps(row: Dict, case, pack_text: str) -> None:
     system gave equals the one the case expects (closure for a found trap, absence for a
     planted "no")."""
     tags = case.tags
-    if tags.get("family") != "traps":
+    if not str(tags.get("family", "")).startswith("traps"):
         return
     required = tags.get("required") or []
-    if required:
-        row["qualifier_recall"] = round(sum(coverage(q, pack_text) >= HIT for q in required) / len(required), 3)
+    if required:   # exact (whitespace / case normalised): look-alikes differ only in an amount or name
+        have = _norm(pack_text)
+        row["qualifier_recall"] = round(sum(_norm(q) in have for q in required) / len(required), 3)
+    row["pack_text"] = pack_text   # kept so the evidence can be re-scored without new model calls
     if "certificate" in row:
         row["certificate_correct"] = row["certificate"] == tags.get("certificate")
 
@@ -396,17 +444,23 @@ def _score_answer(row: Dict, case, judge_provider, judge, answer_f1) -> None:
     answer = row.get("answer", "")
     for key in ("correct", "judge", "judge_score", "answer_f1", "false_abstention"):
         row.pop(key, None)
+    is_trap = str(case.tags.get("family", "")).startswith("traps")
+    if is_trap and row["kind"] in ("existence", "room_existence"):
+        row["correct"] = trap_correct(answer, case) if not row.get("abstained") else not case.answerable
+        if case.answerable:
+            row["false_abstention"] = bool(row.get("abstained"))
+        return
     if not case.answerable:
         row["correct"] = bool(row.get("abstained"))
         return
     row["false_abstention"] = bool(row.get("abstained"))
     if row.get("abstained"):
-        if row["kind"] in ("needle", "needle_2hop") or judge_provider is not None:
+        if row["kind"] in ("needle", "needle_2hop") or judge_provider is not None or is_trap:
             row["correct"] = False
         if judge_provider is not None and row["kind"] in ("cuad", "narrativeqa"):
             row["judge_score"] = 0.0
         return
-    if case.tags.get("family") == "traps":
+    if str(case.tags.get("family", "")).startswith("traps"):
         row["correct"] = trap_correct(answer, case)
     elif row["kind"] in ("needle", "needle_2hop"):
         row["correct"] = contains_answer(answer, case.reference_answer)
@@ -481,6 +535,8 @@ def rescore(family: str, tier: str, system: str, llm: str, judge_spec: Optional[
         try:
             already = old["judge"] is not None
             _score_answer(row, cases[row["id"]], None if already else judge_provider, judge, answer_f1)
+            if row.get("pack_text") is not None:
+                _score_traps(row, cases[row["id"]], row["pack_text"])
             if already:
                 row.update({k: v for k, v in old.items() if v is not None})
         except QuotaExhausted as exc:
@@ -493,7 +549,7 @@ def rescore(family: str, tier: str, system: str, llm: str, judge_spec: Optional[
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--family", required=True, choices=["contracts", "books", "traps"])
+    parser.add_argument("--family", required=True, choices=["contracts", "books", "traps", "traps2"])
     parser.add_argument("--tier", required=True, choices=["S", "M", "L"])
     parser.add_argument("--system", choices=["rule", "v3", "rag", "rag1", "full", "workers", "workers_nogate",
                                              "workers_certify", "coa"])

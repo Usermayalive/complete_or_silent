@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Optional
 
 from ..prompt import count_tokens
 
@@ -45,6 +45,7 @@ class ChainResult:
     abstained: bool
     notes: str
     chunks: int
+    chunks_read: int = 0
     calls: int = 0
     input_tokens: int = 0
     output_tokens: int = 0
@@ -66,12 +67,16 @@ def chunk(text: str, size: int = CHUNK_TOKENS) -> List[str]:
     return out
 
 
-def ask(text: str, question: str, provider, chunk_tokens: int = CHUNK_TOKENS, max_calls: int = 200) -> ChainResult:
+def ask(text: str, question: str, provider, chunk_tokens: int = CHUNK_TOKENS,
+        max_calls: Optional[int] = None) -> ChainResult:
+    """``max_calls``: None reads every chunk (the method). A cap stops early and records it
+    (``chunks_read < chunks``); the caller must not report a truncated run as complete."""
     parts = chunk(text, chunk_tokens)
     notes, res = "", ChainResult("", True, "", len(parts))
     for k, part in enumerate(parts, 1):
-        if res.calls >= max_calls:
+        if max_calls is not None and res.calls >= max_calls:
             break
+        res.chunks_read += 1
         user = (f"Question: {question}\nPart {k} of {len(parts)}.\n\nNotes so far:\n{notes or '(none)'}"
                 f"\n\n<document>\n{part}\n</document>")
         c = provider.complete(WORKER_SYSTEM, user, WORKER_SCHEMA)

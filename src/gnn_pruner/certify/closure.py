@@ -40,7 +40,9 @@ from .qualifiers import AMENDS, OVERRIDES, PRECEDENCE, QUALIFIES, QualifierGraph
 from .reverse import ReverseIndex
 
 FORWARD_LINKS = {"uses_definition": "definition", "refers_to": "reference"}
-SWEEP_MAX = 12            # sweep candidates per closure (one worker call)
+SWEEP_MAX = 12            # candidates per kind and seed (restatements; cues are all offered)
+SWEEP_BATCH = 12          # candidates per qualifier-worker call
+SWEEP_TOTAL = 48          # candidates judged per closure; more are counted as skipped (certificate: uncertified)
 CASCADES = {"answer", QUALIFIES, OVERRIDES, AMENDS}   # relations whose own links are followed
 MAX_ROUNDS = 3
 MAX_ITEMS = 24
@@ -81,6 +83,8 @@ class Closure:
     items: List[ClosureItem] = field(default_factory=list)     # accepted, in discovery order
     dropped: List[ClosureItem] = field(default_factory=list)   # judged irrelevant
     unverified: int = 0                                        # sweep candidates with no verdict
+    skipped: int = 0                                           # cues never offered (sweep budget)
+    screened: int = 0                                          # cues sharing no content word with the subject
     candidates: List[ClosureItem] = field(default_factory=list)  # sweep candidates offered (for reporting)
     forward: int = 0
     reverse: int = 0
@@ -96,7 +100,8 @@ class Closure:
     def summary(self) -> Dict:
         return {"complete": self.complete, "reason": self.reason, "rounds": self.rounds, "items": len(self.items),
                 "forward": self.forward, "reverse": self.reverse, "swept": self.swept,
-                "unverified": self.unverified, "dropped": len(self.dropped), "calls": self.calls}
+                "unverified": self.unverified, "skipped": self.skipped, "screened": self.screened,
+                "dropped": len(self.dropped), "calls": self.calls}
 
 
 # ----------------------------------------------------------------- helpers
@@ -155,9 +160,9 @@ class Expander:
                                        "structural"))
         return out
 
-    def backward(self, passage_id: str) -> List[ClosureItem]:
+    def backward(self, passage_id: str, reader: Set[str] = frozenset()) -> List[ClosureItem]:
         out = []
-        for link in self.reverse.pointing_at(passage_id):
+        for link in self.reverse.pointing_at(passage_id, reader):
             if link.kind == PRECEDENCE:
                 continue
             out.append(ClosureItem(link.passage, [link.sentence], link.kind, "reverse", passage_id, "structural"))
@@ -170,6 +175,11 @@ class Expander:
 
             self._index = SentenceIndex(self.tree)
         return self._index
+
+    def _idf(self, word: str) -> float:
+        bm = self.index.bm25
+        col = bm.vocab.get(word)
+        return float(bm.idf[col]) if col is not None else float(bm.max_idf)
 
     def restatements(self, passage_id: str, seed_words: List[str], exclude: Set[str]) -> List[ClosureItem]:
         """Sentences in the same contract that score highest for the seed's own words:
@@ -184,25 +194,35 @@ class Expander:
             for r in self.index.search(seed_words, ch, k=SWEEP_MAX):
                 sid = self.index.ids[r]
                 pid = self.tree.sentence(sid)[1]
-                if pid in exclude or pid == passage_id or scores[r] <= 0:
+                if sid in exclude or scores[r] <= 0:
                     continue
                 out.append(ClosureItem(pid, [sid], "restates", "sweep", passage_id, "unverified"))
         rows = {c.sentence_ids[0]: c for c in out}
         ranked = sorted(rows.values(), key=lambda c: -scores[self.index.position[c.sentence_ids[0]]])
         return ranked[:SWEEP_MAX]
 
-    def sweep_candidates(self, passage_id: str, subject: Set[str], exclude: Set[str]) -> List[ClosureItem]:
+    def sweep_candidates(self, passage_id: str, subject: Set[str], exclude: Set[str],
+                         closure: Optional["Closure"] = None) -> List[ClosureItem]:
+        """Every unlinked cue sentence of the seed's contract that shares a content word with
+        the subject, best overlap first (one per sentence). Cues sharing none are screened
+        out without a model and counted."""
         unit = self.unit_of(passage_id)
-        scored: List[Tuple[int, ClosureItem]] = []
+        scored: Dict[str, Tuple[int, ClosureItem]] = {}
         for link in self._unresolved_by_unit.get(unit, []):
-            if link.passage in exclude or link.passage == passage_id:
+            if link.sentence in exclude or link.sentence in scored:
                 continue
             text = self.tree.sentence(link.sentence)[0]
-            overlap = len(subject & set(_words(text)))
-            scored.append((overlap, ClosureItem(link.passage, [link.sentence], link.kind, "sweep", passage_id,
-                                                "unverified")))
-        scored.sort(key=lambda x: -x[0])
-        return [item for _, item in scored[:SWEEP_MAX]]
+            shared = subject & set(_words(text))
+            if not shared:
+                if closure is not None:
+                    closure.screened += 1
+                continue
+            # rare shared words weigh more: among many similar clauses the one naming the
+            # same party (a rare word) ranks first
+            weight = sum(self._idf(w) for w in shared)
+            scored[link.sentence] = (weight, ClosureItem(link.passage, [link.sentence], link.kind, "sweep",
+                                                         passage_id, "unverified"))
+        return [item for _, item in sorted(scored.values(), key=lambda x: -x[0])]
 
     def precedence(self, passage_id: str) -> List[ClosureItem]:
         return [ClosureItem(l.passage, [l.sentence], PRECEDENCE, "reverse", passage_id, "structural")
@@ -245,16 +265,35 @@ class Expander:
 
     # ------------------------------------------------------------------ run
     def expand(self, seeds: Sequence[Tuple[str, List[str]]]) -> Closure:
-        """``seeds``: (passage id, sentence ids) of the accepted findings."""
+        """``seeds``: (passage id, sentence ids) of the accepted findings.
+
+        Bookkeeping is per sentence: a passage may hold the clause and, in another sentence,
+        its own carve-out. Every unlinked cue of a swept contract that shares a content word
+        with the closure's subject is offered to the qualifier worker (in batches); cues that
+        exceed ``SWEEP_TOTAL`` are counted as ``skipped`` and the certificate says so."""
         closure = Closure([p for p, _ in seeds])
-        seen: Set[str] = {p for p, _ in seeds}
+        in_closure: Set[str] = {sid for _, sids in seeds for sid in sids}     # sentences already accepted
+        offered: Set[str] = set()                                            # sentences offered to the sweep
         seed_items = [ClosureItem(p, list(sids), "answer", "seed", "", "structural") for p, sids in seeds]
         subject: Set[str] = set()
         for p, sids in seeds:
             subject |= set(_words(self.tree.quote(sids))) | set(_title_words(self.tree, p))
+        swept_units: Set[str] = set()
+        precedence_units: Set[str] = set()
         frontier = list(seed_items)
-        has_override = False
-        while frontier:
+
+        def fresh(item: ClosureItem) -> Optional[ClosureItem]:
+            sids = [x for x in item.sentence_ids if x not in in_closure]
+            if not sids:
+                return None
+            in_closure.update(sids)
+            item.sentence_ids = sids
+            return item
+
+        while True:
+            frontier = [i for i in frontier if i.relation in CASCADES]   # only these can add anything
+            if not frontier:
+                break
             if closure.rounds >= self.max_rounds or len(closure.items) >= self.max_items:
                 closure.complete, closure.reason = False, "budget"
                 return closure
@@ -262,37 +301,46 @@ class Expander:
             new: List[ClosureItem] = []
             pending: List[ClosureItem] = []
             for item in frontier:
-                if item.relation not in CASCADES:
-                    continue
                 for cand in self.forward(item.passage):
-                    if cand.passage not in seen:
-                        seen.add(cand.passage)
+                    if fresh(cand):
                         closure.forward += 1
                         new.append(cand)
-                for cand in self.backward(item.passage):
-                    if cand.passage not in seen:
-                        seen.add(cand.passage)
+                for cand in self.backward(item.passage, set(item.sentence_ids)):
+                    if fresh(cand):
                         closure.reverse += 1
                         new.append(cand)
-                if self.do_sweep and closure.swept + len(pending) < SWEEP_MAX:
-                    taken = seen | {c.passage for c in pending}
-                    cues = self.sweep_candidates(item.passage, subject, taken)
-                    restated = self.restatements(item.passage, _words(self.tree.quote(item.sentence_ids)), taken)
-                    for cand in cues[: SWEEP_MAX // 2] + restated:    # half cues, the rest restatements
-                        if closure.swept + len(pending) < SWEEP_MAX and cand.passage not in {c.passage for c in pending}:
-                            pending.append(cand)
+                if not self.do_sweep:
+                    continue
+                taken = in_closure | offered | {x for c in pending for x in c.sentence_ids}
+                unit = self.unit_of(item.passage)
+                if unit not in swept_units:              # every cue of a contract is offered once
+                    swept_units.add(unit)
+                    for cand in self.sweep_candidates(item.passage, subject, taken, closure):
+                        pending.append(cand)
+                taken |= {x for c in pending for x in c.sentence_ids}
+                for cand in self.restatements(item.passage, _words(self.tree.quote(item.sentence_ids)), taken):
+                    pending.append(cand)
+            if len(pending) > SWEEP_TOTAL - closure.swept:
+                keep = max(0, SWEEP_TOTAL - closure.swept)
+                closure.skipped += len(pending) - keep
+                pending = pending[:keep]
+            offered.update(x for c in pending for x in c.sentence_ids)
             closure.swept += len(pending)
             closure.candidates.extend(pending)
-            for cand in self.judge(seed_items + closure.items, pending, closure):
-                if cand.passage not in seen:
-                    seen.add(cand.passage)
-                    new.append(cand)
-            if any(c.relation in (OVERRIDES, AMENDS) or c.found_by == "sweep" for c in new) and not has_override:
-                has_override = True
-                for item in frontier:
-                    for cand in self.precedence(item.passage):
-                        if cand.passage not in seen:
-                            seen.add(cand.passage)
+            for start in range(0, len(pending), SWEEP_BATCH):
+                for cand in self.judge(seed_items + closure.items, pending[start:start + SWEEP_BATCH], closure):
+                    if fresh(cand):
+                        new.append(cand)
+            # precedence clauses of every contract an override, amendment or restatement touches
+            touching = [i for i in new if i.relation in (OVERRIDES, AMENDS, "restates") or i.found_by == "sweep"]
+            if touching:
+                for i in touching + frontier:
+                    u = self.unit_of(i.passage)
+                    if u in precedence_units:
+                        continue
+                    precedence_units.add(u)
+                    for cand in self.precedence(i.passage):
+                        if fresh(cand):
                             new.append(cand)
             closure.items.extend(new)
             for cand in new:
@@ -312,16 +360,18 @@ def apply_to_board(board, closure: Closure) -> int:
     precedence / references, then bridges and definitions)."""
     from ..workers.board import Finding
 
-    have = {f.passage for f in board.accepted}
+    by_passage = {f.passage: f for f in board.accepted}
     added = 0
     for item in closure.items:
-        if item.passage in have:
-            for f in board.accepted:     # a bridge (phrase guess) gets the closure's structural relation
-                if f.passage == item.passage and f.role == "bridge":
-                    f.role, f.why = item.relation, f"{item.relation} ({item.found_by}); was a bridge"
+        f = by_passage.get(item.passage)
+        if f is not None:      # merge the closure's sentences into the finding already there
+            f.sentence_ids.extend(x for x in item.sentence_ids if x not in f.sentence_ids)
+            if f.role == "bridge":   # a phrase guess confirmed by structure takes the structural relation
+                f.role, f.why = item.relation, f"{item.relation} ({item.found_by}); was a bridge"
             continue
-        board.accepted.append(Finding(item.passage, list(item.sentence_ids), board._chapter_of(item.passage) or "",
-                                      "closure", f"{item.relation} ({item.found_by})", role=item.relation))
-        have.add(item.passage)
+        finding = Finding(item.passage, list(item.sentence_ids), board._chapter_of(item.passage) or "",
+                          "closure", f"{item.relation} ({item.found_by})", role=item.relation)
+        board.accepted.append(finding)
+        by_passage[item.passage] = finding
         added += 1
     return added

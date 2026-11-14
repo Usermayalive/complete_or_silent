@@ -65,14 +65,25 @@ def _read(tree, opened: List[str]) -> Dict:
 
 
 def closure_certificate(tree, closure: Closure, ordering: Ordering, opened: List[str],
-                        verification=None) -> Certificate:
+                        verification=None, abstained: bool = False, abstain_flags: Optional[List[str]] = None,
+                        missing_from_pack: int = 0, require_verification: bool = True) -> Certificate:
     reasons = []
-    if verification is not None:
-        if not verification.parsed:
-            reasons.append("the verifier's reply could not be read")
-        elif verification.unsupported:
-            reasons.append(f"{len(verification.unsupported)} of {verification.total} answer sentences are not "
-                           f"supported by their quotes")
+    if abstained:
+        reasons.append("the answer step abstained" + (f" ({', '.join(abstain_flags)})" if abstain_flags else ""))
+    elif verification is None:
+        if require_verification:
+            reasons.append("the answer was not verified")
+    elif not verification.parsed:
+        reasons.append("the verifier's reply could not be read")
+    elif verification.total == 0:
+        reasons.append("the verifier checked no sentence")
+    elif verification.unsupported:
+        reasons.append(f"{len(verification.unsupported)} of {verification.total} answer sentences are not "
+                       f"supported by their quotes")
+    if missing_from_pack:
+        reasons.append(f"{missing_from_pack} closure items did not fit the evidence pack")
+    if getattr(closure, "skipped", 0):
+        reasons.append(f"{closure.skipped} sweep candidates were never judged (sweep budget)")
     if not closure.complete:
         reasons.append(f"closure stopped at the {closure.reason} after {closure.rounds} rounds")
     if closure.unverified:
@@ -86,11 +97,20 @@ def closure_certificate(tree, closure: Closure, ordering: Ordering, opened: List
     return Certificate(kind, complete=closure.complete, read=_read(tree, opened), evidence=evidence, reasons=reasons)
 
 
-def absence_certificate(tree, calibration: Optional[Calibration], plan: ReadingPlan, certified: Optional[float],
-                        opened: List[str]) -> Certificate:
+def absence_certificate(tree, calibration: Optional[Calibration], plan: Optional[ReadingPlan],
+                        certified: Optional[float], opened: List[str], budget_reached: bool = False,
+                        failed: Optional[List[str]] = None) -> Certificate:
+    """``opened``: chapters a worker actually read. The budget running out, or a worker
+    failing, makes the outcome uncertified: chapters planned but not read cannot count."""
     read = _read(tree, opened)
+    if plan is None:
+        return Certificate(UNCERTIFIED, read=read, reasons=["no reading plan for this search"])
     if calibration is None or plan.basis == "uncalibrated":
         return Certificate(UNCERTIFIED, read=read, reasons=["no calibration for this document"])
+    if budget_reached:
+        return Certificate(UNCERTIFIED, read=read, reasons=["the call budget ran out before the search finished"])
+    if failed:
+        return Certificate(UNCERTIFIED, read=read, reasons=[f"{len(failed)} chapter workers failed"])
     if certified is None:
         return Certificate(UNCERTIFIED, read=read,
                            reasons=[f"fewer chapters opened than the calibration asks for ({plan.k} for "

@@ -317,7 +317,10 @@ def test_closure_certificate_is_honest_about_unverified_sweeps():
     assert cert.kind == UNCERTIFIED and any("not judged" in r for r in cert.reasons)
     assert cert.text().startswith("UNCERTIFIED") and cert.to_dict()["kind"] == UNCERTIFIED
     tree, cap, closure = _beta_closure(FakeQualifierJudge())               # judged: complete
-    cert = closure_certificate(tree, closure, order(tree, closure), [c.id for c in tree.chapters()])
+    unverified = closure_certificate(tree, closure, order(tree, closure), [c.id for c in tree.chapters()])
+    assert unverified.kind == UNCERTIFIED and "the answer was not verified" in unverified.reasons
+    cert = closure_certificate(tree, closure, order(tree, closure), [c.id for c in tree.chapters()],
+                               require_verification=False)
     assert cert.kind == CLOSURE and cert.complete and cert.evidence["superseded"] == 1
     assert "COMPLETE" in cert.text() and cert.read["chapters"] == cert.read["of"]
 
@@ -547,3 +550,21 @@ def test_type_canary_twins_in_the_document_are_blanked():
     assert cs[0].twins and tree.sentence(cs[0].twins[0])[0].startswith("ACME's total liability")
     outside = type_canaries(tree, [(["compet"], "Neither party shall compete in Norway.")], 1, random.Random(0), index)
     assert outside[0].twins == []
+
+
+# ------------------------------------------------------------- T6 clause templates
+
+def test_clause_template_validation():
+    from gnn_pruner.certify.clauselib import validate
+    assert validate("base", "Notwithstanding anything herein, the aggregate liability of {co} arising under this "
+                            "Agreement shall in no event exceed {amount}.") is None
+    assert validate("base", "The aggregate liability of {co} shall not exceed {amount} or $5,000,000 in total.") == "stray money"
+    assert validate("base", "The aggregate liability of {co} shall not exceed {amount} within 30 days of the claim.") == "stray number"
+    assert validate("exception", "Notwithstanding Section {n}, the liability of {co} for confidentiality breaches "
+                                 "shall be capped at {amount2}.") is None
+    assert validate("exception", "Notwithstanding the foregoing, {co}'s liability for confidentiality breaches is "
+                                 "capped at {amount2}.") == "missing Section {n}"
+    assert validate("unlinked", "Nothing in Section {n} shall limit the liability of {co} for fraud.") is not None
+    assert validate("unlinked", "The limitations above shall not apply to any fraud or wilful misconduct by {co}.") is None
+    assert validate("amend2", "Section {n} of the {title}, as amended by Amendment No. 1, is hereby replaced: the "
+                              "liability of {co} shall not exceed {amount3}.") is None

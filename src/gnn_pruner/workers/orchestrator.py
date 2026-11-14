@@ -83,6 +83,8 @@ class WorkerResult:
     ordering: object = None           # certify.precedence.Ordering
     verification: object = None       # certify.verify.Verification
     certificate: object = None        # certify.certificate.Certificate
+    opened: List[str] = field(default_factory=list)   # chapters a worker actually read (>= 1 parsed step, no error)
+    answer_pack: object = None        # the evidence pack the answer (and verifier) actually saw
     calls: int = 0
     input_tokens: int = 0
     output_tokens: int = 0
@@ -90,6 +92,8 @@ class WorkerResult:
 
     @property
     def pack(self):
+        if self.answer_pack is not None:
+            return self.answer_pack
         cfg = SCOPES[self.scope]
         return self.board.to_pack(cfg["items"], cfg["tokens"])
 
@@ -162,8 +166,12 @@ def ask(tree, question: str, provider, answer_provider=None, chapters: Optional[
             if not batch or not board.has_budget():
                 return
             with ThreadPoolExecutor(max_workers=max(1, min(parallel, len(batch)))) as pool:
-                result.reports.extend(pool.map(work, batch))
+                reports = list(pool.map(work, batch))
+            result.reports.extend(reports)
             done.extend(batch)
+            # "opened" (what a certificate may rest on): the worker made at least one parsed
+            # step and did not stop on the budget or an error
+            result.opened.extend(r.chapter for r in reports if r.steps and not r.error)
             batch = [c for c in board.follow if c not in done]
 
     def worth_opening(batch: List[str], query: List[str]) -> List[str]:
@@ -195,8 +203,10 @@ def ask(tree, question: str, provider, answer_provider=None, chapters: Optional[
             result.rounds_run += 1
     result.chapters_searched = done
     if result.reading is not None and gate is not None:
-        ranking = [c for c in gate.lexical(terms) if within is None or c in within]
-        result.certified = certified_alpha(calibration, result.reading, done, ranking)
+        allowed = [c for c in gate.chapters if within is None or c in within]
+        ranking = [c for c in gate.lexical(terms) if c in allowed]
+        ranking += [c for c in allowed if c not in set(ranking)]   # unmatched chapters last, as for the canaries
+        result.certified = certified_alpha(calibration, result.reading, result.opened, ranking)
     if board.status == "found":
         board.add_bridges()
     board.add_definitions()
@@ -217,9 +227,12 @@ def ask(tree, question: str, provider, answer_provider=None, chapters: Optional[
             result.ordering = order(tree, result.closure)
             if result.closure.items:
                 notes = (notes + "\n" if notes else "") + CLOSURE_NOTE
-                if sc == "single":       # a certified answer carries its qualifiers: the multi budget
-                    cfg = SCOPES["multi"]
+                # a certified answer must carry its whole closure: size the pack for it
+                needed = sum(1 for f in board.accepted if f.role not in ("bridge", "definition"))
+                cfg = {"items": max(SCOPES[sc]["items"], needed + 4),
+                       "tokens": max(SCOPES[sc]["tokens"], SCOPES["global"]["tokens"])}
         pack = board.to_pack(cfg["items"], cfg["tokens"])
+        result.answer_pack = pack
         answer = answer_question(pack, answer_provider or provider, abstain=False, notes=notes)
         board.calls += 1
         board.input_tokens += answer.input_tokens or 0
@@ -231,14 +244,22 @@ def ask(tree, question: str, provider, answer_provider=None, chapters: Optional[
 
             if not answer.abstained and answer.answer:
                 result.verification = verify(answer.answer, pack, answer_provider or provider, board)
-            result.certificate = closure_certificate(tree, result.closure, result.ordering, done, result.verification)
+            in_pack = {i.node_id for i in pack.items}
+            missing = [i for i in result.closure.items
+                       if i.relation not in ("definition", "reference") and i.passage not in in_pack]
+            result.certificate = closure_certificate(
+                tree, result.closure, result.ordering, result.opened, result.verification,
+                abstained=answer.abstained, abstain_flags=answer.flags, missing_from_pack=len(missing))
     else:
         result.answer.abstained = True
         result.answer.flags = ["no_evidence"]
         if certify:
             from ..certify.certificate import absence_certificate
 
-            result.certificate = absence_certificate(tree, calibration, result.reading, result.certified, done)
+            failed = [r.chapter for r in result.reports if r.error]
+            result.certificate = absence_certificate(tree, calibration, result.reading, result.certified,
+                                                     result.opened, budget_reached=board.status == "budget_reached",
+                                                     failed=failed)
     result.calls, result.input_tokens, result.output_tokens = board.calls, board.input_tokens, board.output_tokens
     result.seconds = round(time.perf_counter() - started, 2)
     return result

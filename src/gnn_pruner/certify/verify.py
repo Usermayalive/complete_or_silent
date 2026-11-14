@@ -63,8 +63,8 @@ def verify(answer_text: str, pack, provider, board=None) -> Verification:
         labels = {i.label for i in pack.items}
         for s in data.get("sentences", []):
             by = [str(b).strip("[] ") for b in s.get("by", [])]
-            out.sentences.append({"text": str(s.get("text", "")), "by": by,
-                                  "supported": bool(s.get("supported")) and all(b in labels for b in by)})
+            out.sentences.append({"text": str(s.get("text", "")), "by": by,     # supported = named, known quotes
+                                  "supported": bool(s.get("supported")) and bool(by) and all(b in labels for b in by)})
     except (json.JSONDecodeError, TypeError, AttributeError):
         out.parsed = False
     return out

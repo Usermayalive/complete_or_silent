@@ -79,8 +79,9 @@ def reading_plan(calibration: Optional[Calibration], question: str, named: List[
 def certified_alpha(calibration: Optional[Calibration], plan: ReadingPlan, opened: List[str],
                     ranking: List[str]) -> Optional[float]:
     """The highest alpha whose calibrated k chapters (by ``ranking``, the lexical order the
-    canaries were ranked with, restricted to the unit when the basis is ``unit``) were all
-    opened; None if none was reached or the plan has no calibration."""
+    canaries were ranked with, restricted to the unit when the basis is ``unit``, and padded
+    with the chapters the words do not match) were all opened; None if none was reached or
+    the plan has no calibration. ``opened`` must hold only chapters a worker actually read."""
     if calibration is None or plan.basis == "uncalibrated":
         return None
     opened_set = set(opened)
@@ -90,6 +91,9 @@ def certified_alpha(calibration: Optional[Calibration], plan: ReadingPlan, opene
     best = None
     for a in calibration.alphas():
         k = calibration.k(a, cls, plan.basis)
-        if set(ranking[:k]) <= opened_set and (best is None or a > best):
+        top = ranking[:k]
+        # all k must exist and be opened: a ranking shorter than k (chapters the words do
+        # not match are missing from a lexical ranking) never certifies
+        if len(top) == k and set(top) <= opened_set and (best is None or a > best):
             best = a
     return best

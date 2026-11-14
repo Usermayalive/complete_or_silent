@@ -84,6 +84,26 @@ def _in_schedule(tree, passage: str) -> bool:
     return bool(LIFT_TO_CHAPTER.match(_chapter_title(tree, passage)))
 
 
+_PREVAIL = re.compile(r"\b(shall|will|should)?\s*(prevail|control|govern|take[s]?\s+precedence)\b", re.I)
+_SCHEDULE_WORD = re.compile(r"\b(schedules?|exhibits?|annex(?:es)?|appendi(?:x|ces))\b", re.I)
+_BODY_WORD = re.compile(r"\b(this agreement|the agreement|the body|main body|these terms)\b", re.I)
+
+
+def precedence_winner(text: str) -> str:
+    """"schedules" | "body" | "": the side named closest before the prevail verb (its
+    subject). "In the event of a conflict between the Schedules and this Agreement, this
+    Agreement shall prevail" -> "body"."""
+    m = _PREVAIL.search(text)
+    if not m:
+        return ""
+    before = text[:m.start()]
+    last_s = max((x.end() for x in _SCHEDULE_WORD.finditer(before)), default=-1)
+    last_b = max((x.end() for x in _BODY_WORD.finditer(before)), default=-1)
+    if last_s < 0 and last_b < 0:
+        return ""
+    return "schedules" if last_s > last_b else "body"
+
+
 def order(tree, closure: Closure, seeds: List[ClosureItem] = None) -> Ordering:
     """Rank the seeds and the closure items. ``seeds`` default to the closure's seed
     passages as answer items."""
@@ -94,11 +114,9 @@ def order(tree, closure: Closure, seeds: List[ClosureItem] = None) -> Ordering:
         rulings[s.passage] = Ruling(s, GOVERNS)
     for item in closure.items:
         if item.relation == PRECEDENCE:
-            text = tree.quote(item.sentence_ids)
-            if _SCHEDULES_WIN.search(text):
-                out.precedence_rule = "schedules"
-            elif _BODY_WINS.search(text):
-                out.precedence_rule = "body"
+            rule = precedence_winner(tree.quote(item.sentence_ids))
+            if rule:
+                out.precedence_rule = rule
             rulings[item.passage] = Ruling(item, RULE, "precedence clause")
         elif item.relation == AMENDS:
             rulings[item.passage] = Ruling(item, GOVERNS, "later amendment")
@@ -116,7 +134,7 @@ def order(tree, closure: Closure, seeds: List[ClosureItem] = None) -> Ordering:
         if item.relation != AMENDS:
             continue
         target = rulings.get(item.via)
-        if target is None or target.status != GOVERNS:
+        if target is None or target.status not in (GOVERNS, APPLIES):   # a deleted carve-out is superseded too
             continue
         d_amend, d_target = _date(tree, item.passage), _date(tree, item.via)
         if d_amend and d_target and d_amend < d_target:

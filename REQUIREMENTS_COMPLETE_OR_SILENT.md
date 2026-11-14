@@ -63,15 +63,15 @@ the NLLP workshop.
 
 | ID | Requirement | Status |
 |---|---|---|
-| U2.1 | Qualifier cues → kinds: qualifies / overrides / amends / precedence | 🟡 written, 5 tests |
-| U2.2 | Targets: section, schedule, defined term, other contract, "the foregoing" | 🟡 written |
-| U2.3 | Targets resolve inside the sentence's own contract (its slices and schedules) | 🟡 written, tested |
-| U2.4 | Amendments resolve references into the contract their title names | 🟡 written, tested |
-| U2.5 | Cues without a target are kept as unresolved (for the sweep) | 🟡 written, tested |
+| U2.1 | Qualifier cues → kinds: qualifies / overrides / amends / precedence | ✅ tested; exercised by the trap benchmark |
+| U2.2 | Targets: section, schedule, defined term, other contract, "the foregoing" | ✅ tested |
+| U2.3 | Targets resolve inside the sentence's own contract (its slices and schedules) | ✅ tested |
+| U2.4 | Amendments resolve references into the contract their title names | ✅ tested; amendment-of-amendment fixed (traps) |
+| U2.5 | Cues without a target are kept as unresolved (for the sweep) | ✅ tested |
 | U2.6 | Filter noisy defined terms (party names, "Agreement", "Parties") | ✅ 197 → 18 term links on the 130-page room |
 | U2.7 | Link precision ≥ 90% on a hand-checked sample of real links | 🟡 sheet ready: `docs/qualifier_check_sheet.md` (all 54 resolved section / term / schedule links of the 130-page room); **you:** rate it |
 | U3.1 | Reverse index: node → every link pointing at it, its ancestors below the chapter, or its descendants | ✅ written, tested (far override, amendment, other contract excluded) |
-| U3.2 | Reverse-index recall on planted far exceptions ≥ 95% | ⬜ |
+| U3.2 | Reverse-index recall on planted far exceptions ≥ 95% | ✅ 96 / 96 far exceptions (traps S + M) |
 | U4.1 | Mutation canaries per class (fact / clause / qualifier) from the document's own sentences | ✅ numbers and names mutated; queried by common words; plus type canaries for clause-type questions (see READINGS) |
 | U4.2 | Canaries planted in a hidden copy of the index; the real index is never changed | ✅ tested; source sentence blanked in the copy |
 | U4.3 | Gate rank of each canary's chapter recorded | ✅ room rank and within-unit rank |
@@ -107,11 +107,11 @@ the NLLP workshop.
 | T2 | Override chains (an amendment of an amendment) | ✅ built; 83/84, superseded marked |
 | T3 | Unlinked qualifiers (no section number) | ✅ built; 84/84 offered to the qualifier worker |
 | T4 | Precedence conflicts with an order-of-precedence clause | ✅ built; 84/84 offered |
-| T5 | Existence yes / no, in one contract and room-wide | 🟡 one contract built ("no" = a clause type the contract truly lacks); room-wide not yet |
-| T6 | Built by mutating real CUAD clauses; different seeds and texts from the calibration canaries | 🟡 templated now. Rule-based rewriting of real CUAD caps tried and rejected (3–6 usable of 672, broken grammar). Plan: model-rewritten real clauses, 1 call per trap, auto-checked (company + amount present, no other amounts) |
+| T5 | Existence yes / no, in one contract and room-wide | ✅ traps2: per contract + room-wide (escrow; few per room, see data card) |
+| T6 | Built by mutating real CUAD clauses; different seeds and texts from the calibration canaries | ✅ traps2: real CUAD clauses rewritten by a model into validated templates (10–24 per role), sources outside the S/M rooms |
 | T7 | Gold per question: answer, required qualifiers, correct certificate | ✅ |
-| T8 | ≥ 300 questions per size tier (S, M; L where the budget allows) | 🟡 S 60, M 360; S to be raised, L not built |
-| T9 | Data card and licences (CUAD CC BY 4.0, NarrativeQA Apache 2.0, Gutenberg public domain) | ⬜ |
+| T8 | ≥ 300 questions per size tier (S, M; L where the budget allows) | 🟡 traps2: S 62, M 361, L 661 (8,782 pp). S capped by realistic density (≤ 12 traps / contract); 300 at S needs several 100-page rooms |
+| T9 | Data card and licences (CUAD CC BY 4.0, NarrativeQA Apache 2.0, Gutenberg public domain) | ✅ `docs/TRAPS_DATA_CARD.md` |
 
 ## 5. Metrics
 
@@ -243,14 +243,14 @@ deadline.
 
 | ID | Task | When | Status |
 |---|---|---|---|
-| H-1 | Say go for P0 + P1 | now | ⬜ |
+| H-1 | Say go for P0 + P1 | now | ✅ 2026-11-12 |
 | H-2 | Read the 8–10 closest papers | week 1–2 | ⬜ |
 | H-3 | Approve about $200–400 API budget for B1 / B6 | before week 5 | ⬜ |
 | H-4 | Find 2 annotators (law students ideal) | by week 4 | ⬜ |
 | H-5 | Rate the pilot sheet `docs/fact_check_sheet.md` | week 2 | ⬜ |
 | H-6 | Ask the supervisor (Dr. Sumit Kumar Gupta) to review and co-author | now | ⬜ |
 | H-7 | Agree the author order | before the draft | ⬜ |
-| H-8 | Create the new GitHub repository and send the URL | now | ⬜ |
+| H-8 | Create the new GitHub repository and send the URL | now | ✅ Usermayalive/complete_or_silent, pushed 2026-11-14 |
 | H-9 | Review and edit the draft | weeks 7–9 | ⬜ |
 
 ## 12. Overall status

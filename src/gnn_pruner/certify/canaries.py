@@ -157,24 +157,14 @@ def conformal_k(ranks: Sequence[int], alpha: float, chapters: int) -> int:
 
 
 def clopper_pearson_upper(misses: int, n: int, confidence: float = 0.95) -> float:
-    """One-sided upper bound on a rate from ``misses`` out of ``n`` (exact, by bisection)."""
-    if n == 0:
+    """One-sided exact (Clopper-Pearson) upper bound on a rate from ``misses`` out of ``n``:
+    the ``confidence`` quantile of Beta(misses + 1, n - misses). (A direct binomial sum
+    overflowed for n above about 1,000.)"""
+    if n == 0 or misses >= n:
         return 1.0
-    if misses >= n:
-        return 1.0
-    target = 1 - confidence
+    from scipy.stats import beta
 
-    def cdf(p: float) -> float:  # P(X <= misses) for X ~ Binomial(n, p)
-        return sum(math.comb(n, i) * p ** i * (1 - p) ** (n - i) for i in range(misses + 1))
-
-    lo, hi = misses / n, 1.0
-    for _ in range(60):
-        mid = (lo + hi) / 2
-        if cdf(mid) > target:
-            lo = mid
-        else:
-            hi = mid
-    return hi
+    return float(beta.ppf(confidence, misses + 1, n - misses))
 
 
 # ----------------------------------------------------------------- canaries
@@ -275,10 +265,13 @@ def _rank_batch(index, batch: List[Canary]) -> None:
         scores = bm25.scores(c.query)
         best = np.zeros(len(names), dtype=np.float32)
         np.maximum.at(best, idx, scores)
-        own = best[lookup[c.chapter]]
-        c.rank = int((best > own).sum()) + 1
+        mine = lookup[c.chapter]
+        own = best[mine]
+        # ties count against the canary (pessimistic): a chapter scoring as high as the
+        # canary's is opened no later than it; a canary nothing matches ranks last
+        c.rank = int((best >= own).sum())
         unit_idx = [lookup[u] for u in c.unit if u in lookup]
-        c.rank_in_unit = int((best[unit_idx] > own).sum()) + 1
+        c.rank_in_unit = int((best[unit_idx] >= own).sum()) if unit_idx else 1
 
 
 def _class_calibration(ranks: List[int], alphas: Sequence[float], chapters: int) -> ClassCalibration:

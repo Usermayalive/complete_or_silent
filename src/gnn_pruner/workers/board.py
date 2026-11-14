@@ -200,7 +200,7 @@ class Board:
         for k, f in enumerate((answers + closure + bridges + defs)[:max_items], 1):
             t = count_tokens(self.quote(f))
             if max_tokens is not None and items and used + t > max_tokens:
-                break
+                continue     # a later, shorter item may still fit
             used += t
             node = self.tree.node(f.passage)
             span = node.span or [0, 0]

@@ -46,7 +46,16 @@ from ..longbench import EVAL, OUT, PAGE_CHARS, TIERS, Unit, _insert, load_contra
 
 KINDS = ("far_exception", "override_chain", "unlinked", "precedence", "existence")
 DEFAULT_COUNTS = {"S": 60, "M": 300, "L": 300}       # traps per tier
-PER_CONTRACT = 6                                     # at most this many traps in one contract
+TRAPS2_PER_CONTRACT = 12                             # traps2: realistic density
+PER_CONTRACT = 6                                     # at most this many traps in one contract (raised when a tier
+                                                     # needs more traps than its contracts allow at this density)
+ROOM_ESCROW = [2, 3]                                 # room-wide questions: contracts that get a planted escrow clause
+ESCROW_CATEGORY = "Source Code Escrow"
+ESCROW_Q = "Which contracts in the data room contain a source code escrow clause?"
+ROOM_ABSENT_Q = "Which contracts in the data room contain a {clause} clause?"
+ESCROW = ["{co} shall deposit the source code of the licensed software with an independent escrow agent, to be "
+          "released to the licensee if {co} becomes insolvent or ceases to support the software."]
+_ESCROW = re.compile(r"escrow", re.I)
 FIRST_SECTION = 41                                   # base clauses are numbered from here, per contract
 
 COMPANIES = ["Halvorsen", "Quintrell", "Marbury", "Oduya", "Vasquez", "Petrakis", "Lindgren", "Abernathy",
@@ -100,9 +109,17 @@ def _amount(rng: random.Random) -> str:
     return f"{rng.choice([50, 100, 150, 200, 250, 300, 400, 500, 750])},000 USD"
 
 
-def _company(rng: random.Random, used: set) -> str:
+THIRD = ["Bay", "Crest", "Field", "Gate", "Hill", "Mark", "Point", "Ridge", "Stone", "Vale", "Water", "Wood"]
+
+
+def _company(rng: random.Random, used: set, extended: bool = False) -> str:
+    """A fresh company name. ``extended`` (traps2): a third word, ~18,000 names; v1 keeps
+    the two-word names so its rooms stay byte-identical."""
     for _ in range(1000):
-        co = f"{rng.choice(COMPANIES)} {rng.choice(SECOND)} {rng.choice(SUFFIX)}"
+        if extended:
+            co = f"{rng.choice(COMPANIES)} {rng.choice(SECOND)}{rng.choice(THIRD).lower()} {rng.choice(SUFFIX)}"
+        else:
+            co = f"{rng.choice(COMPANIES)} {rng.choice(SECOND)} {rng.choice(SUFFIX)}"
         if co not in used:
             used.add(co)
             return co
@@ -125,7 +142,41 @@ def _case(cid: str, kind: str, question: str, gold: List[str], answerable: bool,
             "answerable": answerable, "reference_answer": reference, "tags": {"family": "traps", "kind": kind, **tags}}
 
 
-def plant_traps(units: List[Unit], rng: random.Random, counts: Dict[str, int] = DEFAULT_COUNTS) -> List[Dict]:
+def builtin_texts() -> Dict[str, List[str]]:
+    return {"base": BASE, "exception": EXCEPTION_LINKED, "side": EXCEPTION_SIDE, "unlinked": UNLINKED,
+            "amend1": AMEND1, "amend2": AMEND2, "schedule_cap": SCHEDULE_CAP, "precedence": PRECEDENCE,
+            "change_of_control": EXISTS, "escrow": ESCROW}
+
+
+def texts_from_library(library: Optional[Dict], min_per_role: int = 5) -> Dict[str, List[str]]:
+    """Real-clause templates (``clauselib``) re-validated with the current rules; a role with
+    fewer than ``min_per_role`` usable templates keeps the built-in wording."""
+    texts = builtin_texts()
+    if not library:
+        return texts
+    from .clauselib import derived, validate
+
+    extra = derived(library)
+    for role in set(library.get("roles", {})) | set(extra):
+        usable = [i["text"] for i in library.get("roles", {}).get(role, []) if validate(role, i["text"]) is None]
+        usable += [t for t in extra.get(role, []) if t not in usable]
+        if len(usable) >= min_per_role:
+            texts[role] = usable
+    return texts
+
+
+def _choice(rng: random.Random, options: List[str]) -> str:
+    """rng.choice, but a single option draws nothing. Used only where v1 drew nothing (the
+    precedence clause, escrow); elsewhere v1 called rng.choice even on one-item lists, so
+    rng.choice is kept to leave the v1 rooms byte-identical."""
+    return options[0] if len(options) == 1 else rng.choice(options)
+
+
+def plant_traps(units: List[Unit], rng: random.Random, counts: Dict[str, int] = DEFAULT_COUNTS,
+                texts: Optional[Dict[str, List[str]]] = None, room_wide: bool = False) -> List[Dict]:
+    """``room_wide``: also plant and ask the room-wide existence questions (T5; traps2 only,
+    so the v1 rooms stay byte-identical)."""
+    T = texts or builtin_texts()
     cases: List[Dict] = []
     used_co: set = set()
     next_section: Dict[str, int] = {}
@@ -133,9 +184,14 @@ def plant_traps(units: List[Unit], rng: random.Random, counts: Dict[str, int] = 
     schedules: Dict[str, int] = {}
     extra_units: List[Unit] = []
     planted_coc: set = set()
+    escrow_planted: set = set()
+    precedence_text: Dict[str, str] = {}
+
+    cap = {"n": PER_CONTRACT}
+    has_precedence: set = set()
 
     def pick(pool: List[Unit]) -> Unit:
-        candidates = [u for u in pool if per_unit.get(u.key, 0) < PER_CONTRACT] or pool
+        candidates = [u for u in pool if per_unit.get(u.key, 0) < cap["n"]] or pool
         u = rng.choice(candidates)
         per_unit[u.key] = per_unit.get(u.key, 0) + 1
         return u
@@ -149,10 +205,14 @@ def plant_traps(units: List[Unit], rng: random.Random, counts: Dict[str, int] = 
         pool = [u for u in units if u.tier == tier]
         if not pool:
             continue
-        for i in range(counts.get(tier, 0)):
+        want = counts.get(tier, 0)
+        if room_wide:     # traps2: at most TRAPS2_PER_CONTRACT traps in a contract (a real contract has few
+            cap["n"] = TRAPS2_PER_CONTRACT          # caps); a small room then holds fewer traps than asked
+            want = min(want, TRAPS2_PER_CONTRACT * len(pool))
+        for i in range(want):
             kind = KINDS[i % len(KINDS)]
             u = pick(pool)
-            co = _company(rng, used_co)
+            co = _company(rng, used_co, room_wide)
             amount, amount2, amount3 = _amount(rng), _amount(rng), _amount(rng)
             while amount2 == amount:
                 amount2 = _amount(rng)
@@ -165,7 +225,7 @@ def plant_traps(units: List[Unit], rng: random.Random, counts: Dict[str, int] = 
             if kind == "existence":
                 yes = i % 2 == 0
                 if yes:
-                    s = rng.choice(EXISTS).format(**v)
+                    s = rng.choice(T["change_of_control"]).format(**v)
                     _insert(u, s, rng, 0.2, 0.9)
                     planted_coc.add(u.key)
                     cases.append(_case(cid, kind, EXIST_Q.format(**v), [s], True, "Yes", required=[], superseded=[],
@@ -178,27 +238,30 @@ def plant_traps(units: List[Unit], rng: random.Random, counts: Dict[str, int] = 
             # every other kind starts from a numbered base clause, plus a look-alike elsewhere
             n = section_number(u)
             v["n"] = n
-            base = rng.choice(BASE).format(**v)
+            base = rng.choice(T["base"]).format(**v)
             pos_base = _section(u, n, base, rng, 0.05, 0.35)
             others = [x for x in pool if x is not u]
             if others:
-                d = dict(v, co=_company(rng, used_co), amount=_amount(rng))
-                _section(rng.choice(others), section_number(u) if False else FIRST_SECTION + 30 + i % 7,
-                         rng.choice(BASE).format(**d), rng, 0.05, 0.95)
+                d = dict(v, co=_company(rng, used_co, room_wide), amount=_amount(rng))
+                other = rng.choice(others)
+                # v1 numbered look-alikes from a fixed range (can collide with real trap
+                # numbers); traps2 numbers them uniquely within the contract
+                number = section_number(other) if room_wide else FIRST_SECTION + 30 + i % 7
+                _section(other, number, rng.choice(T["base"]).format(**d), rng, 0.05, 0.95)
             tags["section"] = n
 
             if kind == "far_exception":
                 where = ("same", "schedule", "side")[i % 3]
                 if where == "same":
-                    q = rng.choice(EXCEPTION_LINKED).format(**v)
+                    q = rng.choice(T["exception"]).format(**v)
                     _insert(u, q, rng, 0.75, 0.98)
                 elif where == "schedule":
-                    q = rng.choice(EXCEPTION_LINKED).format(**v)
+                    q = rng.choice(T["exception"]).format(**v)
                     letter = chr(ord("A") + schedules.get(u.key, 0))
                     schedules[u.key] = schedules.get(u.key, 0) + 1
                     _schedule(u, letter, q)
                 else:
-                    q = rng.choice(EXCEPTION_SIDE).format(**v)
+                    q = rng.choice(T["side"]).format(**v)
                     side = Unit(f"{u.key}-side-{n}", f"Side Letter to the {u.title}", [q], tier=tier, chars=len(q))
                     extra_units.append(side)
                     tags["second_unit"] = side.title
@@ -207,8 +270,8 @@ def plant_traps(units: List[Unit], rng: random.Random, counts: Dict[str, int] = 
                                    f"{amount}, except {amount2} for breaches of confidentiality or data protection",
                                    required=[q], superseded=[], certificate="closure", **tags))
             elif kind == "override_chain":
-                a1 = rng.choice(AMEND1).format(**v)
-                a2 = rng.choice(AMEND2).format(**v)
+                a1 = rng.choice(T["amend1"]).format(**v)
+                a2 = rng.choice(T["amend2"]).format(**v)
                 u1 = Unit(f"{u.key}-am1-{n}", f"Amendment No. 1 to the {u.title}", [a1], tier=tier, chars=len(a1))
                 u2 = Unit(f"{u.key}-am2-{n}", f"Amendment No. 2 to the {u.title}", [a2], tier=tier, chars=len(a2))
                 extra_units += [u1, u2]
@@ -216,26 +279,43 @@ def plant_traps(units: List[Unit], rng: random.Random, counts: Dict[str, int] = 
                 cases.append(_case(cid, kind, QUESTION.format(**v), [base, a1, a2], True, amount3,
                                    required=[a2], superseded=[base, a1], certificate="closure", **tags))
             elif kind == "unlinked":
-                q = rng.choice(UNLINKED).format(**v)
+                q = rng.choice(T["unlinked"]).format(**v)
                 _insert(u, q, rng, 0.75, 0.98)
                 cases.append(_case(cid, kind, QUESTION.format(**v), [base, q], True,
                                    f"{amount}, but no limit for fraud or wilful misconduct",
                                    required=[q], superseded=[], certificate="closure", **tags))
             elif kind == "precedence":
-                cap = rng.choice(SCHEDULE_CAP).format(**v)
+                cap_text = rng.choice(T["schedule_cap"]).format(**v)
                 letter = chr(ord("A") + schedules.get(u.key, 0))
                 schedules[u.key] = schedules.get(u.key, 0) + 1
-                _schedule(u, letter, cap)
-                p = PRECEDENCE[0]
-                if not any(p in b for b in u.blocks):
-                    _insert(u, p, rng, 0.4, 0.7)
-                cases.append(_case(cid, kind, QUESTION.format(**v), [base, cap, p], True, amount2,
-                                   required=[cap, p], superseded=[base], certificate="closure", **tags))
+                _schedule(u, letter, cap_text)
+                if u.key not in has_precedence:          # one precedence clause per contract
+                    has_precedence.add(u.key)
+                    precedence_text[u.key] = _choice(rng, T["precedence"])
+                    _insert(u, precedence_text[u.key], rng, 0.4, 0.7)
+                p = precedence_text[u.key]
+                cases.append(_case(cid, kind, QUESTION.format(**v), [base, cap_text, p], True, amount2,
+                                   required=[cap_text, p], superseded=[base], certificate="closure", **tags))
+
+        if not room_wide:
+            continue
+        # T5: room-wide existence. Escrow clauses are planted in a few contracts of this tier;
+        # the gold is every contract of the room that has one (planted, or labelled by CUAD).
+        candidates = [x for x in pool if x.key not in escrow_planted]
+        for x in rng.sample(candidates, min(rng.choice(ROOM_ESCROW), len(candidates))):
+            co = _company(rng, used_co, room_wide)
+            _insert(x, _choice(rng, T["escrow"]).format(co=co), rng, 0.2, 0.9)
+            escrow_planted.add(x.key)
+        # the question is asked once per tier, after planting (the gold is recomputed below)
+        cases.append(_case(f"trap-room_existence-{tier}-{len(cases)}", "room_existence", ESCROW_Q, [], True, "",
+                           required=[], superseded=[], certificate="closure", unit_tier=tier, clause="escrow",
+                           expected_units=[]))
     # "No" questions: a (contract, clause type) pair where the contract truly lacks the
     # clause: CUAD labels nothing for it, no trap planted it, and none of its key words
     # occur in the contract (amendments and side letters included). Chosen after all
     # planting, with its own generator, so the planted text does not depend on it.
     pick_rng = random.Random(rng.random())
+    asked: set = set()
     attached = {}
     for x in extra_units:
         attached.setdefault(x.key.rsplit("-", 2)[0], []).append(x)
@@ -254,13 +334,65 @@ def plant_traps(units: List[Unit], rng: random.Random, counts: Dict[str, int] = 
                 if x.meta.get("spans", {}).get(cat) or re.search(pattern, text, re.I):
                     continue
                 pairs.append((x, cat, clause))
+        if room_wide:     # traps2: never ask the same (contract, clause type) twice; drop the case instead
+            pairs = [p for p in pairs if (p[0].key, p[1]) not in asked]
+            if not pairs:
+                c["tags"]["drop"] = True
+                continue
         if not pairs:
             raise RuntimeError(f"no contract lacks any of the clause types in tier {tier}")
         target, cat, clause = pick_rng.choice(pairs)
+        asked.add((target.key, cat))
         c["question"] = EXIST_Q_ANY.format(title=target.title, clause=clause)
         c["tags"].update(unit=target.title, absent_category=cat)
+    # Room-wide gold: every contract of the tier's room holding an escrow clause (planted, or
+    # labelled by CUAD, or matching the word), and one "absent" question per tier for a
+    # clause type no contract of the room has.
+    for c in cases:
+        if c["tags"]["kind"] != "room_existence" or c["tags"].get("clause") != "escrow":
+            continue
+        tier = c["tags"]["unit_tier"]
+        room = [x for x in units if TIERS.index(x.tier) <= TIERS.index(tier)]
+        holders = [x for x in room if x.key in escrow_planted or x.meta.get("spans", {}).get(ESCROW_CATEGORY)
+                   or any(_ESCROW.search(b) for b in x.blocks)]
+        c["tags"]["expected_units"] = [x.title for x in holders]
+        c["answerable"] = bool(holders)
+        c["reference_answer"] = "; ".join(x.title for x in holders)
+        c["tags"]["certificate"] = "closure" if holders else "absence"
+    for tier in TIERS:
+        if not counts.get(tier) or not room_wide:
+            continue
+        room = [x for x in units if TIERS.index(x.tier) <= TIERS.index(tier)]
+        for cat, clause, pattern in ABSENT_TYPES:
+            text_hit = any(re.search(pattern, b, re.I) for x in room for b in x.blocks + [
+                bb for y in extra_units if y.key.rsplit("-", 2)[0] == x.key for bb in y.blocks])
+            if not text_hit and not any(x.meta.get("spans", {}).get(cat) for x in room):
+                cases.append(_case(f"trap-room_existence-{tier}-{len(cases)}", "room_existence",
+                                   ROOM_ABSENT_Q.format(clause=clause), [], False, "None", required=[], superseded=[],
+                                   certificate="absence", unit_tier=tier, clause=clause, expected_units=[]))
+                break
     units.extend(extra_units)
-    return cases
+    return [c for c in cases if not c["tags"].get("drop")]
+
+
+def _spans(text: str, title: str) -> List[Tuple[int, int]]:
+    """(start, end) of every document "## {title}" in the rendered room (several
+    amendments of one contract share a title)."""
+    out, at = [], text.find(f"\n## {title}\n")
+    while at >= 0:
+        end = text.find("\n## ", at + 4)
+        out.append((at, end if end >= 0 else len(text)))
+        at = text.find(f"\n## {title}\n", at + 4)
+    return out
+
+
+def _find_in(text: str, needle: str, spans: List[Tuple[int, int]]) -> int:
+    for a, b in spans:
+        if a >= 0:
+            at = text.find(needle, a, b)
+            if at >= 0:
+                return at
+    return -1
 
 
 def render(units: List[Unit], tier: str) -> str:
@@ -270,11 +402,15 @@ def render(units: List[Unit], tier: str) -> str:
 
 
 def build(seed: int = 7, counts: Dict[str, int] = DEFAULT_COUNTS, units: Optional[List[Unit]] = None,
-          write: bool = True) -> Tuple[Dict, Dict[str, str], Dict[str, List[Dict]]]:
-    """Returns (report, {tier: text}, {tier: rows})."""
+          write: bool = True, name: str = "traps", library: Optional[Dict] = None
+          ) -> Tuple[Dict, Dict[str, str], Dict[str, List[Dict]]]:
+    """Returns (report, {tier: text}, {tier: rows}). ``name``: the family written
+    (``traps`` = v1, templated; ``traps2`` = real-clause templates from ``clauselib``)."""
     units = copy.deepcopy(units) if units is not None else load_contracts(seed)
     rng = random.Random(seed + 11)
-    cases = plant_traps(units, rng, counts)
+    cases = plant_traps(units, rng, counts, texts_from_library(library), room_wide=name != "traps")
+    for c in cases:
+        c["tags"]["family"] = name
     report, texts, rows_by_tier = {}, {}, {}
     for tier in TIERS:
         if not counts.get(tier):
@@ -285,10 +421,19 @@ def build(seed: int = 7, counts: Dict[str, int] = DEFAULT_COUNTS, units: Optiona
         for c in cases:
             if TIERS.index(c["tags"]["unit_tier"]) > TIERS.index(tier):
                 continue
+            if c["tags"]["kind"] == "room_existence" and c["tags"]["unit_tier"] != tier:
+                continue     # a room-wide question belongs to the room it was asked about
             row = json.loads(json.dumps(c))
-            row["document"] = str(Path("..") / ".." / "data" / "longbench" / f"traps_{tier}.md")
+            row["document"] = str(Path("..") / ".." / "data" / "longbench" / f"{name}_{tier}.md")
             row["tags"]["doc_tier"] = tier
-            positions = [text.find(g) for g in row["gold_evidence"]]
+            # positions inside the case's own documents (the same precedence or existence
+            # sentence can occur in several contracts; the first hit in the room is not it)
+            unit = row["tags"].get("unit")
+            related = [m.group(1) for m in re.finditer(r"\n## ((?:Amendment No\. \d+|Side Letter) to the "
+                                                       + re.escape(unit or "") + r")\n", text)] if unit else []
+            spans = [sp for t in dict.fromkeys([unit, row["tags"].get("second_unit")] + related) if t
+                     for sp in _spans(text, t)]
+            positions = [_find_in(text, g, spans) for g in row["gold_evidence"]]
             if positions and all(p >= 0 for p in positions):
                 row["tags"]["depth"] = round(positions[0] / len(text), 3)
                 row["tags"]["distance_pages"] = round((max(positions) - min(positions)) / PAGE_CHARS, 1)
@@ -297,14 +442,14 @@ def build(seed: int = 7, counts: Dict[str, int] = DEFAULT_COUNTS, units: Optiona
         kinds: Dict[str, int] = {}
         for r in rows:
             kinds[r["tags"]["kind"]] = kinds.get(r["tags"]["kind"], 0) + 1
-        report[f"traps_{tier}"] = {"units": sum(1 for u in units if TIERS.index(u.tier) <= TIERS.index(tier)),
+        report[f"{name}_{tier}"] = {"units": sum(1 for u in units if TIERS.index(u.tier) <= TIERS.index(tier)),
                                    "chars": len(text), "pages": round(len(text) / PAGE_CHARS), "questions": len(rows),
                                    "kinds": kinds}
         if write:
             OUT.mkdir(parents=True, exist_ok=True)
             EVAL.mkdir(parents=True, exist_ok=True)
-            (OUT / f"traps_{tier}.md").write_text(text, encoding="utf-8")
-            (EVAL / f"traps_{tier}.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
+            (OUT / f"{name}_{tier}.md").write_text(text, encoding="utf-8")
+            (EVAL / f"{name}_{tier}.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows))
     return report, texts, rows_by_tier
 
 
@@ -313,9 +458,15 @@ def main() -> None:
     parser.add_argument("command", choices=["build"])
     parser.add_argument("--seed", type=int, default=7)
     parser.add_argument("--counts", default="S=60,M=300,L=300")
+    parser.add_argument("--name", default="traps", help="family name: traps (v1, templated) or traps2")
+    parser.add_argument("--library", help="clause templates (clauselib); omit for the built-in wording")
     args = parser.parse_args()
     counts = {k: int(v) for k, v in (kv.split("=") for kv in args.counts.split(","))}
-    report, _, _ = build(args.seed, counts)
+    library = None
+    if args.library:
+        with open(args.library) as f:
+            library = json.load(f)
+    report, _, _ = build(args.seed, counts, name=args.name, library=library)
     print(json.dumps(report, indent=2))
 
 

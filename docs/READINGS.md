@@ -1462,3 +1462,83 @@ routing, whole room; real = the benchmark's CUAD questions.
   questions use the "type" table when present (`CANARY_CLASS` preference chains); the
   certified benchmark system builds the library for contract rooms. Calibration cache
   versioned (`.calibration.v2.json`).
+
+## Correctness review of the certify package (2026-11-14, workflow, 107 agents)
+
+Five reviewers (calibration, certificates, closure, qualifiers + precedence, benchmark
+scoring) hunted bugs; each finding went to 3 independent skeptics told to refute it.
+**29 confirmed** (≥ 2 of 3 skeptics, all reproduced), 1 refuted, 4 unverified (session
+limit; 3 of them checked and fixed by hand: Clopper–Pearson overflow, optimistic ties,
+two-word contract naming). All 29 fixed, with tests. The ones that could make a
+certificate overclaim:
+
+| Bug | Fix |
+|---|---|
+| absence certificate for chapters never read (budget ran out, worker failed) | only chapters whose worker made ≥ 1 parsed step count as opened; budget or failures → uncertified |
+| 98% certified after reading fewer than k chapters (lexical ranking omits unmatched chapters) | ranking padded with unmatched chapters; all k must exist and be opened |
+| canary ties broken optimistically | ties count against the canary (rank = chapters scoring ≥ its own) |
+| abstained answer got a COMPLETE certificate; unverified answer certified | abstention / no verification / verifier checked nothing → uncertified |
+| closure items that did not fit the pack, still COMPLETE | pack sized for the whole closure; any missing closure item → uncertified |
+| carve-out in the seed's own passage never examined | closure bookkeeping per sentence; reverse index excludes only the reader's sentences |
+| sweep budget silently capped, closure still complete | every cue of the contract offered in batches; the rest counted as skipped → uncertified |
+| "this Agreement shall prevail" read as schedules prevail | the side named closest before the prevail verb wins |
+| a passage starting "Section 12.3 does not …" claimed number 12.3 | headings first; a passage labels a number only if a capitalised title follows |
+| every article of one contract treated as a separate contract | only real contract boundaries start a unit |
+| amount scoring by substring ("50,000" inside "150,000") | whole amounts compared |
+| abstentions on answerable traps left out of accuracy | counted wrong |
+
+**Re-score of the reported trap result with the fixed scorer:** unchanged —
+certified 30 / 30, plain workers 11 / 30. The evidence numbers ("required provision in
+evidence", 0.17 → 0.80) used a 3-gram match that the review showed can credit a
+look-alike sentence; they cannot be re-scored (those rows did not store the evidence
+text) and are superseded by the next runs, which store it and use exact matching.
+
+## U4.7 / RQ1: leak-free type canaries at 8,619 pages
+
+Twins of in-room clauses blanked in the hidden copy (153 of 300 type canaries had a twin):
+
+| α | k (of 554) | canary miss | real CUAD miss (upper, n = 89) |
+|---|---|---|---|
+| 0.90 | 417 | 9.7% | 5.6% (11.4) |
+| 0.95 | 457 | 4.3% | 3.4% (8.5) |
+| 0.98 | 479 | 1.7% | 3.4% (8.5) |
+
+Stated and measured agree within the intervals; the leak did not drive the earlier result.
+
+## T6 / T8 / T5 / T9: `traps2` (real-style clauses), 2026-11-14
+
+Data card: `docs/TRAPS_DATA_CARD.md`. Template library: `eval/traps2/clause_templates.json`
+(generated with gemini-3.1-flash-lite, 287 calls; rule-based rewriting of real CUAD caps had
+been tried and rejected: 3–6 usable of 672). v1 (`traps`) rebuilds byte-identically.
+
+| Room | Pages | Questions | Per kind |
+|---|---|---|---|
+| traps2 S | 144 | 62 | 12 × 5 kinds + 2 room-wide |
+| traps2 M | 1,065 | 361 | 72 × 5 + 1 room-wide |
+| traps2 L | 8,782 | 661 | 132 × 5 + 1 room-wide |
+
+**Structural reach (no model):**
+
+| Kind | traps v1 M | traps2 M |
+|---|---|---|
+| far exception (same / schedule / side letter) | 72 / 72 | 72 / 72 |
+| override chain | 71 / 72 | 70 / 72 |
+| unlinked carve-out offered to the qualifier worker | 72 / 72 | 65 / 72 |
+| precedence restatement offered | 72 / 72 | 62 / 72 |
+
+Real-style wording is harder, as intended. Remaining misses at M: 5 carve-outs use wording
+no cue pattern covers ("shall not be applicable to …"; not patched — that would tune the
+system to its own benchmark; a learned cue detector is the fix), 5 skipped or ranked out
+by the sweep budget (these make the certificate "uncertified"), 2 amendment chains not
+linked.
+
+**Benchmark bugs found while building it (fixed):** look-alike caps numbered from a fixed
+range collided with real trap section numbers (two "Section 74" in one contract); 300 traps
+in a 7-contract room put ~43 caps in each contract (density now ≤ 12 per contract, so S
+holds 62 traps); room-wide questions of a smaller room were repeated in the nested larger
+rooms with the smaller room's gold; duplicate "no" questions; gold positions taken from the
+first copy of a shared sentence anywhere in the room.
+
+**Sweep ranking improved (method change, reported):** candidates are ranked by the IDF
+weight of the words they share with the clause, not their count, so the carve-out naming
+the same party outranks dozens of similar clauses for other parties.

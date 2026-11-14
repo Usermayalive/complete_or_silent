@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from typing import Dict, List, Set
 
-from ..tree import CHAPTER, ROOT, DocTree
+from ..tree import CHAPTER, LIFT_TO_CHAPTER, ROOT, DocTree
 from .qualifiers import QualifierGraph, QualifierLink
 
 
@@ -24,24 +24,32 @@ class ReverseIndex:
                 self._by_target.setdefault(target, []).append(link)
 
     def _related(self, node_id: str) -> Set[str]:
+        """The node, its descendants, its ancestors below the chapter, and the chapter itself
+        when the chapter is a schedule / exhibit (a link to "Schedule 3" targets the chapter)."""
         related = {node_id}
         node = self.tree.node(node_id)
         while node.parent not in (None, ROOT) and node.kind != CHAPTER:
             node = self.tree.node(node.parent)
-            if node.kind != CHAPTER:
+            if node.kind != CHAPTER or LIFT_TO_CHAPTER.match(node.title or ""):
                 related.add(node.id)
         related.update(n.id for n in self.tree.walk(node_id))
         return related
 
-    def pointing_at(self, node_id: str) -> List[QualifierLink]:
+    def pointing_at(self, node_id: str, reader: Set[str] = frozenset()) -> List[QualifierLink]:
+        """Links targeting the node. ``reader``: the sentences being read; their own links are
+        left out (a clause does not qualify itself), but another sentence of the same
+        passage that qualifies it is returned."""
         out, seen = [], set()
         related = self._related(node_id)
         for nid in related:
             for link in self._by_target.get(nid, []):
                 key = id(link)
-                if key not in seen and link.passage not in related:
-                    seen.add(key)
-                    out.append(link)
+                if key in seen or link.sentence in reader:
+                    continue
+                if not reader and link.passage in related:   # no reader given: the old passage rule
+                    continue
+                seen.add(key)
+                out.append(link)
         return sorted(out, key=lambda l: l.sentence)
 
     def targets(self) -> int:

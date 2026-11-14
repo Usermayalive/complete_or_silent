@@ -1,0 +1,672 @@
+{
+ "seed": 7,
+ "per_role": 20,
+ "roles": {
+  "base": [
+   {
+    "text": "Notwithstanding anything to the contrary set forth in this Agreement, the total aggregate liability of {co} for any and all claims, losses, or damages arising out of or related to this Agreement, whether in contract, tort, or otherwise, shall not exceed {amount}.",
+    "source_title": "Co-Branding Agreement of NeoformaInc",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "NOTWITHSTANDING ANYTHING TO THE CONTRARY IN THIS AGREEMENT, THE TOTAL AGGREGATE LIABILITY OF {co} FOR ANY AND ALL CLAIMS ARISING OUT OF OR RELATING TO THIS AGREEMENT, WHETHER IN CONTRACT, TORT OR OTHERWISE, SHALL NOT EXCEED {amount}.",
+    "source_title": "Cologuard® Promotion Agreement of ExactSciencesCorp",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Each party agrees that the total liability of {co} under this Agreement shall not exceed {amount} in the aggregate.",
+    "source_title": "Co-Branding Agreement of EdietsComInc",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "The total liability of {co} under this Agreement shall not exceed the {amount}.",
+    "source_title": "Global Master Supply Agreement of WestPharmaceuticalServicesInc",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "THE TOTAL AGGREGATE LIABILITY OF {co} FOR ANY AND ALL CLAIMS ARISING OUT OF OR RELATING TO THIS AGREEMENT, REGARDLESS OF THE FORM OF ACTION, WHETHER IN CONTRACT, TORT, OR OTHERWISE, SHALL NOT EXCEED {amount}.",
+    "source_title": "Reseller Agreement of MTITECHNOLOGYCORP (2004-11-16)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "{co}'s total liability under this Agreement shall not exceed {amount}.",
+    "source_title": "e-business Hosting Agreement of QuantumGroupIncFl",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "IN NO EVENT SHALL {co}'S AGGREGATE LIABILITY ARISING OUT OF OR RELATING TO THIS AGREEMENT EXCEED THE {amount} LIMITATION, EVEN IF IT HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.",
+    "source_title": "Trademark License Agreement of MorganStanleyDirectLendingFund",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding anything to the contrary contained in this AGREEMENT, the aggregate liability of {co} for any and all claims, losses, or damages arising out of or in connection with this AGREEMENT shall in no event exceed the {amount}.",
+    "source_title": "Licence And Maintenance Agreement of TELKOMSALTD (2003-01-30)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding any other provision herein, {co}'s total aggregate liability under this Agreement, whether in contract, tort, or otherwise, shall in no event exceed {amount}.",
+    "source_title": "Distributor Agreement of AIRSPANNETWORKSINC (2000-04-11)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "THE TOTAL LIABILITY OF {co} UNDER THIS AGREEMENT SHALL NOT EXCEED {amount}.",
+    "source_title": "Reseller Agreement of DIVERSINETCORP (2012-03-01)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "The total aggregate liability of {co} under this Agreement or otherwise shall not exceed {amount}.",
+    "source_title": "Outsourcing Agreement of BNLFINANCIALCORP (2007-03-30)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding any other provision herein, {co}'s total liability under this Agreement shall not exceed {amount}.",
+    "source_title": "Co-Branding Agreement of LeadersonlineInc",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "THE TOTAL LIABILITY OF {co} UNDER THIS AGREEMENT FOR ALL CLAIMS, DAMAGES OR LOSSES ARISING OUT OF OR RELATING TO THE SUBJECT MATTER HEREOF SHALL IN NO EVENT EXCEED {amount}.",
+    "source_title": "Collaboration Agreement of CERES,INC (2012-01-25)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "{co}'s total liability under this Agreement shall not exceed {amount} as its sole and exclusive limitation of liability for any claims arising out of or related to this Agreement.",
+    "source_title": "Supply Agreement of SEASPINEHOLDINGSCORP (2018-10-10)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "EXCEPT FOR DAMAGES ARISING FROM GROSS NEGLIGENCE OR FRAUD, THE TOTAL AGGREGATE LIABILITY OF {co} FOR ANY AND ALL CLAIMS ARISING OUT OF OR RELATING TO THIS AGREEMENT SHALL BE LIMITED TO {amount}.",
+    "source_title": "Transition Services Agreement of ReynoldsConsumerProductsInc",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "{co}’s total liability for all claims arising out of or related to this Agreement shall not exceed the {amount}.",
+    "source_title": "Maintenance and Support Agreement of VERTICALNETINC (2002-04-01)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "The total liability of {co} under this Agreement shall not exceed {amount} in the aggregate, regardless of the form of action, whether in contract, tort (including negligence), strict liability, or otherwise, and whether such damages are foreseeable.",
+    "source_title": "Intellectual Property Agreement of MSCIINC (2008-02-28)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding any other provision herein, the total liability of {co} under this Agreement shall in no event exceed {amount} in the aggregate for any and all claims arising out of or in connection with this Agreement.",
+    "source_title": "Strategic Alliance Agreement of INTRICONCORP (2009-03-10)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "The total liability of {co} under this Agreement shall not exceed {amount} in the aggregate.",
+    "source_title": "Service Agreement For Transfer Agent Services of BLACKSTONEGSOLONG-SHORTCREDITINCOMEFUND (2020-05-11)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "NOTWITHSTANDING ANYTHING TO THE CONTRARY CONTAINED IN THIS AGREEMENT, THE TOTAL AGGREGATE LIABILITY OF {co} FOR ANY AND ALL CLAIMS, LOSSES OR DAMAGES ARISING OUT OF OR RELATING TO THIS AGREEMENT, WHETHER IN CONTRACT, TORT OR OTHERWISE, SHALL NOT EXCEED {amount}.",
+    "source_title": "Maintenance and Support Agreement of VERTICALNETINC (2002-04-01)",
+    "source_category": "Cap On Liability"
+   }
+  ],
+  "exception": [
+   {
+    "text": "Notwithstanding Section {n}, the aggregate liability of {co} for any breach of its confidentiality or data protection obligations arising under this Agreement shall not exceed {amount2}.",
+    "source_title": "Cooperation Agreement of HPILHOLDING (2015-01-07)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding Section {n}, the aggregate liability of {co} for any breaches of its confidentiality or data protection obligations under this Agreement shall in no event exceed {amount2}.",
+    "source_title": "Strategic Alliance Agreement of MOELIS (2014-03-24)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding Section {n}, the liability of {co} for any breach of its confidentiality or data protection obligations shall not exceed {amount2} in the aggregate.",
+    "source_title": "Co-Branding Agreement of ImpresseCorp",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding Section {n}, the total aggregate liability of {co} for any breach of its confidentiality or data protection obligations shall not exceed {amount2}.",
+    "source_title": "Licence And Maintenance Agreement of TELKOMSALTD (2003-01-30)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding Section {n}, the liability of {co} for breaches of its confidentiality or data protection obligations shall not exceed {amount2}.",
+    "source_title": "Amended And Restated Strategic Licensing, Distribution And Marketing Agreement of PACIRA PHARMACEUTICALS, INC. - A",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding Section {n}, the liability of {co} for breaches of its confidentiality or data protection obligations shall not exceed {amount2} as its sole and exclusive limit for such damages.",
+    "source_title": "Supply Agreement of SEASPINEHOLDINGSCORP (2018-10-10)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding Section {n}, the aggregate liability of {co} for any breaches of its confidentiality or data protection obligations under this Agreement shall not exceed {amount2}.",
+    "source_title": "Reseller Agreement of DIVERSINETCORP (2012-03-01)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding Section {n}, the aggregate liability of {co} for any and all claims arising out of or relating to breaches of its confidentiality or data protection obligations shall in no event exceed {amount2}.",
+    "source_title": "Development Agreement of BIOAMBERINC (2013-04-10)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding Section {n}, the total aggregate liability of {co} for any breach of its confidentiality or data protection obligations arising under or in connection with this Agreement shall not exceed {amount2}.",
+    "source_title": "Collaboration Agreement of SENMIAOTECHNOLOGYLTD (2019-02-19)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding Section {n}, the aggregate liability of {co} for any breaches of its confidentiality or data protection obligations shall not exceed {amount2}.",
+    "source_title": "Strategic Alliance Agreement of INTRICONCORP (2009-03-10)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding Section {n}, the total aggregate liability of {co} arising out of or in connection with any breach of its obligations regarding confidentiality or data protection shall not exceed {amount2}.",
+    "source_title": "Maintenance and Support Agreement of VERTICALNETINC (2002-04-01)",
+    "source_category": "Cap On Liability"
+   }
+  ],
+  "side": [
+   {
+    "text": "This side letter supplements the {title}. Notwithstanding Section {n} of the {title}, the liability of {co} for breaches of its confidentiality obligations shall not exceed {amount2}.",
+    "source_title": "e-business Hosting Agreement of BLUEFLYINC (2002-03-27)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "This side letter supplements the {title}. Notwithstanding Section {n} of the {title}, the aggregate liability of {co} for any breach of its confidentiality obligations under this agreement shall be limited to {amount2}.",
+    "source_title": "License and Hosting Agreement of CORIOINC (2000-07-20)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "This side letter supplements the {title}. Notwithstanding Section {n} of the {title}, the aggregate liability of {co} for any breach of its confidentiality obligations shall not exceed {amount2}.",
+    "source_title": "Cooperation Agreement (2014 Amendment) of TUNIUCORP (2014-03-06)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "This side letter supplements the {title}. Notwithstanding Section {n} of the {title}, the aggregate liability of {co} for any and all breaches of its confidentiality obligations shall not exceed {amount2}.",
+    "source_title": "Cooperation Agreement of HPILHOLDING (2015-01-07)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "This side letter supplements the {title}. Notwithstanding Section {n} of the {title}, the aggregate liability of {co} arising out of or in connection with any breach of its confidentiality obligations under this Agreement shall not exceed {amount2}.",
+    "source_title": "Construction And Maintenance Agreement of STARTECGLOBALCOMMUNICATIONSCORP (1998-11-16)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "This side letter supplements the {title}. Notwithstanding Section {n} of the {title}, the total aggregate liability of {co} for any breach of its confidentiality obligations contained therein shall not exceed {amount2}.",
+    "source_title": "Licence And Maintenance Agreement of TELKOMSALTD (2003-01-30)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "This side letter supplements the {title}. Notwithstanding Section {n} of the {title}, the liability of {co} for breaches of its confidentiality obligations shall not exceed {amount2} on each occasion or such an amount as agreed by the parties from time to time.",
+    "source_title": "Construction And Maintenance Agreement of STARTECGLOBALCOMMUNICATIONSCORP (1998-11-16)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "This side letter supplements the {title}; provided, however, that notwithstanding Section {n} of the {title}, the liability of {co} for breaches of its confidentiality obligations shall in no event exceed {amount2}.",
+    "source_title": "Strategic Alliance Agreement of MOELIS (2014-03-24)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "This side letter supplements the {title}; notwithstanding Section {n} of the {title}, the aggregate liability of {co} for any breaches of its confidentiality obligations shall not exceed {amount2}.",
+    "source_title": "Product Manufacturing Agreement of KitovPharmaLtd",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "This side letter supplements the {title}. Notwithstanding Section {n} of the {title}, the liability of {co} for breaches of its confidentiality obligations, whether under the express or implied terms of this Agreement, in tort (including negligence), or at common law, for any loss or damage suffered, shall be limited to {amount2}.",
+    "source_title": "Photo Retouching Outsourcing Agreement of HUBEIMINKANGPHARMACEUTICALLTD (2006-09-19)",
+    "source_category": "Cap On Liability"
+   }
+  ],
+  "unlinked": [
+   {
+    "text": "THE LIMITATIONS OF LIABILITY SET OUT ABOVE SHALL NOT APPLY TO ANY LOSSES ARISING FROM FRAUD OR WILFUL MISCONDUCT OF {co}, AND IN NO EVENT SHALL EITHER PARTY BE LIABLE TO THE OTHER FOR ANY INDIRECT, SPECIAL, INCIDENTAL, PUNITIVE OR CONSEQUENTIAL DAMAGES, LOSSES, OR EXPENSES INCLUDING, BUT NOT LIMITED TO, LOSS OF USE, LOSS OF PROFITS, OR LOSS OF GOODWILL, EVEN IF THAT PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH LOSS OR DAMAGE.",
+    "source_title": "Co-Branding Agreement of RandWorldwideInc",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "NOTWITHSTANDING ANYTHING TO THE CONTRARY CONTAINED IN THIS SECTION, THE LIMITATIONS OF LIABILITY SET FORTH HEREIN SHALL NOT APPLY TO ANY LOSSES OR DAMAGES ARISING FROM THE FRAUD OR WILFUL MISCONDUCT OF {co}.",
+    "source_title": "Outsourcing Agreement of ParatekPharmaceuticalsInc",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "THE LIMITATIONS OF LIABILITY SET OUT ABOVE SHALL NOT APPLY TO LOSSES ARISING FROM FRAUD OR WILFUL MISCONDUCT OF {co}.",
+    "source_title": "CO-BRANDING Agreement of TheglobeComInc",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "NOTWITHSTANDING THE FOREGOING, THE LIMITATIONS OF LIABILITY SET FORTH ABOVE SHALL NOT APPLY TO ANY LOSSES OR DAMAGES ARISING OUT OF THE FRAUD OR WILFUL MISCONDUCT OF {co}.",
+    "source_title": "Sponsorship Agreement of STAMPSCOMINC (1999-06-24)",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "NOTWITHSTANDING THE FOREGOING, THE LIMITATIONS OF LIABILITY SET FORTH IN THIS AGREEMENT SHALL NOT APPLY TO ANY LOSSES, DAMAGES, OR LIABILITIES ARISING FROM THE FRAUD OR WILFUL MISCONDUCT OF {co}.",
+    "source_title": "Distributor Agreement of EUROPEANMICROHOLDINGSINC (1998-03-06)",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "NOTWITHSTANDING THE FOREGOING, THE LIMITATIONS OF LIABILITY SET FORTH IN THIS AGREEMENT SHALL NOT APPLY TO ANY LOSSES, LIABILITIES OR DAMAGES ARISING OUT OF OR RELATING TO FRAUD OR WILFUL MISCONDUCT OF {co}, REGARDLESS OF THE FORM OF ACTION OR THE THEORY OF LIABILITY UPON WHICH ANY SUCH CLAIM MAY BE BASED.",
+    "source_title": "Content License Agreement of IdeanomicsInc",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "NOTWITHSTANDING THE FOREGOING, THE LIMITATIONS OF LIABILITY SET FORTH HEREIN SHALL NOT APPLY TO ANY LOSSES, LIABILITIES, OR DAMAGES ARISING OUT OF OR RELATING TO FRAUD OR WILFUL MISCONDUCT ON THE PART OF {co}.",
+    "source_title": "Supply Agreement of SEASPINEHOLDINGSCORP (2018-10-10)",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "Notwithstanding any provision to the contrary, the limitations of liability set forth herein shall not apply to any claims or losses arising out of or related to fraud or wilful misconduct of {co}.",
+    "source_title": "Co-Branding Agreement of LeadersonlineInc",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "THE LIMITATIONS OF LIABILITY SET FORTH ABOVE SHALL NOT APPLY TO ANY LOSSES, LIABILITIES, OR DAMAGES ARISING FROM THE FRAUD OR WILFUL MISCONDUCT OF {co}.",
+    "source_title": "Marketing Affiliate Agreement of SteelVaultCorp",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "NOTWITHSTANDING THE PROVISIONS TO THE CONTRARY, THE LIMITATIONS OF LIABILITY STATED ABOVE SHALL NOT BE APPLICABLE TO ANY LOSSES INCURRED TO THE EXTENT THEY ARISE OUT OF THE FRAUD OR WILLFUL MISCONDUCT OF {co}.",
+    "source_title": "Marketing Agreement of Loop Industries, Inc. - Marketing Agreement",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "THE LIMITATIONS OF LIABILITY SET FORTH ABOVE SHALL NOT APPLY TO ANY LOSSES, DAMAGES, OR LIABILITIES ARISING DIRECTLY OR INDIRECTLY FROM THE FRAUD OR WILFUL MISCONDUCT OF {co}.",
+    "source_title": "Reseller Agreement of DIVERSINETCORP (2012-03-01)",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "The limitations of liability set out above shall not apply to losses arising from fraud or wilful misconduct of {co}.",
+    "source_title": "Promotion and Distribution Agreement of WHITESMOKE,INC (2011-11-08)",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "The limitations of liability set out in this Article shall not apply to any losses, damages, or liabilities arising from the fraud or wilful misconduct of {co}.",
+    "source_title": "Co-Branding Agreement of ImpresseCorp",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "THE LIMITATIONS OF LIABILITY SET FORTH HEREIN SHALL NOT BE APPLICABLE TO ANY LOSSES OR DAMAGES RESULTING FROM THE FRAUD OR WILFUL MISCONDUCT OF {co}.",
+    "source_title": "Sponsorship Agreement of STAMPSCOMINC (1999-06-24)",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "EXCEPT FOR LOSSES ARISING FROM FRAUD OR WILLFUL MISCONDUCT OF {co}, IN NO EVENT SHALL EITHER PARTY BE LIABLE TO THE OTHER FOR ANY CONSEQUENTIAL, INDIRECT, SPECIAL, INCIDENTAL OR PUNITIVE DAMAGES INCLUDING LOSS OF USE, REVENUES OR PROFITS, INTERRUPTION OF BUSINESS OR CLAIMS AGAINST EITHER PARTY OR ITS CUSTOMERS BY ANY THIRD PARTY, WHETHER SUCH CLAIM IS BASED IN CONTRACT, TORT (INCLUDING NEGLIGENCE), STRICT LIABILITY OR OTHERWISE, EVEN IF THE PARTY IS ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.",
+    "source_title": "Manufacturing and Supply Agreement of Apollo Endosurgery - Manufacturing and Supply Agreement",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "EXCEPT IN CONNECTION WITH LOSSES ARISING FROM FRAUD OR WILFUL MISCONDUCT OF {co}, NEITHER PARTY WILL BE LIABLE FOR ANY SPECIAL, INDIRECT, CONSEQUENTIAL, EXEMPLARY OR INCIDENTAL DAMAGES ARISING OUT OF OR RELATED TO THIS AGREEMENT, HOWEVER CAUSED AND UNDER ANY THEORY OF LIABILITY (INCLUDING NEGLIGENCE), EVEN IF SUCH PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.",
+    "source_title": "Co-Branding Agreement of ImpresseCorp",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "NO PARTY SHALL BE LIABLE FOR CONSEQUENTIAL, INCIDENTAL, PUNITIVE, EXEMPLARY OR INDIRECT DAMAGES, LOST PROFITS OR OTHER BUSINESS INTERRUPTION DAMAGES, BY STATUTE, IN TORT OR CONTRACT, OR OTHERWISE; PROVIDED, HOWEVER, THAT THIS LIMITATION SHALL NOT APPLY TO ANY LOSSES OR LIABILITIES ARISING FROM THE FRAUD OR WILFUL MISCONDUCT OF {co}.",
+    "source_title": "Gas Transportation Agreement of PenntexMidstreamPartnersLp",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "NOTWITHSTANDING ANYTHING TO THE CONTRARY IN THIS AGREEMENT, THE LIMITATIONS OF LIABILITY SET FORTH HEREIN SHALL NOT APPLY TO ANY LOSSES, LIABILITIES, OR DAMAGES ARISING OUT OF THE FRAUD OR WILFUL MISCONDUCT OF {co}, WHETHER IN AN ACTION FOR BREACH OF CONTRACT, TORT, OR ANY OTHER LEGAL THEORY, REGARDLESS OF WHETHER SUCH PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH LOSSES.",
+    "source_title": "Form Of Content License Agreement of IdeanomicsInc",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "The limitations of liability set out in this Clause shall not apply to any losses, damages, or liabilities arising from the fraud or wilful misconduct of {co}.",
+    "source_title": "Promotion and Distribution Agreement of WHITESMOKE,INC (2011-11-08)",
+    "source_category": "Uncapped Liability"
+   },
+   {
+    "text": "EXCEPT FOR LOSSES ARISING FROM FRAUD OR WILFUL MISCONDUCT OF {co}, NEITHER PARTY WILL BE LIABLE FOR ANY SPECIAL, INDIRECT, CONSEQUENTIAL, EXEMPLARY OR INCIDENTAL DAMAGES ARISING OUT OF OR RELATED TO THIS AGREEMENT, HOWEVER CAUSED AND UNDER ANY THEORY OF LIABILITY (INCLUDING NEGLIGENCE), EVEN IF SUCH PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.",
+    "source_title": "Co-Branding Agreement of PaperexchangeComInc",
+    "source_category": "Uncapped Liability"
+   }
+  ],
+  "amend1": [
+   {
+    "text": "Section {n} of the {title} is hereby deleted and replaced in its entirety with the following: the total liability of {co} under this Agreement shall not exceed {amount2}.",
+    "source_title": "Services And Hosting Agreement of VitalibisInc",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Section {n} of the {title} is hereby deleted and replaced in its entirety with the following: Notwithstanding any other provision contained herein, the total liability of {co} under this Agreement shall not exceed {amount2}.",
+    "source_title": "Co-Promotion Agreement of DovaPharmaceuticalsInc",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Section {n} of the {title} is hereby deleted and replaced in its entirety with the following: notwithstanding any provision herein to the contrary, the total liability of {co} under this Agreement shall not exceed {amount2}.",
+    "source_title": "Reseller Agreement of MTITECHNOLOGYCORP (2004-11-16)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Section {n} of the {title} is hereby deleted and replaced in its entirety with the following: in no event shall the total liability of {co} under this Agreement exceed {amount2}.",
+    "source_title": "Marketing Affiliate Agreement of CybergyHoldingsInc",
+    "source_category": "Cap On Liability"
+   }
+  ],
+  "amend2": [
+   {
+    "text": "Section {n} of the {title}, as amended by Amendment No. 1, is hereby deleted and replaced in its entirety with the following: the total liability of {co} under this Agreement shall not exceed {amount3}.",
+    "source_title": "Marketing And Transportation Services Agreement of DYNAMEXINC (1996-06-06)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Section {n} of the {title}, as amended by Amendment No. 1, is hereby deleted and replaced in its entirety with the following: notwithstanding any provision contained in this Agreement to the contrary, the total liability of {co} under this Agreement shall not exceed {amount3}.",
+    "source_title": "Sponsorship Agreement of VNUE,INC (2015-07-10)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Section {n} of the {title}, as amended by Amendment No. 1, is hereby deleted and replaced in its entirety with the following: IN NO EVENT WILL THE TOTAL LIABILITY OF {co} UNDER THIS AGREEMENT EXCEED {amount3}.",
+    "source_title": "Distributor Agreement of EUROPEANMICROHOLDINGSINC (1998-03-06)",
+    "source_category": "Cap On Liability"
+   }
+  ],
+  "schedule_cap": [],
+  "precedence": [
+   {
+    "text": "In the event of any conflict between the body of this Agreement and its Schedules, the Schedules shall prevail.",
+    "source_title": "Master Franchise Agreement of SoupmanInc",
+    "source_category": "Third Party Beneficiary"
+   },
+   {
+    "text": "Notwithstanding anything to the contrary, in the event of any conflict between the body of this Agreement and its Schedules, the Schedules shall prevail.",
+    "source_title": "Development Agreement of ConformisInc",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "In the event of any conflict or inconsistency between the terms and conditions set forth in the body of this Agreement and those contained in its Schedules, the provisions of the Schedules shall prevail.",
+    "source_title": "Agency Agreement of ATHENSBANCSHARESCORP (2009-11-02)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "For the avoidance of doubt, in the event of any conflict between the body of this Agreement and its Schedules, the Schedules shall prevail.",
+    "source_title": "Distributor Agreement of NEOMEDIATECHNOLOGIESINC (2005-12-15)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "Notwithstanding any provision of this Agreement, in the event of any conflict between the body of this Agreement and its Schedules, the Schedules shall prevail.",
+    "source_title": "Strategic Alliance Agreement of ENTRUSTINC (1998-07-24)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "In the event of any conflict or inconsistency between the body of this Agreement and its Schedules, the Schedules shall prevail.",
+    "source_title": "Promotion and Distribution Agreement of WHITESMOKE,INC (2011-11-08)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "In the event of any conflict or inconsistency between the terms contained in the body of this Agreement and the terms contained in any of its Schedules, the terms of the Schedules shall prevail.",
+    "source_title": "e-business Hosting Agreement of BLUEFLYINC (2002-03-27)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "In the event of any conflict between the body of this Agreement and its Schedules, the Schedules shall in all circumstances prevail.",
+    "source_title": "Escrow Agreement of HEALTHGATEDATACORP (1999-11-24)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "In the event of any conflict or inconsistency between the terms contained in the body of this Agreement and those contained in the Schedules hereto, the provisions of the Schedules shall prevail and govern in all respects.",
+    "source_title": "Master Franchise Agreement of SoupmanInc",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "In the event of any conflict or inconsistency between the terms contained in the body of this Agreement and the terms set forth in the Schedules, the provisions of the Schedules shall prevail and govern in all respects.",
+    "source_title": "INTELLECTUAL PROPERTY AGREEMENT, d of CerenceInc",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "This Section states the entire understanding regarding the precedence of documents and the governing terms in the event of any conflict between the body of this Agreement and its Schedules, in which case the Schedules shall prevail.",
+    "source_title": "License and Hosting Agreement of CHANGEPOINTCORP (2000-03-08)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "In the event of any conflict or inconsistency between the terms of the body of this Agreement and the provisions of its Schedules, the terms of the Schedules shall prevail.",
+    "source_title": "Service Agreement For Transfer Agent Services of BLACKSTONEGSOLONG-SHORTCREDITINCOMEFUND (2020-05-11)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "In the event of any conflict between the body of this Agreement and its Schedules, the Schedules shall prevail. The foregoing constitutes the entire understanding regarding the priority of contractual documents.",
+    "source_title": "License and Hosting Agreement of CHANGEPOINTCORP (2000-03-08)",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "In the event of any conflict or inconsistency between the terms and conditions contained in the body of this Agreement and those contained in its Schedules, the terms and conditions of the Schedules shall prevail.",
+    "source_title": "Amended And Restated Strategic Licensing, Distribution And Marketing Agreement of PACIRA PHARMACEUTICALS, INC. - A",
+    "source_category": "Cap On Liability"
+   },
+   {
+    "text": "In the event of any conflict or inconsistency between the terms of this Agreement and any of the Schedules, the provisions contained within the Schedules shall prevail and supersede the terms of this Agreement.",
+    "source_title": "Co-Branding Agreement of LeadersonlineInc",
+    "source_category": "Cap On Liability"
+   }
+  ],
+  "change_of_control": [
+   {
+    "text": "Notwithstanding the foregoing, either party may terminate this Agreement upon a Change of Control of {co}.",
+    "source_title": "Form Of Trademark License Agreement of ArconicRolledProductsCorp",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "In the event of a change of control of {co}, either party shall have the right to terminate this Agreement upon written notice to the other party.",
+    "source_title": "Endorsement Agreement of BerkshireHillsBancorpInc",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "In the event of a change of control of {co}, either party shall have the right to terminate this Agreement by so notifying the other party in writing.",
+    "source_title": "Endorsement Agreement of MOSSIMOINC (2000-04-14)",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "In the event of a change of control of {co}, either party may, at its option, terminate this Agreement upon written notice.",
+    "source_title": "Co-Branding Agreement (Form) of RaeSystemsInc",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "(b) a change of control of {co}, in which event either party may terminate this Agreement upon written notice to the other party, provided such termination is effective immediately upon the occurrence of such event.",
+    "source_title": "Distributor Agreement of EUROPEANMICROHOLDINGSINC (1998-03-06)",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "Either Party may terminate this Agreement immediately upon written notice to the other Party in the event of a change of control of {co}.",
+    "source_title": "Global Master Supply Agreement of WestPharmaceuticalServicesInc",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "Either party may terminate this Agreement immediately upon the occurrence of a Change in Control involving {co}.",
+    "source_title": "Co-Branding Agreement of EdietsComInc",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "In the event of a change of control of {co}, either party shall be entitled to terminate this Agreement upon written notice to the other party.",
+    "source_title": "Cooperation Agreement of IDREAMSKYTECHNOLOGYLTD (2014-07-03)",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "Either party shall have the right to terminate this Agreement upon a change of control of {co}, provided that written notice of such termination is delivered to the other party in accordance with the provisions set forth herein.",
+    "source_title": "Co-Branding Agreement of TomOnlineInc",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "Either party may terminate this Agreement immediately upon a change of control of {co} by providing written notice to the other party.",
+    "source_title": "Outsource Technology Development Agreement of HfEnterprisesInc",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "Either party reserves the right to terminate this Agreement effective immediately upon a change of control of {co}.",
+    "source_title": "Franchise Agreement of HOSPITALITYINVESTORSTRUST,INC (2014-04-07)",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "The parties acknowledge and agree that a \"Termination Event\" for purposes of this Agreement shall be deemed to mean the occurrence of a change of control of {co}, upon which either party may terminate this Agreement by providing written notice to the other party.",
+    "source_title": "License And Reseller Agreement of EhaveInc",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "Either party may terminate this Agreement upon a change of control of {co}, or (b) the other party provides written notice of termination following such a change of control.",
+    "source_title": "Trademark License Agreement of MorganStanleyDirectLendingFund",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "Either party may terminate this Agreement upon a change of control of {co}.",
+    "source_title": "Intellectual Property Agreement of ZEBRATECHNOLOGIESCORP (2014-04-16)",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "Notwithstanding anything to the contrary in this Agreement, either party shall have the right to terminate this Agreement immediately upon a Change of Control of {co} by providing written notice of such termination to the other party.",
+    "source_title": "Second Amended And Restated Exclusive Agency And Marketing Agreement of Monsanto Company - SECOND A",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "Upon the occurrence of a change of control of {co}, either party shall have the right to terminate this Agreement, upon written notice to the other party, effective as of the date specified in such notice.",
+    "source_title": "Co-Development Agreement of PhasebioPharmaceuticalsInc",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "Either party may terminate this Agreement upon a Change of Control of {co} by providing written notice to the other party.",
+    "source_title": "Global Master Supply Agreement of WestPharmaceuticalServicesInc",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "In the event of a change of control of {co}, either party shall have the right to terminate this Agreement upon providing written notice to the other party.",
+    "source_title": "Outsourcing Base Agreement of MANUFACTURERSSERVICESLTD (2000-06-05)",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "Either party may terminate this Agreement immediately upon the occurrence of a change of control of {co} unless such change of control has been previously approved in writing by the other party.",
+    "source_title": "Outsource Technology Development Agreement of HfEnterprisesInc",
+    "source_category": "Change Of Control"
+   },
+   {
+    "text": "For the avoidance of doubt, either party may terminate this Agreement upon a Change of Control of {co}.",
+    "source_title": "Promotion and Distribution Agreement of WHITESMOKE,INC (2011-11-08)",
+    "source_category": "Change Of Control"
+   }
+  ],
+  "escrow": [
+   {
+    "text": "{co} shall deposit the source code of the licensed software with an independent escrow agent, to be released to the licensee if {co} becomes insolvent or ceases to support the software.",
+    "source_title": "License and Hosting Agreement of CORIOINC (2000-07-20)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the source code of the licensed software with an independent escrow agent, and such source code shall be released to the licensee in the event that {co} becomes insolvent or ceases to support the software.",
+    "source_title": "Electronic Journal Soft Ware Development, Hosting And Management Agreement of HEALTHGATEDATACORP (1999-11-24)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the Source Code for the licensed software with an independent escrow agent, to be released to the licensee in the event that {co} becomes insolvent or ceases to support the software.",
+    "source_title": "License and Hosting Agreement of CORIOINC (2000-07-20)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the Source Code for the licensed Software with an independent escrow agent, which shall be released to the licensee in the event that {co} becomes insolvent or otherwise ceases to provide support for the Software.",
+    "source_title": "Software License And Maintenance Agreement of SPARKLINGSPRINGWATERHOLDINGSLTD (2002-07-03)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the source code of the licensed software with an independent escrow agent, to be released to the licensee in the event that {co} becomes insolvent or ceases to support the software.",
+    "source_title": "License and Hosting Agreement of CORIOINC (2000-07-20)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the Source Code of the SOFTWARE with an independent escrow agent, to be released to the LICENSEE if {co} becomes insolvent or ceases to support the SOFTWARE.",
+    "source_title": "Licence And Maintenance Agreement of TELKOMSALTD (2003-01-30)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the source code of the licensed software with an independent escrow agent, which shall be released to the licensee in the event that {co} becomes insolvent or otherwise ceases to support the software.",
+    "source_title": "Licence And Maintenance Agreement of TELKOMSALTD (2003-01-30)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "Within the timeframe specified, {co} shall deposit the source code of the licensed software with an independent escrow agent, to be released to the licensee in the event that {co} becomes insolvent or ceases to provide support for such software.",
+    "source_title": "Electronic Journal Soft Ware Development, Hosting And Management Agreement of HEALTHGATEDATACORP (1999-11-24)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "In the event that {co} becomes insolvent or ceases to support the licensed software (a \"Release Condition\"), the Escrow Agent shall, in accordance with the terms of the escrow agreement between the parties and the Escrow Agent (the \"Escrow Agreement\"), release the source code of the licensed software deposited by {co} to the licensee.",
+    "source_title": "Strategic Alliance Agreement of ENERGOUSCORP (2017-03-16)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the Source Code of the licensed software with an independent escrow agent, to be released to the licensee if {co} becomes insolvent or ceases to support the software.",
+    "source_title": "Software License, Customization and Maintenance Agreement of CardlyticsInc",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall from time to time deposit the Source Code of the licensed software with an independent escrow agent, which shall be released to the LICENSEE in the event that {co} becomes insolvent or otherwise ceases to support the software.",
+    "source_title": "Licence And Maintenance Agreement of TELKOMSALTD (2003-01-30)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the Source Code of the licensed software with an independent escrow agent, which shall release such Source Code to the licensee upon the event that {co} becomes insolvent or ceases to support the software.",
+    "source_title": "Software License, Customization and Maintenance Agreement of CardlyticsInc",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deliver the source code of the licensed software to an independent escrow agent, which shall be released to the licensee if {co} enters into insolvency proceedings or terminates support for the licensed software.",
+    "source_title": "Software Hosting Agreement of INKTOMICORP (1998-06-08)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall at its own cost and expense, upon the reasonable request of the licensee, enter into a software escrow arrangement with a reputable third-party escrow agent, providing for the deposit of the source code of the licensed software and for the release thereof to the licensee in the event that {co} undergoes an insolvency event or fails to provide ongoing support for such software.",
+    "source_title": "Strategic Alliance Agreement of ENERGOUSCORP (2017-03-16)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "Upon the occurrence of a triggering event, {co} shall deposit the source code of the licensed software with an independent escrow agent, which shall be released to the licensee in the event that {co} becomes insolvent or ceases to provide support for the software.",
+    "source_title": "Software License, Customization and Maintenance Agreement of CardlyticsInc",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the Source Code of the Licensed Software with an independent escrow agent, to be released to the Licensee upon the insolvency of {co} or in the event {co} ceases to provide support for the Licensed Software.",
+    "source_title": "Licence And Maintenance Agreement of TELKOMSALTD (2003-01-30)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the Source Code of the Licensed Software with an independent escrow agent, which shall be released to the licensee in the event that {co} becomes insolvent or ceases to provide support for the Licensed Software.",
+    "source_title": "Licence And Maintenance Agreement of TELKOMSALTD (2003-01-30)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "If {co} becomes insolvent or ceases to support the licensed software, {co} shall deposit the source code with an independent escrow agent, to be released to the licensee upon the occurrence of such event, following the issuance of a written statement to the licensee by {co}’s executive management, confirming that such insolvency or cessation of support has occurred.",
+    "source_title": "Software License, Customization and Maintenance Agreement of CardlyticsInc",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the source code for the licensed software with an independent escrow agent, which shall be released to the licensee in the event that {co} becomes insolvent or fails to provide ongoing support for such software.",
+    "source_title": "Reseller Agreement of DIVERSINETCORP (2012-03-01)",
+    "source_category": "Source Code Escrow"
+   },
+   {
+    "text": "{co} shall deposit the Source Code for the licensed Software with an independent escrow agent, which shall be released to the licensee in the event that {co} becomes insolvent or ceases to provide support for the Software.",
+    "source_title": "Software License, Customization and Maintenance Agreement of CardlyticsInc",
+    "source_category": "Source Code Escrow"
+   }
+  ]
+ },
+ "rejected": {
+  "base": {},
+  "exception": {
+   "missing Section {n}": 24
+  },
+  "side": {
+   "missing Section {n}": 10
+  },
+  "unlinked": {
+   "length": 4,
+   "unlinked must name fraud and cite no section": 1,
+   "stray number": 2
+  },
+  "amend1": {
+   "missing Section {n}": 1
+  },
+  "amend2": {
+   "missing Section {n}": 3
+  },
+  "schedule_cap": {
+   "wrong amount placeholder": 37,
+   "stray number": 2,
+   "unknown placeholder {'placeholder'}": 1
+  },
+  "precedence": {
+   "missing Schedule": 12
+  },
+  "change_of_control": {},
+  "escrow": {
+   "unknown placeholder {'section_number'}": 1
+  }
+ }
+}
