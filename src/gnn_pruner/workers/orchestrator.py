@@ -12,11 +12,18 @@
 5. **Widen before "not found"** (R1): if nothing was accepted,
    - round 2 opens the next chapters
    - round 3 rewrites the question in the document's wording and searches again
-6. **Add definitions** of terms used in the accepted passages.
-7. **Whole-document questions** (scope ``global``, R2): more chapters are opened (8 per
+
+   Widening is kept cheap: a widening round opens only chapters whose best sentence scores
+   at least ``WIDEN_MIN_SHARE`` of the best chapter's (chapters with no real word match are
+   skipped without a call), and its workers get ``WIDEN_STEPS`` steps instead of
+   ``max_steps``.
+6. **Bridge the second hop** (board, no model): sentences elsewhere that continue a rare
+   phrase of an accepted sentence ("rate card RC-8985") join the evidence.
+7. **Add definitions** of terms used in the accepted passages.
+8. **Whole-document questions** (scope ``global``, R2): more chapters are opened (8 per
    signal), each worker also writes a short partial answer for its chapter, and the final
    answer receives those as orientation notes. Only quotes are evidence and can be cited.
-8. **Answer** from an evidence pack sized by scope (R9):
+9. **Answer** from an evidence pack sized by scope (R9):
 
    | Scope | Evidence |
    |---|---|
@@ -39,7 +46,11 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional
 
 from ..answer import ABSTAIN_TEXT, Answer, answer_question
+from ..certify.plan import DEFAULT_ALPHA, certified_alpha, reading_plan
 from .board import Board
+
+CLOSURE_NOTE = ("Evidence roles: items marked overrides, amends or qualifies change the main clause. State the main "
+                "clause first, then what qualifies or overrides it, and say which text was replaced (superseded).")
 from .gate import Gate, GatePlan
 from .routing import Route, route, scope, words
 from .worker import ChapterWorker, SentenceIndex, WorkerReport
@@ -51,6 +62,8 @@ SCOPES: Dict[str, Dict[str, int]] = {
     "global": {"k": 8, "items": 24, "tokens": 2000},
 }
 NAMED_AS_FILTER = 6   # a named unit with more chapters than this narrows the gate instead
+WIDEN_MIN_SHARE = 0.5  # widening opens a chapter only if its best sentence scores this share of the best
+WIDEN_STEPS = 2        # steps per worker in widening rounds
 
 
 @dataclass
@@ -64,6 +77,12 @@ class WorkerResult:
     chapters_searched: List[str] = field(default_factory=list)
     rounds_run: int = 0
     plan: Optional[GatePlan] = None
+    reading: object = None            # certify.plan.ReadingPlan (when a calibration was given)
+    certified: Optional[float] = None  # highest alpha whose calibrated chapters were all opened
+    closure: object = None            # certify.closure.Closure (certify=True, answer found)
+    ordering: object = None           # certify.precedence.Ordering
+    verification: object = None       # certify.verify.Verification
+    certificate: object = None        # certify.certificate.Certificate
     calls: int = 0
     input_tokens: int = 0
     output_tokens: int = 0
@@ -78,7 +97,16 @@ class WorkerResult:
 def ask(tree, question: str, provider, answer_provider=None, chapters: Optional[List[str]] = None,
         index: Optional[SentenceIndex] = None, gate: Optional[Gate] = None, use_gate: bool = True,
         use_toc: bool = True, widen: bool = True, max_calls: int = 40, max_steps: int = 4, parallel: int = 4,
-        follow_hops: int = 2) -> WorkerResult:
+        follow_hops: int = 2, calibration=None, alpha: float = DEFAULT_ALPHA, certify: bool = False,
+        qualifier_graph=None, reverse_index=None) -> WorkerResult:
+    """``calibration``: this document's canary calibration (certify.canaries). When given,
+    the gate opens the calibrated number of chapters for ``alpha`` instead of the scope's
+    fixed k, and the result records the level actually reached (``certified``).
+    ``certify``: Complete or Silent. An answer found is expanded to its closure (forward
+    links, reverse index, sweep judged by the qualifier worker), ordered by precedence,
+    verified sentence by sentence, and given a closure certificate; "not found" is given an
+    absence certificate from the calibration. ``qualifier_graph`` / ``reverse_index`` may be
+    passed precomputed (``certify.build_qualifier_graph``, ``certify.ReverseIndex``)."""
     started = time.perf_counter()
     index = index or SentenceIndex(tree)
     r = route(tree, question)
@@ -98,20 +126,25 @@ def ask(tree, question: str, provider, answer_provider=None, chapters: Optional[
     else:
         gate = gate or Gate(tree, index)
         named = r.chapters
+        reading = reading_plan(calibration, question, named, alpha, cfg["k"])
+        result.reading = reading
+        k = reading.k if reading.basis in ("unit", "room") else cfg["k"]
         if len(named) > NAMED_AS_FILTER:       # e.g. a whole book: search within it
             within, named = named, []
-        plan = gate.plan(question, terms, named, k=cfg["k"], provider=provider, use_toc=use_toc,
+        plan = gate.plan(question, terms, named, k=k, provider=provider, use_toc=use_toc,
                          board=board, within=within)
         result.plan = plan
         rounds = plan.rounds if widen else plan.rounds[:1]
 
     search_terms = {"now": terms}
 
+    steps = {"now": max_steps}
+
     def work(chapter: str) -> WorkerReport:
         board.workers[chapter] = "searching"
         try:
-            report = ChapterWorker(tree, chapter, provider, board, index, max_steps).run(question,
-                                                                                          search_terms["now"])
+            report = ChapterWorker(tree, chapter, provider, board, index, steps["now"]).run(question,
+                                                                                            search_terms["now"])
         except Exception as exc:  # a failed worker must not sink the question
             from ..answer import QuotaExhausted
 
@@ -133,14 +166,27 @@ def ask(tree, question: str, provider, answer_provider=None, chapters: Optional[
             done.extend(batch)
             batch = [c for c in board.follow if c not in done]
 
+    def worth_opening(batch: List[str], query: List[str]) -> List[str]:
+        best = index.best_per_chapter(query)
+        top = max(best.values(), default=0.0)
+        named = set(r.chapters)
+        return [c for c in batch if c in named or (top > 0 and best.get(c, 0.0) >= WIDEN_MIN_SHARE * top)]
+
     for k, batch in enumerate(rounds):
         if k and board.status == "found":
             break
+        if k:
+            batch = worth_opening(batch, terms)
+            steps["now"] = min(max_steps, WIDEN_STEPS)
+            if not batch:
+                continue
         run_round(batch)
         result.rounds_run += 1
     if (use_gate and widen and gate is not None and not chapters and board.status != "found"
             and board.has_budget() and provider is not None):
         extra, rewritten = gate.widen_by_rewrite(question, provider, done, cfg["k"], board, within)
+        extra = worth_opening(extra, rewritten + list(terms)) if extra else extra
+        steps["now"] = min(max_steps, WIDEN_STEPS)
         if extra:
             for c in extra:
                 result.plan.opened_by.setdefault(c, []).append("rewrite")
@@ -148,19 +194,51 @@ def ask(tree, question: str, provider, answer_provider=None, chapters: Optional[
             run_round(extra)
             result.rounds_run += 1
     result.chapters_searched = done
+    if result.reading is not None and gate is not None:
+        ranking = [c for c in gate.lexical(terms) if within is None or c in within]
+        result.certified = certified_alpha(calibration, result.reading, done, ranking)
+    if board.status == "found":
+        board.add_bridges()
     board.add_definitions()
 
     if board.status == "found":
-        pack = board.to_pack(cfg["items"], cfg["tokens"])
         notes = board.notes() if sc == "global" else ""
+        if certify:
+            from ..certify import ReverseIndex, build_qualifier_graph
+            from ..certify.closure import apply_to_board, expand
+            from ..certify.precedence import order
+
+            qualifier_graph = qualifier_graph or build_qualifier_graph(tree)
+            reverse_index = reverse_index or ReverseIndex(tree, qualifier_graph)
+            seeds = [(f.passage, list(f.sentence_ids)) for f in board.accepted if f.role == "answer"]
+            result.closure = expand(tree, qualifier_graph, reverse_index, seeds, provider=provider, board=board,
+                                    index=index)
+            apply_to_board(board, result.closure)
+            result.ordering = order(tree, result.closure)
+            if result.closure.items:
+                notes = (notes + "\n" if notes else "") + CLOSURE_NOTE
+                if sc == "single":       # a certified answer carries its qualifiers: the multi budget
+                    cfg = SCOPES["multi"]
+        pack = board.to_pack(cfg["items"], cfg["tokens"])
         answer = answer_question(pack, answer_provider or provider, abstain=False, notes=notes)
         board.calls += 1
         board.input_tokens += answer.input_tokens or 0
         board.output_tokens += answer.output_tokens or 0
         result.answer = answer
+        if certify:
+            from ..certify.certificate import closure_certificate
+            from ..certify.verify import verify
+
+            if not answer.abstained and answer.answer:
+                result.verification = verify(answer.answer, pack, answer_provider or provider, board)
+            result.certificate = closure_certificate(tree, result.closure, result.ordering, done, result.verification)
     else:
         result.answer.abstained = True
         result.answer.flags = ["no_evidence"]
+        if certify:
+            from ..certify.certificate import absence_certificate
+
+            result.certificate = absence_certificate(tree, calibration, result.reading, result.certified, done)
     result.calls, result.input_tokens, result.output_tokens = board.calls, board.input_tokens, board.output_tokens
     result.seconds = round(time.perf_counter() - started, 2)
     return result

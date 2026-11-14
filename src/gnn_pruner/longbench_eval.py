@@ -205,12 +205,12 @@ def run(family: str, tier: str, system: str, llm: Optional[str] = None, judge_sp
     if todo:
         doc = todo[0].document
         started = time.perf_counter()
-        if system == "full":
+        if system in ("full", "coa"):
             if provider is None:
-                raise SystemExit("--system full needs --llm")
+                raise SystemExit(f"--system {system} needs --llm")
             full_text = Path(doc).read_text()
             ask = None
-        elif system in ("workers", "workers_nogate"):
+        elif system in ("workers", "workers_nogate", "workers_certify"):
             if provider is None:
                 raise SystemExit("--system workers needs --llm")
             from .upload import upload
@@ -221,6 +221,25 @@ def run(family: str, tier: str, system: str, llm: Optional[str] = None, judge_sp
                 print("warning: enrichment incomplete (quota?); workers see partial summaries")
             index = SentenceIndex(tree)
             ask = None
+            certify_kw: Dict = {}
+            if system == "workers_certify":      # Complete or Silent: calibration + qualifier graph, built once
+                from .certify import ReverseIndex, build_qualifier_graph
+                from .certify.canaries import Calibration, calibrate
+
+                cal_path = Path(doc).with_suffix(".calibration.v2.json")   # v2: with type canaries
+                if cal_path.exists():
+                    calibration = Calibration.load(str(cal_path))
+                else:
+                    library = None
+                    if family in ("contracts", "traps"):   # type canaries: CUAD clauses from contracts not in this room
+                        from .certify.canaries import cuad_type_library
+
+                        library = cuad_type_library(exclude_titles=[c.title for c in tree.chapters()])
+                    calibration = calibrate(tree, index=index, n=300, seed=0, type_library=library)
+                    calibration.save(str(cal_path))
+                graph = build_qualifier_graph(tree)
+                certify_kw = {"certify": True, "calibration": calibration, "qualifier_graph": graph,
+                              "reverse_index": ReverseIndex(tree, graph)}
         else:
             embedder = load_embedder("st:all-MiniLM-L6-v2")
             ask = make_system(system, doc, embedder)
@@ -234,11 +253,25 @@ def run(family: str, tier: str, system: str, llm: Optional[str] = None, judge_sp
         try:
             if system == "full":
                 row.update(_full_answer(provider, full_text, case))
-            elif system in ("workers", "workers_nogate"):
+            elif system == "coa":
+                from .baselines.chain_of_agents import ask as coa_ask
+
+                t0 = time.perf_counter()
+                res = coa_ask(full_text, case.question, provider)
+                row.update(answer=res.answer, abstained=res.abstained, calls=res.calls, chunks=res.chunks,
+                           input_tokens=res.input_tokens, output_tokens=res.output_tokens,
+                           llm_ms=round((time.perf_counter() - t0) * 1000), pack_tokens=count_tokens(res.notes))
+                if case.gold_evidence:
+                    covs = [coverage(g, res.notes) for g in case.gold_evidence]
+                    row["coverage"] = round(min(covs) if row["kind"] == "needle_2hop" else max(covs), 3)
+                    row["hit"] = row["coverage"] >= HIT
+                _score_traps(row, case, res.notes)
+            elif system in ("workers", "workers_nogate", "workers_certify"):
                 from .workers import ask as workers_ask
 
                 t0 = time.perf_counter()
-                res = workers_ask(tree, case.question, provider, index=index, use_gate=system == "workers")
+                res = workers_ask(tree, case.question, provider, index=index, use_gate=system != "workers_nogate",
+                                  **certify_kw)
                 pack = res.pack
                 text = " ".join(i.text for i in pack.items)
                 row.update(pack_tokens=count_tokens(text), chapters_searched=len(res.chapters_searched),
@@ -253,6 +286,14 @@ def run(family: str, tier: str, system: str, llm: Optional[str] = None, judge_sp
                     row["hit"] = row["coverage"] >= HIT
                 if case.tags.get("answers"):
                     row["answer_overlap"] = round(answer_overlap(case.tags["answers"], text), 3)
+                if res.certificate is not None:
+                    row["certificate"] = res.certificate.kind
+                    row["certificate_text"] = res.certificate.text()
+                    row["closure"] = res.closure.summary() if res.closure else None
+                    row["superseded"] = len(res.ordering.superseded()) if res.ordering else None
+                    row["verified"] = res.verification.summary() if res.verification else None
+                    row["certified"] = res.certified
+                _score_traps(row, case, text)
             else:
                 t0 = time.perf_counter()
                 pack, level = ask(case.question)
@@ -315,6 +356,40 @@ def _full_answer(provider, full_text: str, case) -> Dict:
             "llm_ms": round((time.perf_counter() - t0) * 1000)}
 
 
+_AMOUNT = re.compile(r"\d[\d,]*(?:\.\d+)?\s*USD")
+
+
+def trap_correct(answer: str, case) -> bool:
+    """A trap answer is correct when it states every amount of the reference (the cap and
+    each exception; for an override chain, the final amount) and, for an unlinked
+    carve-out, names fraud. Existence: yes / no as expected (an abstention counts as no)."""
+    text = answer.lower()
+    if case.tags.get("kind") == "existence":
+        said_yes = text.strip().startswith("yes") or ("contain" in text and not re.search(r"\b(no|not|does not)\b", text[:60]))
+        return said_yes if case.tags.get("expected") == "yes" else not said_yes
+    amounts = [a.replace(" ", "").lower() for a in _AMOUNT.findall(case.reference_answer)]
+    have = text.replace(" ", "")
+    ok = all(a in have for a in amounts)
+    if case.tags.get("kind") == "unlinked":
+        ok = ok and "fraud" in text
+    return ok
+
+
+def _score_traps(row: Dict, case, pack_text: str) -> None:
+    """Trap metrics (family ``traps``): ``qualifier_recall`` = share of the required
+    sentences present in the evidence; ``certificate_correct`` = the certificate kind the
+    system gave equals the one the case expects (closure for a found trap, absence for a
+    planted "no")."""
+    tags = case.tags
+    if tags.get("family") != "traps":
+        return
+    required = tags.get("required") or []
+    if required:
+        row["qualifier_recall"] = round(sum(coverage(q, pack_text) >= HIT for q in required) / len(required), 3)
+    if "certificate" in row:
+        row["certificate_correct"] = row["certificate"] == tags.get("certificate")
+
+
 def _score_answer(row: Dict, case, judge_provider, judge, answer_f1) -> None:
     """``correct`` only where it can be decided: planted facts (the values), unanswerable
     questions (abstained), and judged answers. ``false_abstention`` for answerable ones."""
@@ -331,7 +406,9 @@ def _score_answer(row: Dict, case, judge_provider, judge, answer_f1) -> None:
         if judge_provider is not None and row["kind"] in ("cuad", "narrativeqa"):
             row["judge_score"] = 0.0
         return
-    if row["kind"] in ("needle", "needle_2hop"):
+    if case.tags.get("family") == "traps":
+        row["correct"] = trap_correct(answer, case)
+    elif row["kind"] in ("needle", "needle_2hop"):
         row["correct"] = contains_answer(answer, case.reference_answer)
     if case.tags.get("answers"):
         row["answer_f1"] = round(max(answer_f1(answer, a) for a in case.tags["answers"]), 3)
@@ -370,6 +447,11 @@ def summarize(rows: List[Dict]) -> Dict:
             k["judge_score"] = mean([r.get("judge_score") for r in rs])
         if any("false_abstention" in r for r in rs):
             k["false_abstention"] = mean([float(r["false_abstention"]) for r in rs if "false_abstention" in r])
+        if any("qualifier_recall" in r for r in rs):
+            k["qualifier_recall"] = mean([r.get("qualifier_recall") for r in rs])
+        if any("certificate" in r for r in rs):
+            k["certificates"] = dict(Counter(r["certificate"] for r in rs if r.get("certificate")))
+            k["certificate_correct"] = mean([float(r["certificate_correct"]) for r in rs if "certificate_correct" in r])
         out["by_kind"][kind] = k
     out["pack_tokens"] = mean([r.get("pack_tokens") for r in rows])
     out["retrieval_ms"] = mean([r.get("retrieval_ms") for r in rows])
@@ -411,9 +493,10 @@ def rescore(family: str, tier: str, system: str, llm: str, judge_spec: Optional[
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--family", required=True, choices=["contracts", "books"])
+    parser.add_argument("--family", required=True, choices=["contracts", "books", "traps"])
     parser.add_argument("--tier", required=True, choices=["S", "M", "L"])
-    parser.add_argument("--system", choices=["rule", "v3", "rag", "rag1", "full", "workers", "workers_nogate"])
+    parser.add_argument("--system", choices=["rule", "v3", "rag", "rag1", "full", "workers", "workers_nogate",
+                                             "workers_certify", "coa"])
     parser.add_argument("--llm")
     parser.add_argument("--judge")
     parser.add_argument("--limit", type=int)
@@ -472,7 +555,7 @@ def gate_readings(family: str, tier: str, dense: bool = False, k: Optional[int] 
 
     def unit_chapters(title):
         base = lambda t: _re.sub(r"\s*\(\d+/\d+\)$", "", _re.sub(r"^Book:\s*", "", t))
-        ids = {ch.id for ch in tree.chapters() if base(ch.title) == title}
+        ids = {ch.id for ch in tree.chapters() if base(ch.title) == title and ch.role == "body"}
         for part in tree.parts():                     # a book: all its chapters
             if base(part.title) == title:
                 ids |= set(part.children)
@@ -485,6 +568,10 @@ def gate_readings(family: str, tier: str, dense: bool = False, k: Optional[int] 
         allowed = set().union(*[unit_chapters(u) for u in units if u]) or None
         exclude = set(index.chapter_names) - allowed if allowed else set()
         gold_chapters = {index.best_chapter(g, exclude=exclude) for g in c.gold_evidence} - {None}
+        if not gold_chapters:        # the unit (e.g. a one-book library's title page) holds no gold: whole document
+            gold_chapters = {index.best_chapter(g) for g in c.gold_evidence} - {None}
+        if not gold_chapters:
+            continue                 # gold text not in the document: never count it as found
         r = route(tree, c.question)
         cfg = SCOPES[scope(c.question)]
         named, within = r.chapters, None

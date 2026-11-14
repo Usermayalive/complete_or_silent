@@ -114,6 +114,24 @@ class SentenceIndex:
                 return self.chapter_of[i]
         return None
 
+    def rows_with_phrase(self, first: str, second: str, limit: int) -> Optional[List[int]]:
+        """Sentences containing the two words next to each other ("copper scarf", "rc 8985").
+        None when the words are too common (more than ``limit`` sentences hold both)."""
+        vocab, w = self.bm25.vocab, self.bm25.weights
+        if first not in vocab or second not in vocab:
+            return []
+        cols = [vocab[first], vocab[second]]
+        posts = [w.indices[w.indptr[c]:w.indptr[c + 1]] for c in cols]
+        both = np.intersect1d(posts[0], posts[1])
+        if len(both) > 4 * limit:
+            return None
+        out = []
+        for r in both:
+            toks = words(self.texts[r])
+            if any(x == first and y == second for x, y in zip(toks, toks[1:])):
+                out.append(int(r))
+        return out if len(out) <= limit else None
+
     def search(self, terms: List[str], chapter: str, k: int = TOP_SENTENCES,
                within: Optional[set] = None) -> List[int]:
         rows = self.rows.get(chapter)

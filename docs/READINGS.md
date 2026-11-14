@@ -1109,10 +1109,17 @@ the unit the question is about), and whether the gate opens it.
 |---|---|---|---|---|---|---|
 | contracts S (130 pages) | 8 | 23 | 100% | 91% (CUAD and single needles 100%) | **100%** | 1.5 / 4.5 |
 | contracts M (977 pages) | 55 | 71 | 100% | 94% (CUAD and single needles 100%) | **98.6%** | 1.3 / 4.3 |
-| books S (119 pages, 1 book) | 20 | 8 | — (book not a unit) | **100%** | 100% | 3 / 6 |
+| books S (119 pages, 1 book) | 20 | 8 | — (book not a unit) | 87.5% (single needles 100%, two-hop 50%)* | 87.5% | 3 / 6 |
 | books M (1,001 pages) | 155 | 16 | 100% | 81% | 87.5% | 2.8 / 5.8 |
 | contracts L (8,619 pages) | 554 | 119 | **95%** | 95%* | 97.5%* | 1.2 / 4.2 |
 | books L (9,988 pages) | 1,669 | 24 | 100% | 83% (single needles 100%) | 87.5% | 2.9 / 5.9 |
+
+\* **Corrected 2026-11-12.** First recorded as 100% / 100%: in a one-book library the
+title-page chapter carries the book's name, the "unit" lookup restricted the gold search
+to that placeholder, found nothing, and an empty gold set counted as "found". The lookup
+now ignores non-body chapters and falls back to the whole document; questions whose gold
+text cannot be located are no longer counted. Other rows were unaffected (their units
+are real contracts or parts).
 
 \* About 6% of L CUAD spans could not be located inside their contract (the span crosses a
 paragraph break). Those questions count as found, so the conservative round-1 figure is
@@ -1146,3 +1153,312 @@ That is the step the pipelines above are missing at L.
 - gated vs ungated workers
 - the whole-document route on NarrativeQA
 - the five-system comparison
+
+---
+
+# Complete or Silent — P1 readings (2026-11-12)
+
+Code: `src/gnn_pruner/certify/` (qualifiers, reverse, canaries, plan); tests in
+`tests/test_certify.py` (9) and `tests/test_workers.py` (+3). Full suite: 223 passed.
+
+## U2 / U3: qualifier graph and reverse index on the real 130-page data room
+
+| | Links | Resolved | qualifies | overrides | amends | precedence | → section | → term | → "foregoing" |
+|---|---|---|---|---|---|---|---|---|---|
+| first version | 302 | 255 | 215 | 72 | 14 | 1 | 37 | 197 | 22 |
+| after the term filter (U2.6) | 204 | 76 | 152 | 44 | 7 | 1 | 37 | 18 | 22 |
+
+- Build time 0.06 s. Section links checked by hand on a sample look right ("Subject to
+  Section 8.2" → 8.2; "Section 7.2.2(a)" → 7.2.2; "Article 10" → 10.x).
+- **Bug found and fixed:** party names ("BLI", "Ginkgo") and "Agreement" are defined
+  terms too and were linked everywhere (197 term links, 34 to "agreement"). Terms used in
+  more than 5% of a contract's sentences, and a generic list, are now dropped: 18 term
+  links remain, all real ("receiving party", "headstart period", "confidential information").
+- "Resolved" fell because unresolved cues are kept on purpose: "shall not apply …" without
+  a section number is exactly what the whole-document sweep (Q4) must catch.
+- Link precision on a hand-checked sample of 100 (U2.7): not yet measured.
+
+## U4: canary calibration — stated vs measured miss rate (early RQ1 probe)
+
+Lexical gate only, no routing, whole document; 300 mutation canaries per document;
+real questions = every benchmark question with gold evidence (CUAD clauses, planted
+single and two-hop facts). "Miss" = the answer's chapter is not in the top k.
+
+**1. Naive canaries lie.** Queried with a random half of their own words, canaries rank
+first almost always, so the calibration promised k = 1–2 chapters at 98%:
+
+| Room | α | k | canary miss | **real miss** |
+|---|---|---|---|---|
+| 130 pages (8 chapters) | 0.98 | 2 | 0.0% | **60.9%** |
+
+Rank distributions explain it (p50 / p75 / p90 / p98 of the answer chapter's rank):
+
+| 977-page room, 55 chapters | p50 | p75 | p90 | p98 |
+|---|---|---|---|---|
+| real questions | 16 | 30 | 41 | 47 |
+| canary, random 50% of its words | 1 | 1 | 1 | 2 |
+| canary, its 10% most common words | 12 | 23 | 38 | 47 |
+
+Real questions share few rare words with their answer (query–answer word overlap: median
+0.33). **Design decision:** a canary is queried with its lowest-IDF 10% of content words
+(`QUERY_SHARE = 0.1`). Chosen on the 130-page room; it reproduced the real rank shape on
+the 977-page room it was not tuned on.
+
+**2. With common-word canaries (current code; canary planted in its own unit, its source
+sentence blanked in the hidden copy):**
+
+| Room | α | k (of N) | canary miss (upper) | **real miss** (upper, n) | by kind |
+|---|---|---|---|---|---|
+| 130 pp, N = 8 | 0.90 | 6 | 5.3% (8.0) | **8.7%** (24.9, 23) | CUAD 2/15, needles 0/8 |
+| | 0.95 | 7 | 1.7% (3.9) | 4.3% (19.0) | CUAD 1/15 |
+| | 0.98 | 7 | 1.7% (3.9) | 4.3% (19.0) | CUAD 1/15 |
+| 977 pp, N = 55 | 0.90 | 30 | 9.3% (12.5) | **25.4%** (35.2, 71) | CUAD 18/55, needles 0/16 |
+| | 0.95 | 38 | 4.7% (7.2) | 16.9% (25.9) | CUAD 12/55 |
+| | 0.98 | 46 | 0.7% (2.2) | 4.2% (10.6) | CUAD 3/55 |
+
+- **Planted facts: 0 misses** at every α on both rooms (24 questions).
+- **Real CUAD questions are missed more often than stated** on the larger room. They ask
+  by clause *type* ("Does X have a non-compete clause?"), and those words occur in many
+  contracts, so a lexical rank cannot single out the right contract. In the workers these
+  questions name their contract (basis "named": all its chapters are opened; coverage =
+  routing, measured 95–100%), so the room table governs only unnamed questions.
+- **Blanking the source sentence** in the hidden copy changed nothing (identical numbers);
+  kept because it is the right simulation of a real answer, which has no twin.
+- **Cost of certainty without routing** is high: 46 of 55 chapters at 98% on the 977-page
+  room. The unit table (a named book or contract ranked within itself) asks for 2–4
+  chapters. These are the first points of the RQ4 cost curve.
+- Sample sizes are small (23 and 71 real questions); upper bounds are wide. The P3 test
+  needs the trap benchmark (≥ 300 questions per size).
+
+**119-page library (one book, 20 chapters; 8 questions with gold, all planted):**
+
+| α | k (of 20) | canary miss | real miss |
+|---|---|---|---|
+| 0.90 | 15 | 7.3% | 0 / 8 |
+| 0.95 | 16 | 4.7% | 0 / 8 |
+| 0.98 | 19 | 1.0% | 0 / 8 |
+
+- A single book counts as one unit, so its unit table equals its room table (a question
+  that names the book opens the whole book's ranking).
+- Only the "clause" class had enough canaries (296 of 300): novels hold few numbers.
+  **Design decision:** a class needs ≥ 30 canaries (`MIN_CLASS_N`) for its own k;
+  otherwise the "all" table is used. Before this rule the fact and qualifier classes
+  fell to "open everything" (k = 20) from a handful of ranks.
+- **Measurement bug found on the way:** see the corrected books-S gate row above.
+
+**What this means for the paper (RQ1, honest):** the absence certificate holds for
+planted facts and is optimistic for clause-type questions when no unit is named. Either
+the canary class for "clause-type" questions must be queried the way such questions are
+asked (the clause-type words, not the sentence's own words), or the certificate for
+unnamed clause-type questions must be stated with the measured gap. Open for P3.
+
+## Q1 / Q2: question class and calibrated reading plan
+
+- `classify_question`: fact / clause / list / existence by patterns (tests cover the four).
+- `reading_plan`: basis named (open the whole unit) / unit (unit table) / room (room table)
+  / uncalibrated; `ask(..., calibration=, alpha=)` uses the calibrated k for the gate and
+  records `certified`, the highest α whose k chapters were all opened. Unit-tested with
+  the scripted model; not yet run on the benchmark with a real model.
+
+## Q4: closure expansion on the real 130-page data room (no model)
+
+Seeds: the gold clause of each of the 15 answerable CUAD questions. Forward links
+(definitions, references), reverse index, sweep candidates (unverified without a model).
+
+| Version | Items / q | Forward | Reverse | Swept | Rounds | Fixpoint | Time / q |
+|---|---|---|---|---|---|---|---|
+| first | 14.3 | 12.5 | 1.8 | 84.9 | 2.8 | 4 / 15 | 6.9 ms |
+| **current** | **2.7** | 2.4 | 0.3 | 9.0 | 2.0 | **15 / 15** | 0.5 ms |
+
+- **Bug found and fixed (design):** the tree's `uses_definition` links cover every defined
+  term, including party names and "Agreement", and every accepted definition cascaded its
+  own links: 11 of 15 closures hit the 24-item budget on definitions alone. Now only the
+  answer, qualifiers, overrides and amendments cascade; a definition joins only if it
+  defines a kept term (the qualifier graph's filter); the sweep has one budget of 12
+  candidates per closure. Items per question: 0–9.
+- A term counts as name-like when it occurs in more than max(5% of the contract's
+  sentences, 10 sentences); the pure share rule dropped "Fees" from a 12-sentence test room.
+- Reverse links are rare on real CUAD clauses (0.3 per question): most CUAD gold spans are
+  not the target of a "notwithstanding Section X" elsewhere. The trap benchmark (P2)
+  plants exactly those; this reading says the structural part finds them when present
+  (unit tests: far override, amendment through its title, subject-to, precedence) and adds
+  little noise when absent.
+- The sweep needs the qualifier worker: 9 candidates per question on average, one model
+  call. Without a model the closure reports them as unverified, and a certificate built on
+  it must say so. Not yet run with a real model.
+
+## Q5–Q7 and the end-to-end path (built, scripted-model tests only)
+
+- **Q5 precedence** (`certify/precedence.py`): later amendment supersedes its target
+  (kept, marked); an explicit "schedules prevail" clause ranks schedule items over the
+  body; an amendment dated earlier than what it amends is not applied and is flagged as a
+  conflict; two amendments governing one clause are a conflict.
+- **Q6 certificates** (`certify/certificate.py`): closure / absence / uncertified, with
+  the share of chapters and tokens read; reasons for "uncertified": budget, unjudged sweep
+  candidates, conflicts, unsupported answer sentences, fewer chapters than the
+  calibration asks, no calibration.
+- **Q7 verifier** (`certify/verify.py`): one independent call per answer; a label outside
+  the pack counts as unsupported.
+- **`ask(..., certify=True)`**: found → closure → precedence → answer (pack widened to the
+  multi budget, roles note in the prompt) → verifier → closure certificate; not found →
+  absence certificate. On the BETA example with a scripted model the certificate is
+  COMPLETE with the override, amendment, carve-out, definition and precedence clause in
+  the pack and the 12-month cap marked superseded.
+- **Bug found on the way:** the two-hop bridge (F10) had already pulled in the override
+  sentence by its phrase "shall not exceed", so the closure skipped it and the pack
+  labelled it a bridge. A bridge now takes the closure's structural relation.
+- **Not yet measured with a real model:** the qualifier worker's verdicts, the verifier,
+  and the certificate rates on the benchmark.
+
+## F10 / F11 re-measured: chapter workers on contracts S (42 questions, gemini-3.5-flash-lite, gated)
+
+Run `long_contracts_S_workers_..._f10f11` vs the earlier gated run, same questions and model.
+
+| Kind | n | Calls / q (new / old) | Evidence coverage (new / old) | Correct (new / old) | Refused (new / old) |
+|---|---|---|---|---|---|
+| CUAD clause | 15 | 5.9 / 5.7 | 0.64 / 0.69 | 9 / 10 | 3 / 3 (same 3 wrong refusals) |
+| CUAD absent | 15 | **8.5 / 10.0** | — | — | 10 / 10 |
+| planted single | 6 | 3.0 / 3.0 | 0.79 / 0.79 | 5 / 5 | 1 / 1 |
+| planted two-hop | 2 | 8.5 / 8.0 | **0.83 / 0.17** | **2 / 0** | 0 / 0 |
+| never planted | 4 | 6.8 / 7.0 | — | — | 3 / 3 |
+| **all** | 42 | **6.6 / 7.1** | | | |
+
+- **F10:** the bridge step (no model call) puts the second part of a two-part fact into
+  the pack by its rare phrase ("rate card RC-8985"); both two-hop questions are now
+  judged correct. n = 2: the trap benchmark (P2) is where this gets a real sample.
+- **F11:** widening rounds open only chapters with word evidence (≥ 50% of the best
+  chapter's score) and give their workers 2 steps: 15% fewer calls on absent questions,
+  6% overall, with no change in what is refused or found. The remaining cost of a
+  "not found" (8.5 calls) is the widening itself, which the absence certificate turns
+  into a stated guarantee instead of a hope.
+- Unchanged weaknesses: 5 of 15 absent CUAD questions still get an answer from an
+  on-topic but non-stating clause (the same 5 as before); the judge prompt and the
+  worker's "must state the answer" rule are the next levers.
+
+## P2: the trap benchmark (`certify/traps.py`, built 2026-11-14)
+
+Built on the same CUAD rooms (seed 7) as its own family `traps`; original rooms unchanged.
+
+| Room | Documents | Pages | Questions | Per kind |
+|---|---|---|---|---|
+| traps S | 33 | 139 | 60 | 12 × far exception, override chain, unlinked, precedence, existence |
+| traps M | 215 | 1,034 | 360 | 72 × each |
+
+Each trap plants a numbered base clause (a named company's liability cap) plus a
+look-alike cap in another contract. Gold per case: required sentences, superseded
+sentences, the expected certificate (closure / absence). Templated text (several
+wordings); mutating real clauses is still to do.
+
+### Structural trap recall (no model): is every required provision reached?
+
+| Kind | traps S (n) | traps M (n) | Reached by |
+|---|---|---|---|
+| far exception, same contract | 4 / 4 | 24 / 24 | reverse index |
+| far exception, in a schedule | 4 / 4 | 24 / 24 | reverse index |
+| far exception, side letter (another document) | 4 / 4 | 24 / 24 | reverse index, contract named in the text |
+| override chain (amendment of an amendment) | 12 / 12 | 71 / 72 | reverse index; old caps marked superseded in all |
+| unlinked carve-out (no section number) | 12 / 12 offered | 72 / 72 offered | sweep → qualifier worker |
+| precedence (schedule restates the cap) | 12 / 12 offered | 72 / 72 offered | sweep (restatement) → qualifier worker |
+
+Closure time: 30 ms / question (S), 222 ms (M); graph + reverse index 1.0 s / 17.5 s.
+
+**Bugs the traps found (all fixed, with tests):**
+1. *Amendment of an amendment* resolved "Section 42 of the MSA, as amended by Amendment
+   No. 1" into Amendment No. 1 (its title shares more words with the sentence). Contract
+   names now never resolve to an amending document; amendments bind to the contract.
+2. *Two amendments of one clause* were reported as a conflict. The later one (by
+   amendment number, else by date) now governs and the earlier one is superseded.
+3. *"Nothing in the foregoing limitations shall limit …"* was not a qualifier cue.
+4. *A schedule restating a cap* has no cue word at all, so the cue sweep missed it. The
+   sweep now also offers restatements: the contract's highest-BM25 sentences for the
+   seed's words. The qualifier worker gained the verdict "restates"; a restatement
+   governs only through an explicit precedence clause.
+
+## First real-model certificates (gemini-3.1-flash-lite, contracts S, 8 questions)
+
+| Question | Calls | Certificate | Closure items | Sweep judged → kept |
+|---|---|---|---|---|
+| 4 CUAD clauses | 4–19 | 3 COMPLETE, 1 UNCERTIFIED | 0–16 | 43 → 1 |
+| 2 absent CUAD clauses | 8, 23 | 2 NOT FOUND at 98% (named contract opened whole) | — | — |
+| 2 planted facts | 4, 20 | 2 COMPLETE | 0–4 | 24 → 0 |
+
+- The one "uncertified": the verifier found the answer's date was not in the quoted
+  text — the certificate did its job.
+- The qualifier worker rejected 66 of 67 sweep candidates on real CUAD text: real
+  contracts in this room have few carve-outs of the clauses asked about.
+- Wording bug fixed: an absence certificate for a question naming its contract printed
+  "0 canaries"; it now says the named unit was opened whole and the risk is routing.
+
+## RQ2 first reading: certified vs plain workers on the trap benchmark (traps S)
+
+30 trap questions (6 per kind, balanced by `--limit 30`), the 139-page trap room, the same
+model for both systems (gemini-3.5-flash-lite), gated workers; "certified" =
+`--system workers_certify` (calibration, closure, precedence, verifier, certificates).
+Scorer: every amount of the reference in the answer (plus "fraud" for carve-outs);
+existence: yes / no as expected.
+
+| Kind | Required provisions in evidence (plain → certified) | Correct (plain → certified) | Calls / q | Certificate right |
+|---|---|---|---|---|
+| far exception | 0.00 → **1.00** | 0 / 6 → **6 / 6** | 4.5 → 6.8 | 6 / 6 |
+| override chain | 0.67 → **1.00** | 4 / 6 → **6 / 6** | 4.3 → 7.0 | 6 / 6 |
+| precedence | 0.17 → **1.00** | 1 / 6 → **6 / 6** | 5.3 → 8.0 | 6 / 6 |
+| unlinked carve-out | 0.00 → **1.00** | 0 / 6 → **6 / 6** | 5.0 → 7.2 | 6 / 6 |
+| existence (3 yes, 3 no) | — | 6 / 6 → 6 / 6 | 7.8 → 10.2 | 6 / 6 (3 closure, 3 absence) |
+| **all** | | **11 / 30 → 30 / 30** | **5.4 → 7.8** | **30 / 30** |
+
+- Plain workers find the base clause and stop: the cap they report is wrong or incomplete
+  in 19 of 30 cases. The certified system reaches every required provision and states
+  the result with the carve-outs and the superseded amounts.
+- Cost of certainty here: +2.4 calls per question (+44%).
+- **Caveats (must be in the paper):** n = 30, one small room, one model, templated trap
+  text (mutation of real clauses still to do), and the traps were designed together with
+  the system. The M room (360 traps, 1,034 pages), a second model, and the external
+  baselines (B1 long-context, B3 Chain-of-Agents) are the next runs.
+
+**Benchmark bugs found by this run (fixed; documents byte-identical after the fix):**
+1. Every "no" existence question asked about the same contract, and "yes" traps had
+   planted a change-of-control clause into it: the system's "yes" was right, the gold
+   was wrong. "No" questions now pick a (contract, clause type) pair where the contract
+   truly lacks the clause (no CUAD label, nothing planted, none of the key words).
+2. The automatic scorer demanded the reference's exact wording ("no limit for fraud");
+   correct certified answers scored 0. It now checks the amounts and the carve-out.
+
+## U4.7 + RQ1: calibration at 10,000 pages, and type canaries (2026-11-14, no model)
+
+**Fact canaries on the 8,619-page room** (554 chapters, 300 canaries, 119 real questions;
+18 min, 772 MB peak):
+
+| α | k | canary miss | real miss (upper) | by kind |
+|---|---|---|---|---|
+| 0.90 | 268 | 9.7% | 23.5% (30.8) | CUAD 27/95, planted 1/24 |
+| 0.95 | 305 | 4.7% | 17.6% (24.4) | CUAD 21/95, planted 0/24 |
+| 0.98 | 393 | 1.7% | 7.6% (12.8) | CUAD 9/95, planted 0/24 |
+
+Same pattern as at 977 pages: planted facts are covered, clause-type questions are not.
+
+**Type canaries** (new, `canaries.type_canaries`, `cuad_type_library`): a real CUAD clause
+of category X from a contract outside the room is planted in a random chapter and looked
+up with the words of the category-X question (unit name removed). Lexical gate, no
+routing, whole room; real = the benchmark's CUAD questions.
+
+| Room | Ranks p50/p75/p90/p98: type canaries vs real CUAD | α 0.90 real miss (stated 10%) | α 0.95 (5%) | α 0.98 (2%) |
+|---|---|---|---|---|
+| 130 pp (8 ch, n = 15) | 4/6/7/8 vs 4/5/6/7 | 6.7% | 0% | 0% |
+| 977 pp (55 ch, n = 55) | 21/32/43/51 vs 16/35/43/47 | **10.9%** | **1.8%** | **1.8%** |
+| 8,619 pp (554 ch, n = 89) | 196/324/411/492 vs 155/271/388/506 | **5.6%** (ub 11.4) | **3.4%** (ub 8.5) | **2.2%** (ub 6.9) |
+
+- **Stated and measured miss rates now agree within the confidence intervals at every
+  size.** With fact canaries the 977-page room missed 25% / 17% / 4%; with type canaries
+  11% / 1.8% / 1.8%. This is the first positive RQ1 evidence for clause-type questions.
+- **Caveat (leak at L):** the 8,619-page room holds every CUAD contract, so its "outside"
+  library fell back to contracts that are in the room (canaries with twins). The 130 and
+  977-page numbers are clean. Paper protocol: hold out a fixed set of contracts from all
+  rooms as the type library.
+- **Cost:** a room-wide certificate for an unnamed clause-type question needs most of the
+  room (493 of 554 chapters at 98%): lexical ranking cannot single out one contract by
+  clause type. When the question names its contract (all CUAD questions do), the named
+  unit is opened whole and the certificate costs one contract.
+- Type canaries are now part of `calibrate(..., type_library=)`; clause and existence
+  questions use the "type" table when present (`CANARY_CLASS` preference chains); the
+  certified benchmark system builds the library for contract rooms. Calibration cache
+  versioned (`.calibration.v2.json`).

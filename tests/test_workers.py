@@ -271,3 +271,50 @@ def test_whole_document_question_gathers_many_chapters_and_passes_partial_answer
     answer_prompt = model.users[-1]
     assert "Notes from the search" in answer_prompt and "names its governing law" in answer_prompt
     assert "not evidence" in answer_prompt
+
+
+# ------------------------------------------------- second hop + widening cost (F10, F11)
+
+def test_board_bridges_a_two_part_fact_without_a_model_call():
+    tree = build_tree(DocumentGraph.from_text(
+        "# Library\n\n## CHAPTER I\n\nRufus said the parcel must be left with the man who wore a copper scarf.\n\n"
+        "## CHAPTER II\n\nThe ferry left at dawn. Nobody spoke.\n\n"
+        "## CHAPTER III\n\nThe man who wore a copper scarf was the ferryman, Silas Grey.\n\n"
+        "## CHAPTER IV\n\nOttilie hid the silver key inside a blue tin of peppermints.\n\n"
+        "## CHAPTER V\n\nMarta hid the gold key inside a red tin of peppermints.\n"))
+    index = SentenceIndex(tree)
+    board = Board(tree, "Who was Rufus's parcel to be left with?")
+    board.index = index
+    first = next(p for p in tree.passages() if "Rufus" in p.text).sentences[0][0]
+    board.submit("w1", [{"sentence_ids": [first], "why": "parcel"}])
+    assert board.add_bridges() == 1
+    assert [f.role for f in board.accepted] == ["answer", "bridge"]
+    assert "Silas Grey" in board.quote(board.accepted[1]) and board.calls == 0
+    # a same-template sentence (a distractor) is not a bridge
+    board = Board(tree, "Where did Ottilie hide the silver key?")
+    board.index = index
+    key = next(p for p in tree.passages() if "Ottilie" in p.text).sentences[0][0]
+    board.submit("w1", [{"sentence_ids": [key], "why": "key"}])
+    assert board.add_bridges() == 0
+
+
+def test_two_hop_answer_pack_holds_both_parts():
+    tree = build_tree(DocumentGraph.from_text(
+        "# Room\n\n## Services Agreement of ACME\n\nThe hourly charges are set out in rate card RC-8985.\n\n"
+        "## Lease of BETA\n\nThe tenant pays rent monthly.\n\n"
+        "## Consulting Terms of GAMMA\n\nRate card RC-8985 fixes the hourly rate for consulting at 212 USD.\n"))
+    result = ask(tree, "What hourly charges apply under the Services Agreement of ACME?", FakeModel("RC-8985"),
+                 use_toc=False, widen=False)
+    texts = [i.text for i in result.pack.items]
+    assert any("212 USD" in t for t in texts) and result.pack.items[1].role == "bridge"
+
+
+def test_widening_skips_chapters_without_word_evidence_and_uses_fewer_steps():
+    fillers = "".join(f"## Notice {k} of DELTA{k}\n\nThe parties met on day {k}.\n\n" for k in range(6))
+    big = build_tree(DocumentGraph.from_text(ROOM.replace("## Schedule 1 Prices", fillers + "## Schedule 1 Prices")))
+    model = FakeModel("Zanzibar")
+    result = ask(big, "Which agreement is governed by Zanzibar law?", model, use_toc=False)
+    assert result.answer.abstained
+    notices = {c.id for c in big.chapters() if c.title.startswith("Notice")}
+    assert not notices & set(result.chapters_searched)        # no word match: never opened
+    assert result.calls < len(big.chapters())

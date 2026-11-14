@@ -10,8 +10,12 @@ For every post the board:
    passage (tree links ``uses_definition``).
 5. **Tracks references to follow** (``follow``): chapters a worker asks the board to
    search next.
-6. **Builds the evidence pack** for the final answer: accepted findings first, then the
-   definitions, each with its chapter / section path and pages.
+6. **Bridges a second hop** (no model): an accepted sentence that names something rare
+   ("rate card RC-8985", "the man who wore a copper scarf") is joined by the few other
+   sentences in the document that contain the same two-word phrase. That is where a
+   two-part fact continues ("Rate card RC-8985 fixes the hourly rate at …").
+7. **Builds the evidence pack** for the final answer: accepted findings first, then the
+   bridges, then the definitions, each with its chapter / section path and pages.
 
 **Budget:** every model call is counted. Workers stop when the board's budget is spent.
 """
@@ -19,7 +23,12 @@ For every post the board:
 from __future__ import annotations
 
 import threading
+from difflib import SequenceMatcher
 from dataclasses import dataclass, field
+
+BRIDGE_MAX_SENTENCES = 3   # a phrase held by more sentences than this is not a pointer
+BRIDGES_PER_QUESTION = 2
+BRIDGE_MAX_SIMILARITY = 0.55  # same words in the same order (one template, other values) is not a bridge
 from typing import Dict, List, Optional
 
 from ..evidence import EvidenceItem, EvidencePack
@@ -32,7 +41,7 @@ class Finding:
     chapter: str
     worker: str
     why: str = ""
-    role: str = "answer"            # answer | definition
+    role: str = "answer"            # answer | bridge | definition
 
 
 @dataclass
@@ -122,6 +131,42 @@ class Board:
                     self.follow.append(chapter)
 
     # ------------------------------------------------------------ evidence
+    def add_bridges(self) -> int:
+        """Second hop without a model call (see 6 above). Phrases made only of the
+        question's own words are skipped: they are the topic, not a pointer."""
+        if self.index is None:
+            return 0
+        from .routing import words
+
+        q = set(words(self.question))
+        have = {s for f in self.accepted for s in f.sentence_ids}
+        passages = {f.passage for f in self.accepted}
+        added: List[Finding] = []
+        for f in [a for a in self.accepted if a.role == "answer"]:
+            for sid in f.sentence_ids:
+                toks = words(self.tree.sentence(sid)[0])
+                for first, second in dict.fromkeys(zip(toks, toks[1:])):
+                    if len(added) >= BRIDGES_PER_QUESTION:
+                        break
+                    if first in q or second in q:
+                        continue
+                    rows = self.index.rows_with_phrase(first, second, BRIDGE_MAX_SENTENCES)
+                    for r in rows or []:
+                        other = self.index.ids[r]
+                        if other in have or len(added) >= BRIDGES_PER_QUESTION:
+                            continue
+                        text, passage = self.tree.sentence(other)
+                        if passage in passages:
+                            continue
+                        if SequenceMatcher(None, toks, words(text), autojunk=False).ratio() > BRIDGE_MAX_SIMILARITY:
+                            continue
+                        added.append(Finding(passage, [other], self._chapter_of(passage) or "", "board",
+                                             f"continues '{first} {second}' from an accepted sentence", role="bridge"))
+                        have.add(other)
+                        passages.add(passage)
+        self.accepted.extend(added)
+        return len(added)
+
     def add_definitions(self) -> int:
         """Definitions used by accepted passages join the pack (dependency rule, Phase 6)."""
         added = 0
@@ -149,8 +194,10 @@ class Board:
 
         items, used = [], 0
         answers = [f for f in self.accepted if f.role == "answer"]
+        closure = [f for f in self.accepted if f.role not in ("answer", "bridge", "definition")]  # certify.closure
+        bridges = [f for f in self.accepted if f.role == "bridge"]
         defs = [f for f in self.accepted if f.role == "definition"]
-        for k, f in enumerate((answers + defs)[:max_items], 1):
+        for k, f in enumerate((answers + closure + bridges + defs)[:max_items], 1):
             t = count_tokens(self.quote(f))
             if max_tokens is not None and items and used + t > max_tokens:
                 break
