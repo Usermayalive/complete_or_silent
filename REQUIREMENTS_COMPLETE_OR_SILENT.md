@@ -214,7 +214,7 @@ or workshop).
 |---|---|---|
 | D1 | Idea, method and plan documented | ✅ |
 | D2 | ACL LaTeX template set up (from the GNN PRUNER paper) | ✅ |
-| D3 | Related-work table from a systematic search (P0) | ⬜ blocked: web search needs your permission or your own search (see chat) |
+| D3 | Related-work table from a systematic search (P0) | 🟡 first pass done: `docs/RELATED_WORK.md` — GO with sharper claims (Certify, CONFLARE); second pass (ACL Anthology / Scholar) to do |
 | D4 | Formal definitions of "complete" and "absent" | ✅ `paper_cs/main.tex` §3 |
 | D5 | Figures: system diagram, certificate examples, stated-vs-measured plot, cost curves, trap results table | ⬜ |
 | D6 | Full draft: intro (BETA example), related work, problem, method, benchmark, experiments, limitations, ethics | 🟡 first draft in `paper_cs/` with 8 PENDING marks |
